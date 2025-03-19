@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { FaEnvelope, FaLinkedin, FaTwitter, FaGithub, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaEnvelope, FaLinkedin, FaGithub } from 'react-icons/fa';
+import { IoLocationOutline } from 'react-icons/io5';
 
 const ContactContainer = styled.div`
-  background: #0a192f;
-  color: #8892b0;
-  padding: 100px calc((100vw - 1200px) / 2);
-  min-height: 80vh;
+  background: ${props => props.theme.background};
+  color: ${props => props.theme.textSlate};
+  padding: 60px calc((100vw - 1200px) / 2);
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
   
   @media screen and (max-width: 768px) {
-    padding: 80px 24px;
+    padding: 60px 24px;
   }
 `;
 
@@ -18,330 +21,196 @@ const ContactWrapper = styled.div`
   flex-direction: column;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  width: 100%;
 `;
 
 const SectionTitle = styled.h2`
-  color: #ccd6f6;
+  color: ${props => props.theme.textLightSlate};
   font-size: 32px;
-  margin-bottom: 16px;
+  margin-bottom: 40px;
   position: relative;
   
   &:before {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -10px;
     left: 0;
     width: 70px;
     height: 3px;
-    background: #64ffda;
+    background: ${props => props.theme.highlight};
   }
 `;
 
 const ContactContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+`;
+
+const ContactText = styled.p`
+  font-size: 20px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 800px;
+  text-align: center;
+`;
+
+const ContactGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 50px;
-  margin-top: 40px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
+  width: 100%;
+  max-width: 800px;
   
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const ContactInfo = styled.div`
-  display: flex;
-  flex-direction: column;
+// Flip Card Container
+const FlipCardContainer = styled.div`
+  background-color: transparent;
+  perspective: 1000px;
+  height: 120px;
+  
+  &:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
 `;
 
-const ContactText = styled.p`
-  font-size: 18px;
-  line-height: 1.6;
-  margin-bottom: 30px;
+// Inner container that will be flipped
+const FlipCardInner = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 `;
 
-const ContactItem = styled.div`
+// Front of card
+const FlipCardFront = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: ${props => props.theme.cardBackground};
+  border-radius: 8px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
   
   svg {
-    color: #64ffda;
-    font-size: 24px;
-    margin-right: 15px;
+    color: ${props => props.theme.highlight};
+    font-size: 40px;
   }
+`;
+
+// Back of card
+const FlipCardBack = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: ${props => props.theme.highlightAlt};
+  color: ${props => props.theme.textLightSlate};
+  transform: rotateY(180deg);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 `;
 
 const ContactLink = styled.a`
-  color: #ccd6f6;
+  color: ${props => props.theme.textLightSlate};
   text-decoration: none;
+  font-size: 18px;
   transition: color 0.3s ease;
   
   &:hover {
-    color: #64ffda;
+    color: ${props => props.theme.highlight};
   }
 `;
 
-const SocialLinks = styled.div`
-  display: flex;
-  margin-top: 30px;
-`;
-
-const SocialLink = styled.a`
-  color: #ccd6f6;
-  font-size: 24px;
-  margin-right: 20px;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    color: #64ffda;
-    transform: translateY(-3px);
-  }
-`;
-
-const FormContainer = styled.div`
-  background: #112240;
-  padding: 30px;
-  border-radius: 5px;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 20px;
-`;
-
-const Label = styled.label`
-  display: block;
-  color: #ccd6f6;
-  margin-bottom: 8px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #8892b0;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #e6f1ff;
-  font-size: 16px;
-  
-  &:focus {
-    outline: none;
-    border-color: #64ffda;
-  }
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #8892b0;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #e6f1ff;
-  font-size: 16px;
-  min-height: 150px;
-  resize: vertical;
-  
-  &:focus {
-    outline: none;
-    border-color: #64ffda;
-  }
-`;
-
-const SubmitButton = styled.button`
-  background: transparent;
-  color: #64ffda;
-  padding: 12px 30px;
-  border: 1px solid #64ffda;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(100, 255, 218, 0.1);
-  }
-  
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
-
-const SuccessMessage = styled.div`
-  background: rgba(100, 255, 218, 0.1);
-  color: #64ffda;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 20px;
-  text-align: center;
-`;
-
-const ErrorMessage = styled.div`
-  background: rgba(255, 100, 100, 0.1);
-  color: #ff6464;
-  padding: 15px;
-  border-radius: 4px;
-  margin-top: 20px;
-  text-align: center;
+const ContactInfo = styled.span`
+  color: ${props => props.theme.textLightSlate};
+  font-size: 18px;
+  white-space: nowrap;
 `;
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
-    }, 1500);
-  };
-  
   return (
     <ContactContainer id="contact">
       <ContactWrapper>
         <SectionTitle>Get In Touch</SectionTitle>
         
         <ContactContent>
-          <ContactInfo>
-            <ContactText>
-              I'm currently open to new opportunities and collaborations in bioinformatics, 
-              genomics, and machine learning. Feel free to reach out if you have a question, 
-              project idea, or just want to connect!
-            </ContactText>
-            
-            <ContactItem>
-              <FaEnvelope />
-              <ContactLink href="mailto:contact@arunboddapati.com">
-                contact@arunboddapati.com
-              </ContactLink>
-            </ContactItem>
-            
-            <ContactItem>
-              <FaLinkedin />
-              <ContactLink href="https://linkedin.com/in/arunboddapati" target="_blank" rel="noopener noreferrer">
-                linkedin.com/in/arunboddapati
-              </ContactLink>
-            </ContactItem>
-            
-            <ContactItem>
-              <FaGithub />
-              <ContactLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer">
-                github.com/arunbodd
-              </ContactLink>
-            </ContactItem>
-            
-            <ContactItem>
-              <FaMapMarkerAlt />
-              <span>Washington, D.C. Metro Area</span>
-            </ContactItem>
-            
-            <SocialLinks>
-              <SocialLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                <FaGithub />
-              </SocialLink>
-              <SocialLink href="https://linkedin.com/in/arunboddapati" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                <FaLinkedin />
-              </SocialLink>
-              <SocialLink href="https://twitter.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                <FaTwitter />
-              </SocialLink>
-              <SocialLink href="mailto:contact@arunboddapati.com" aria-label="Email">
-                <FaEnvelope />
-              </SocialLink>
-            </SocialLinks>
-          </ContactInfo>
+          <ContactText>
+            I'm currently open to new opportunities and collaborations in bioinformatics, 
+            genomics, and machine learning. Feel free to reach out if you have a question, 
+            project idea, or just want to connect!
+          </ContactText>
           
-          <FormContainer>
-            <form onSubmit={handleSubmit}>
-              <FormGroup>
-                <Label htmlFor="name">Name</Label>
-                <Input 
-                  type="text" 
-                  id="name" 
-                  name="name" 
-                  value={formData.name}
-                  onChange={handleChange}
-                  required 
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
-                  value={formData.email}
-                  onChange={handleChange}
-                  required 
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label htmlFor="subject">Subject</Label>
-                <Input 
-                  type="text" 
-                  id="subject" 
-                  name="subject" 
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required 
-                />
-              </FormGroup>
-              
-              <FormGroup>
-                <Label htmlFor="message">Message</Label>
-                <TextArea 
-                  id="message" 
-                  name="message" 
-                  value={formData.message}
-                  onChange={handleChange}
-                  required 
-                />
-              </FormGroup>
-              
-              <SubmitButton type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </SubmitButton>
-              
-              {submitStatus === 'success' && (
-                <SuccessMessage>
-                  Your message has been sent successfully! I'll get back to you soon.
-                </SuccessMessage>
-              )}
-              
-              {submitStatus === 'error' && (
-                <ErrorMessage>
-                  There was an error sending your message. Please try again later.
-                </ErrorMessage>
-              )}
-            </form>
-          </FormContainer>
+          <ContactGrid>
+            {/* Email Card */}
+            <FlipCardContainer>
+              <FlipCardInner className="flip-card-inner">
+                <FlipCardFront>
+                  <FaEnvelope />
+                </FlipCardFront>
+                <FlipCardBack>
+                  <ContactLink href="mailto:arunbodd@outlook.com">
+                    arunbodd@outlook.com
+                  </ContactLink>
+                </FlipCardBack>
+              </FlipCardInner>
+            </FlipCardContainer>
+            
+            {/* LinkedIn Card */}
+            <FlipCardContainer>
+              <FlipCardInner className="flip-card-inner">
+                <FlipCardFront>
+                  <FaLinkedin />
+                </FlipCardFront>
+                <FlipCardBack>
+                  <ContactLink href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer">
+                    linkedin.com/in/arunbodd
+                  </ContactLink>
+                </FlipCardBack>
+              </FlipCardInner>
+            </FlipCardContainer>
+            
+            {/* GitHub Card */}
+            <FlipCardContainer>
+              <FlipCardInner className="flip-card-inner">
+                <FlipCardFront>
+                  <FaGithub />
+                </FlipCardFront>
+                <FlipCardBack>
+                  <ContactLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer">
+                    github.com/arunbodd
+                  </ContactLink>
+                </FlipCardBack>
+              </FlipCardInner>
+            </FlipCardContainer>
+            
+            {/* Location Card */}
+            <FlipCardContainer>
+              <FlipCardInner className="flip-card-inner">
+                <FlipCardFront>
+                  <IoLocationOutline />
+                </FlipCardFront>
+                <FlipCardBack>
+                  <ContactInfo>Atlanta, GA</ContactInfo>
+                </FlipCardBack>
+              </FlipCardInner>
+            </FlipCardContainer>
+          </ContactGrid>
         </ContactContent>
       </ContactWrapper>
     </ContactContainer>

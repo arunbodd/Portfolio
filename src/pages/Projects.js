@@ -2,157 +2,180 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 
-const ProjectsContainer = styled.div`
-  background: #0a192f;
-  color: #8892b0;
-  padding: 100px calc((100vw - 1200px) / 2);
-  
-  @media screen and (max-width: 768px) {
-    padding: 80px 24px;
-  }
-`;
-
-const ProjectsWrapper = styled.div`
+const PageContainer = styled.div`
+  background: ${props => props.theme.background};
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
+  align-items: center;
 `;
 
-const SectionTitle = styled.h2`
-  color: #ccd6f6;
-  font-size: 32px;
-  margin-bottom: 16px;
+const ProjectsContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: ${props => props.theme.textSlate};
+  width: 100%;
+`;
+
+const Title = styled.h1`
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: ${props => props.theme.textLightSlate};
   position: relative;
   
-  &:before {
+  &:after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -10px;
     left: 0;
-    width: 70px;
-    height: 3px;
-    background: #64ffda;
+    width: 80px;
+    height: 4px;
+    background: ${props => props.theme.highlight};
   }
 `;
 
 const FilterContainer = styled.div`
   display: flex;
-  justify-content: center;
-  margin: 40px 0;
   flex-wrap: wrap;
+  gap: 1rem;
+  margin: 2rem 0;
 `;
 
 const FilterButton = styled.button`
-  background: ${({ active }) => (active ? 'rgba(100, 255, 218, 0.1)' : 'transparent')};
-  color: ${({ active }) => (active ? '#64ffda' : '#ccd6f6')};
-  border: 1px solid ${({ active }) => (active ? '#64ffda' : '#8892b0')};
+  background: ${props => props.active ? props.theme.highlight : 'transparent'};
+  color: ${props => props.active ? props.theme.navy : props.theme.textLightSlate};
+  border: 1px solid ${props => props.theme.highlight};
+  padding: 0.5rem 1rem;
   border-radius: 4px;
-  padding: 8px 16px;
-  margin: 0 8px 8px 0;
   cursor: pointer;
   transition: all 0.3s ease;
   
   &:hover {
-    background: rgba(100, 255, 218, 0.1);
-    color: #64ffda;
-    border-color: #64ffda;
+    background: ${props => props.active ? props.theme.highlight : props.theme.highlightTint || 'rgba(100, 255, 218, 0.1)'};
+    color: ${props => props.active ? props.theme.navy : props.theme.textLightSlate};
   }
 `;
 
-const ProjectsGrid = styled.div`
+const ProjectGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  grid-gap: 30px;
-  margin-top: 20px;
+  gap: 2rem;
+  margin-top: 2rem;
   
-  @media screen and (max-width: 400px) {
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
   }
 `;
 
 const ProjectCard = styled.div`
-  background: #112240;
-  border-radius: 5px;
+  background-color: ${props => props.theme.lightNavy};
+  border-radius: 8px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: translateY(-12px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
   }
-`;
-
-const ProjectImage = styled.div`
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
   
-  img {
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
+    height: 4px;
+    background: ${props => props.theme.highlight};
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
   }
   
-  ${ProjectCard}:hover & img {
-    transform: scale(1.05);
+  &:hover:after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 `;
 
 const ProjectContent = styled.div`
-  padding: 24px;
+  padding: 1.5rem;
   flex: 1;
   display: flex;
   flex-direction: column;
 `;
 
 const ProjectTitle = styled.h3`
-  color: #e6f1ff;
-  font-size: 22px;
-  margin-bottom: 12px;
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: ${props => props.theme.textLightSlate};
 `;
 
 const ProjectDescription = styled.p`
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 20px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  color: ${props => props.theme.textSlate};
   flex: 1;
 `;
 
 const TechStack = styled.div`
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
 `;
 
 const TechTag = styled.span`
-  background: rgba(100, 255, 218, 0.1);
-  color: #64ffda;
-  padding: 4px 10px;
+  background-color: rgba(100, 255, 218, 0.1);
+  color: ${props => props.theme.highlight};
+  padding: 0.25rem 0.5rem;
   border-radius: 3px;
-  font-size: 12px;
-  margin: 0 8px 8px 0;
+  font-size: 0.8rem;
 `;
 
 const ProjectLinks = styled.div`
   display: flex;
-  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: auto;
 `;
 
 const ProjectLink = styled.a`
-  color: #ccd6f6;
-  font-size: 20px;
-  margin-left: 16px;
+  color: ${props => props.theme.textLightSlate};
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
   transition: color 0.3s ease;
   
   &:hover {
-    color: #64ffda;
+    color: ${props => props.theme.highlight};
   }
+`;
+
+const NoResults = styled.p`
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  color: ${props => props.theme.textSlate};
+`;
+
+const CategoryBadge = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: ${props => props.theme.highlight};
+  color: ${props => props.theme.navy};
+  opacity: 0.9;
 `;
 
 const Projects = () => {
@@ -161,74 +184,107 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
-      title: 'Ebola Virus Genomic Analysis',
-      description: 'A comprehensive genomic analysis pipeline for Ebola virus sequences, enabling rapid identification of variants and phylogenetic relationships.',
-      image: '/projects/ebola-project.jpg',
-      technologies: ['Python', 'Nextflow', 'Bioinformatics', 'Phylogenetics'],
-      github: 'https://github.com/arunbodd/Nf-workflow-Ebola',
-      live: null,
-      category: 'bioinformatics'
+      title: "NexAws-AI",
+      description: "A framework for integrating AI pipelines with Nextflow and AWS infrastructure for scalable and efficient data processing.",
+      tech: ["Nextflow", "AWS", "AI", "Machine Learning"],
+      github: "https://github.com/arunbodd/NexAws-AI",
+      demo: null,
+      category: "Nextflow and AWS"
     },
     {
       id: 2,
-      title: 'Single-cell RNA-Seq Analysis Pipeline',
-      description: 'A pipeline for processing and analyzing single-cell RNA sequencing data, including quality control, normalization, clustering, and differential expression analysis.',
-      image: '/projects/scrna-project.jpg',
-      technologies: ['R', 'Bioconductor', 'Machine Learning', 'Data Visualization'],
-      github: 'https://github.com/arunbodd/scRNASeq',
-      live: null,
-      category: 'bioinformatics'
+      title: "Serum-Proteomics",
+      description: "A pipeline for analyzing serum proteomics data to identify biomarkers and protein signatures in various disease states.",
+      tech: ["Proteomics", "Mass Spectrometry", "R", "Data Analysis"],
+      github: "https://github.com/arunbodd/Serum-Proteomics",
+      demo: null,
+      category: "Proteomics"
     },
     {
       id: 3,
-      title: 'Gene Expression Predictor',
-      description: 'A machine learning model that predicts gene expression levels based on genomic features and regulatory elements.',
-      image: '/projects/gene-expression-project.jpg',
-      technologies: ['Python', 'TensorFlow', 'Deep Learning', 'Genomics'],
-      github: 'https://github.com/arunbodd',
-      live: null,
-      category: 'machine-learning'
+      title: "arunbodd.github.io",
+      description: "Personal portfolio website showcasing projects, publications, and professional experience built with modern web technologies.",
+      tech: ["React", "JavaScript", "HTML/CSS", "Styled Components"],
+      github: "https://github.com/arunbodd/arunbodd.github.io",
+      demo: "https://arunbodd.github.io",
+      category: "Website Development"
     },
     {
       id: 4,
-      title: 'Biomedical Literature Mining Tool',
-      description: 'A natural language processing tool for extracting relevant information from biomedical literature, helping researchers stay updated with the latest findings.',
-      image: '/projects/literature-mining-project.jpg',
-      technologies: ['Python', 'NLP', 'BERT', 'Web Scraping'],
-      github: 'https://github.com/arunbodd',
-      live: 'https://example.com',
-      category: 'machine-learning'
+      title: "mycosnp-nf",
+      description: "A Nextflow-based pipeline for analyzing mycological single nucleotide polymorphisms to track fungal outbreaks and evolution.",
+      tech: ["Nextflow", "Genomics", "SNP Analysis", "Docker"],
+      github: "https://github.com/arunbodd/mycosnp-nf",
+      demo: null,
+      category: "Nextflow"
     },
     {
       id: 5,
-      title: 'Interactive Genomic Data Visualizer',
-      description: 'A web-based tool for interactive visualization of genomic data, allowing researchers to explore and analyze complex datasets.',
-      image: '/projects/genomic-viz-project.jpg',
-      technologies: ['JavaScript', 'D3.js', 'React', 'Genomics'],
-      github: 'https://github.com/arunbodd',
-      live: 'https://example.com',
-      category: 'web-development'
+      title: "Ebola_Hackthon",
+      description: "A project developed during a hackathon for analyzing Ebola virus genomic data to track outbreak transmission and evolution.",
+      tech: ["Nextflow", "Viral Genomics", "Phylogenetics", "Bioinformatics"],
+      github: "https://github.com/arunbodd/Ebola_Hackthon",
+      demo: null,
+      category: "Nextflow"
     },
     {
       id: 6,
-      title: 'Protein Structure Prediction Dashboard',
-      description: 'A dashboard for monitoring and analyzing protein structure predictions, integrating multiple prediction algorithms and visualization tools.',
-      image: '/projects/protein-structure-project.jpg',
-      technologies: ['Python', 'React', 'PyMOL', 'Molecular Modeling'],
-      github: 'https://github.com/arunbodd',
-      live: null,
-      category: 'web-development'
+      title: "aquascope",
+      description: "CDC's wastewater surveillance analysis pipeline for detecting and monitoring pathogens including SARS-CoV-2 variants.",
+      tech: ["Nextflow", "Metagenomics", "Wastewater Analysis", "COVID-19"],
+      github: "https://github.com/CDCgov/aquascope",
+      demo: null,
+      category: "Nextflow"
+    },
+    {
+      id: 7,
+      title: "tautyping-nf",
+      description: "A Nextflow pipeline for finding optimal phylogenetic markers in microbial genomes using Kendall Tau correlation statistics.",
+      tech: ["Nextflow", "Phylogenetics", "Microbial Genomics", "Python"],
+      github: "https://github.com/arunbodd/tautyping-nf",
+      demo: null,
+      category: "Nextflow"
+    },
+    {
+      id: 8,
+      title: "RM_Baricitinib_manuscript",
+      description: "Analysis code for single-cell RNA sequencing data investigating the effects of Baricitinib treatment in SARS-CoV-2 infected rhesus macaques.",
+      tech: ["scRNA-seq", "R", "Bioinformatics", "COVID-19"],
+      github: "https://github.com/BosingerLab/RM_Baricitinib_manuscript",
+      demo: null,
+      category: "scRNA Analysis"
+    },
+    {
+      id: 9,
+      title: "CRISPR_Cas9_gRNA",
+      description: "A toolkit for designing and analyzing CRISPR-Cas9 guide RNAs for precise genome editing experiments.",
+      tech: ["CRISPR", "Genome Editing", "Python", "Bioinformatics"],
+      github: "https://github.com/arunbodd/CRISPR_Cas9_gRNA",
+      demo: null,
+      category: "CRISPR"
+    },
+    {
+      id: 10,
+      title: "WES_QC",
+      description: "A Snakemake-based quality control pipeline for Whole Exome Sequencing data in the NIAID repository.",
+      tech: ["Snakemake", "WES", "Quality Control", "Bioinformatics"],
+      github: "https://github.com/CCBR/NIAID/tree/master/WES_QC",
+      demo: null,
+      category: "Snakemake"
     }
   ];
+  
+  // Extract unique categories for filter buttons
+  const categories = [...new Set(projects.map(project => project.category))];
   
   const filteredProjects = filter === 'all' 
     ? projects 
     : projects.filter(project => project.category === filter);
   
   return (
-    <ProjectsContainer id="projects">
-      <ProjectsWrapper>
-        <SectionTitle>Projects</SectionTitle>
+    <PageContainer>
+      <ProjectsContainer>
+        <Title>Projects</Title>
         
         <FilterContainer>
           <FilterButton 
@@ -237,58 +293,51 @@ const Projects = () => {
           >
             All
           </FilterButton>
-          <FilterButton 
-            active={filter === 'bioinformatics'} 
-            onClick={() => setFilter('bioinformatics')}
-          >
-            Bioinformatics
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'machine-learning'} 
-            onClick={() => setFilter('machine-learning')}
-          >
-            Machine Learning
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'web-development'} 
-            onClick={() => setFilter('web-development')}
-          >
-            Web Development
-          </FilterButton>
+          {categories.map(category => (
+            <FilterButton 
+              key={category}
+              active={filter === category} 
+              onClick={() => setFilter(category)}
+            >
+              {category}
+            </FilterButton>
+          ))}
         </FilterContainer>
         
-        <ProjectsGrid>
-          {filteredProjects.map(project => (
-            <ProjectCard key={project.id}>
-              <ProjectImage>
-                <img src={project.image} alt={project.title} />
-              </ProjectImage>
-              <ProjectContent>
-                <ProjectTitle>{project.title}</ProjectTitle>
-                <ProjectDescription>{project.description}</ProjectDescription>
-                <TechStack>
-                  {project.technologies.map((tech, index) => (
-                    <TechTag key={index}>{tech}</TechTag>
-                  ))}
-                </TechStack>
-                <ProjectLinks>
-                  {project.github && (
-                    <ProjectLink href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub Repository">
-                      <FaGithub />
-                    </ProjectLink>
-                  )}
-                  {project.live && (
-                    <ProjectLink href={project.live} target="_blank" rel="noopener noreferrer" aria-label="Live Demo">
-                      <FaExternalLinkAlt />
-                    </ProjectLink>
-                  )}
-                </ProjectLinks>
-              </ProjectContent>
-            </ProjectCard>
-          ))}
-        </ProjectsGrid>
-      </ProjectsWrapper>
-    </ProjectsContainer>
+        {filteredProjects.length > 0 ? (
+          <ProjectGrid>
+            {filteredProjects.map(project => (
+              <ProjectCard key={project.id}>
+                <CategoryBadge>{project.category}</CategoryBadge>
+                <ProjectContent>
+                  <ProjectTitle>{project.title}</ProjectTitle>
+                  <ProjectDescription>{project.description}</ProjectDescription>
+                  <TechStack>
+                    {project.tech.map((tech, index) => (
+                      <TechTag key={index}>{tech}</TechTag>
+                    ))}
+                  </TechStack>
+                  <ProjectLinks>
+                    {project.github && (
+                      <ProjectLink href={project.github} target="_blank" rel="noopener noreferrer">
+                        <FaGithub /> GitHub
+                      </ProjectLink>
+                    )}
+                    {project.demo && (
+                      <ProjectLink href={project.demo} target="_blank" rel="noopener noreferrer">
+                        <FaExternalLinkAlt /> Demo
+                      </ProjectLink>
+                    )}
+                  </ProjectLinks>
+                </ProjectContent>
+              </ProjectCard>
+            ))}
+          </ProjectGrid>
+        ) : (
+          <NoResults>No projects found for the selected filter.</NoResults>
+        )}
+      </ProjectsContainer>
+    </PageContainer>
   );
 };
 

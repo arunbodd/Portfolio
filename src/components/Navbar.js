@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaSun, FaMoon } from 'react-icons/fa';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Nav = styled.nav`
-  background: #0a192f;
+  background: ${props => props.theme.navBackground};
   height: 80px;
   display: flex;
   justify-content: space-between;
@@ -14,10 +15,11 @@ const Nav = styled.nav`
   position: sticky;
   top: 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 `;
 
 const Logo = styled(Link)`
-  color: #64ffda;
+  color: ${props => props.theme.highlight};
   font-size: 1.8rem;
   font-weight: bold;
   text-decoration: none;
@@ -26,7 +28,7 @@ const Logo = styled(Link)`
   transition: all 0.3s ease;
   
   &:hover {
-    color: #fff;
+    color: ${props => props.theme.textWhite};
   }
 `;
 
@@ -44,7 +46,7 @@ const NavMenu = styled.div`
     left: ${({ isOpen }) => (isOpen ? '0' : '-100%')};
     opacity: 1;
     transition: all 0.5s ease;
-    background: #0a192f;
+    background: ${props => props.theme.navBackground};
     padding-top: 2rem;
   }
 `;
@@ -61,7 +63,7 @@ const NavItem = styled.li`
 `;
 
 const NavLink = styled(Link)`
-  color: #ccd6f6;
+  color: ${props => props.theme.textLightSlate};
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -72,7 +74,7 @@ const NavLink = styled(Link)`
   transition: all 0.3s ease;
   
   &:hover {
-    color: #64ffda;
+    color: ${props => props.theme.highlight};
   }
   
   @media screen and (max-width: 768px) {
@@ -97,16 +99,35 @@ const NavBtnLink = styled.a`
   border-radius: 4px;
   background: transparent;
   padding: 10px 22px;
-  color: #64ffda;
-  border: 1px solid #64ffda;
+  color: ${props => props.theme.highlight};
+  border: 1px solid ${props => props.theme.highlight};
   outline: none;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   text-decoration: none;
+  margin-left: 16px;
   
   &:hover {
     transition: all 0.3s ease-in-out;
     background: rgba(100, 255, 218, 0.1);
+  }
+`;
+
+const ThemeToggle = styled.button`
+  background: transparent;
+  color: ${props => props.theme.highlight};
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  margin-right: 12px;
+  
+  &:hover {
+    transform: rotate(30deg);
   }
 `;
 
@@ -121,13 +142,14 @@ const MobileIcon = styled.div`
     transform: translate(-100%, 60%);
     font-size: 1.8rem;
     cursor: pointer;
-    color: #ccd6f6;
+    color: ${props => props.theme.textLightSlate};
   }
 `;
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrollNav, setScrollNav] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -162,6 +184,15 @@ const Navbar = () => {
           <NavLink to="/about" onClick={() => setIsOpen(false)}>About</NavLink>
         </NavItem>
         <NavItem>
+          <NavLink to="/career" onClick={() => setIsOpen(false)}>Career</NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink to="/skills" onClick={() => setIsOpen(false)}>Skills</NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink to="/strengths" onClick={() => setIsOpen(false)}>Strengths</NavLink>
+        </NavItem>
+        <NavItem>
           <NavLink to="/projects" onClick={() => setIsOpen(false)}>Projects</NavLink>
         </NavItem>
         <NavItem>
@@ -172,6 +203,9 @@ const Navbar = () => {
         </NavItem>
       </NavMenu>
       <NavBtn>
+        <ThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </ThemeToggle>
         <NavBtnLink href="/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</NavBtnLink>
       </NavBtn>
     </Nav>

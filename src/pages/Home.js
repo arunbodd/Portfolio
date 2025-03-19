@@ -4,7 +4,7 @@ import Typed from 'typed.js';
 import { Link } from 'react-router-dom';
 
 const HeroContainer = styled.div`
-  background: #0a192f;
+  background: ${props => props.theme.background};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -28,7 +28,7 @@ const HeroContent = styled.div`
 `;
 
 const HeroGreeting = styled.p`
-  color: #64ffda;
+  color: ${props => props.theme.highlight};
   font-size: 16px;
   font-weight: 400;
   margin-bottom: 20px;
@@ -36,7 +36,7 @@ const HeroGreeting = styled.p`
 `;
 
 const HeroH1 = styled.h1`
-  color: #ccd6f6;
+  color: ${props => props.theme.textLightSlate};
   font-size: 80px;
   font-weight: 600;
   margin-bottom: 24px;
@@ -47,7 +47,7 @@ const HeroH1 = styled.h1`
 `;
 
 const HeroH2 = styled.h2`
-  color: #8892b0;
+  color: ${props => props.theme.textSlate};
   font-size: 60px;
   font-weight: 600;
   margin-bottom: 24px;
@@ -58,7 +58,7 @@ const HeroH2 = styled.h2`
 `;
 
 const HeroP = styled.p`
-  color: #8892b0;
+  color: ${props => props.theme.textSlate};
   font-size: 24px;
   max-width: 600px;
   margin-bottom: 35px;
@@ -69,7 +69,7 @@ const HeroP = styled.p`
 `;
 
 const TypedSpan = styled.span`
-  color: #64ffda;
+  color: ${props => props.theme.highlight};
 `;
 
 const HeroBtnWrapper = styled.div`
@@ -83,13 +83,13 @@ const HeroBtnWrapper = styled.div`
 
 const Button = styled(Link)`
   border-radius: 4px;
-  background: ${({ primary }) => (primary ? '#64ffda' : 'transparent')};
+  background: ${({ primary, theme }) => (primary ? theme.highlight : 'transparent')};
   white-space: nowrap;
   padding: ${({ big }) => (big ? '14px 48px' : '12px 30px')};
-  color: ${({ primary }) => (primary ? '#0a192f' : '#64ffda')};
+  color: ${({ primary, theme }) => (primary ? theme.background : theme.highlight)};
   font-size: ${({ fontBig }) => (fontBig ? '20px' : '16px')};
   outline: none;
-  border: ${({ primary }) => (primary ? 'none' : '1px solid #64ffda')};
+  border: ${({ primary, theme }) => (primary ? 'none' : `1px solid ${theme.highlight}`)};
   cursor: pointer;
   display: flex;
   justify-content: center;
@@ -100,7 +100,8 @@ const Button = styled(Link)`
   
   &:hover {
     transition: all 0.2s ease-in-out;
-    background: ${({ primary }) => (primary ? 'rgba(100, 255, 218, 0.8)' : 'rgba(100, 255, 218, 0.1)')};
+    background: ${({ primary, theme }) => (primary ? theme.highlightTint : theme.highlightTint)};
+    color: ${({ primary, theme }) => (primary ? theme.background : theme.highlight)};
   }
   
   @media screen and (max-width: 768px) {
