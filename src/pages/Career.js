@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaExternalLinkAlt, FaCalendarAlt, FaMapMarkerAlt, FaBuilding } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt, FaBuilding } from 'react-icons/fa';
 import { EmoryLogo, CompanyLogo } from '../components/CompanyLogos';
 
 const PageContainer = styled.div`
@@ -102,17 +102,27 @@ const TimelineItem = styled.div`
   }
 `;
 
-const IconWrapper = styled.div`
+const TimelineItemDot = styled.div`
   position: absolute;
-  left: 0;
+  left: -10px;
   top: 0;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   background-color: ${props => props.theme.highlight};
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 2;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: calc(100% + 40px);
+    background-color: ${props => props.theme.highlight};
+    left: -20px;
+  }
 `;
 
 const Content = styled.div`

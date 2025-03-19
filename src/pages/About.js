@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 const AboutContainer = styled.div`
@@ -66,26 +66,67 @@ const AboutText = styled.div`
   }
 `;
 
-const AboutImage = styled.div`
-  img {
-    width: 100%;
-    border-radius: 5px;
-    border: 2px solid ${props => props.theme.highlight};
-    filter: grayscale(20%);
-    transition: all 0.3s ease;
-    
-    &:hover {
-      filter: grayscale(0%);
-      transform: translateY(-5px);
-    }
+const CanvasImage = styled.canvas`
+  width: 100%;
+  border-radius: 5px;
+  border: 2px solid ${props => props.theme.highlight};
+  filter: grayscale(20%);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    filter: grayscale(0%);
+    transform: translateY(-5px);
   }
+`;
+
+const AboutImage = styled.div`
+  position: relative;
+  overflow: hidden;
   
   @media screen and (max-width: 768px) {
     margin-top: 30px;
   }
 `;
 
+const ImageOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  cursor: default;
+`;
+
 const About = () => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = "https://avatars.githubusercontent.com/u/22992035?v=4";
+    
+    img.onload = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas dimensions to match image
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      // Draw the image
+      ctx.drawImage(img, 0, 0);
+      
+      // Add subtle watermark
+      ctx.font = '20px Arial';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.textAlign = 'center';
+      ctx.fillText('Arun Boddapati', canvas.width / 2, canvas.height / 2);
+    };
+  }, []);
+  
   return (
     <AboutContainer id="about">
       <AboutWrapper>
@@ -106,7 +147,14 @@ const About = () => {
             </p>
           </AboutText>
           <AboutImage>
-            <img src="https://avatars.githubusercontent.com/u/22992035?v=4" alt="Arun Boddapati" />
+            <CanvasImage 
+              ref={canvasRef}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+            <ImageOverlay 
+              onContextMenu={(e) => e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
+            />
           </AboutImage>
         </AboutContent>
       </AboutWrapper>

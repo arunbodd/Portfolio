@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaEnvelope, FaLinkedin, FaGithub } from 'react-icons/fa';
+import { FaEnvelope, FaLinkedin, FaGithub, FaFileAlt, FaQrcode } from 'react-icons/fa';
 import { IoLocationOutline } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 
 const ContactContainer = styled.div`
   background: ${props => props.theme.background};
@@ -72,11 +73,8 @@ const ContactGrid = styled.div`
 const FlipCardContainer = styled.div`
   background-color: transparent;
   perspective: 1000px;
-  height: 120px;
-  
-  &:hover .flip-card-inner {
-    transform: rotateY(180deg);
-  }
+  height: 150px;
+  cursor: pointer;
 `;
 
 // Inner container that will be flipped
@@ -85,9 +83,13 @@ const FlipCardInner = styled.div`
   width: 100%;
   height: 100%;
   text-align: center;
-  transition: transform 0.6s;
+  transition: transform 0.8s;
   transform-style: preserve-3d;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  
+  ${FlipCardContainer}:hover & {
+    transform: rotateY(180deg);
+  }
 `;
 
 // Front of card
@@ -100,13 +102,21 @@ const FlipCardFront = styled.div`
   background: ${props => props.theme.cardBackground};
   border-radius: 8px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   
   svg {
     color: ${props => props.theme.highlight};
-    font-size: 40px;
+    font-size: 50px;
+    margin-bottom: 10px;
   }
+`;
+
+const CardLabel = styled.div`
+  margin-top: 10px;
+  color: ${props => props.theme.textLightSlate};
+  font-size: 16px;
 `;
 
 // Back of card
@@ -116,7 +126,7 @@ const FlipCardBack = styled.div`
   height: 100%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  background: ${props => props.theme.highlightAlt};
+  background: ${props => props.theme.highlightAlt || props.theme.cardBackground};
   color: ${props => props.theme.textLightSlate};
   transform: rotateY(180deg);
   border-radius: 8px;
@@ -124,6 +134,7 @@ const FlipCardBack = styled.div`
   justify-content: center;
   align-items: center;
   padding: 20px;
+  box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
 `;
 
 const ContactLink = styled.a`
@@ -131,6 +142,7 @@ const ContactLink = styled.a`
   text-decoration: none;
   font-size: 18px;
   transition: color 0.3s ease;
+  word-break: break-word;
   
   &:hover {
     color: ${props => props.theme.highlight};
@@ -140,7 +152,6 @@ const ContactLink = styled.a`
 const ContactInfo = styled.span`
   color: ${props => props.theme.textLightSlate};
   font-size: 18px;
-  white-space: nowrap;
 `;
 
 const Contact = () => {
@@ -159,9 +170,10 @@ const Contact = () => {
           <ContactGrid>
             {/* Email Card */}
             <FlipCardContainer>
-              <FlipCardInner className="flip-card-inner">
+              <FlipCardInner>
                 <FlipCardFront>
                   <FaEnvelope />
+                  <CardLabel>Email</CardLabel>
                 </FlipCardFront>
                 <FlipCardBack>
                   <ContactLink href="mailto:arunbodd@outlook.com">
@@ -173,9 +185,10 @@ const Contact = () => {
             
             {/* LinkedIn Card */}
             <FlipCardContainer>
-              <FlipCardInner className="flip-card-inner">
+              <FlipCardInner>
                 <FlipCardFront>
                   <FaLinkedin />
+                  <CardLabel>LinkedIn</CardLabel>
                 </FlipCardFront>
                 <FlipCardBack>
                   <ContactLink href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer">
@@ -187,9 +200,10 @@ const Contact = () => {
             
             {/* GitHub Card */}
             <FlipCardContainer>
-              <FlipCardInner className="flip-card-inner">
+              <FlipCardInner>
                 <FlipCardFront>
                   <FaGithub />
+                  <CardLabel>GitHub</CardLabel>
                 </FlipCardFront>
                 <FlipCardBack>
                   <ContactLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer">
@@ -201,12 +215,43 @@ const Contact = () => {
             
             {/* Location Card */}
             <FlipCardContainer>
-              <FlipCardInner className="flip-card-inner">
+              <FlipCardInner>
                 <FlipCardFront>
                   <IoLocationOutline />
+                  <CardLabel>Location</CardLabel>
                 </FlipCardFront>
                 <FlipCardBack>
                   <ContactInfo>Atlanta, GA</ContactInfo>
+                </FlipCardBack>
+              </FlipCardInner>
+            </FlipCardContainer>
+            
+            {/* Resume Card */}
+            <FlipCardContainer>
+              <FlipCardInner>
+                <FlipCardFront>
+                  <FaFileAlt />
+                  <CardLabel>Resume</CardLabel>
+                </FlipCardFront>
+                <FlipCardBack>
+                  <ContactLink href={`${process.env.PUBLIC_URL}/resume.pdf`} target="_blank" rel="noopener noreferrer" download="Arun_Boddapati_Resume.pdf">
+                    View My Resume
+                  </ContactLink>
+                </FlipCardBack>
+              </FlipCardInner>
+            </FlipCardContainer>
+            
+            {/* QR Code Card */}
+            <FlipCardContainer>
+              <FlipCardInner>
+                <FlipCardFront>
+                  <FaQrcode />
+                  <CardLabel>QR Code</CardLabel>
+                </FlipCardFront>
+                <FlipCardBack>
+                  <ContactLink as={Link} to="/qrcode">
+                    Share My Portfolio
+                  </ContactLink>
                 </FlipCardBack>
               </FlipCardInner>
             </FlipCardContainer>

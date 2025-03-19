@@ -18,3 +18,70 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.protected-image {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+}
+
+/* Print styles */
+@media print {
+  /* Hide navigation, footer and buttons when printing */
+  nav, footer, button, .navbar, .footer {
+    display: none !important;
+  }
+  
+  /* Ensure text is black on white background for better printing */
+  body, html {
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  /* Remove shadows and fancy effects */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+  }
+  
+  /* Ensure all text is visible */
+  * {
+    color: black !important;
+  }
+  
+  /* Adjust margins for printing */
+  @page {
+    margin: 0.5cm;
+  }
+  
+  /* Ensure content fits on page */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  img, table, figure {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure links are readable */
+  a {
+    text-decoration: underline;
+    color: #000 !important;
+  }
+  
+  /* Show URL after links */
+  a[href^="http"]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+  
+  /* Don't show URL for internal links */
+  a[href^="#"]:after,
+  a[href^="/"]:after {
+    content: "";
+  }
+}

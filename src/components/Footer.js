@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaEnvelope, FaDesktop } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
   background-color: ${props => props.theme.navBackground};
@@ -41,13 +42,38 @@ const Copyright = styled.p`
   margin-bottom: 0.5rem;
 `;
 
+const ViewportNotice = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.2rem;
+  padding: 2px 4px;
+  font-size: 0.6rem;
+  max-width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  color: #a6b1e1;
+  opacity: 0.6;
+  
+  svg {
+    margin-right: 3px;
+    color: #a6b1e1;
+    font-size: 0.6em;
+    transform: scale(0.2);
+  }
+  
+  @media screen and (min-width: 1024px) {
+    display: none;
+  }
+`;
+
 const FooterNav = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 1.5rem;
 `;
 
-const FooterLink = styled.a`
+const FooterLink = styled(Link)`
   color: ${props => props.theme.textLightSlate};
   text-decoration: none;
   margin: 0 1rem;
@@ -69,16 +95,19 @@ const Footer = () => {
         <SocialIconLink href="https://linkedin.com/in/arunboddapati" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
           <FaLinkedin />
         </SocialIconLink>
-        <SocialIconLink href="mailto:contact@arunboddapati.com" aria-label="Email">
+        <SocialIconLink href="mailto:arunbodd@outlook.com" aria-label="Email">
           <FaEnvelope />
         </SocialIconLink>
       </SocialIcons>
+      <ViewportNotice>
+        <FaDesktop /> This website is best viewed on a desktop or laptop computer
+      </ViewportNotice>
       <FooterNav>
-        <FooterLink href="/">Home</FooterLink>
-        <FooterLink href="/about">About</FooterLink>
-        <FooterLink href="/projects">Projects</FooterLink>
-        <FooterLink href="/publications">Publications</FooterLink>
-        <FooterLink href="/contact">Contact</FooterLink>
+        <FooterLink to="/">Home</FooterLink>
+        <FooterLink to="/about">About</FooterLink>
+        <FooterLink to="/projects">Projects</FooterLink>
+        <FooterLink to="/publications">Publications</FooterLink>
+        <FooterLink to="/contact">Contact</FooterLink>
       </FooterNav>
       <Copyright> {new Date().getFullYear()} Arun Boddapati. All rights reserved.</Copyright>
     </FooterContainer>

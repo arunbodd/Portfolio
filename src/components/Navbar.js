@@ -131,6 +131,16 @@ const ThemeToggle = styled.button`
   }
 `;
 
+const MobileThemeToggle = styled(ThemeToggle)`
+  display: none;
+  
+  @media screen and (max-width: 768px) {
+    display: flex;
+    margin: 20px auto;
+    font-size: 2rem;
+  }
+`;
+
 const MobileIcon = styled.div`
   display: none;
   
@@ -153,6 +163,10 @@ const Navbar = () => {
 
   const toggle = () => {
     setIsOpen(!isOpen);
+  };
+
+  const closeMenu = () => {
+    if (isOpen) setIsOpen(false);
   };
 
   const changeNav = () => {
@@ -178,35 +192,38 @@ const Navbar = () => {
       </MobileIcon>
       <NavMenu isOpen={isOpen}>
         <NavItem>
-          <NavLink to="/" onClick={() => setIsOpen(false)}>Home</NavLink>
+          <NavLink to="/" onClick={closeMenu}>Home</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/about" onClick={() => setIsOpen(false)}>About</NavLink>
+          <NavLink to="/about" onClick={closeMenu}>About</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/career" onClick={() => setIsOpen(false)}>Career</NavLink>
+          <NavLink to="/career" onClick={closeMenu}>Career</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/skills" onClick={() => setIsOpen(false)}>Skills</NavLink>
+          <NavLink to="/projects" onClick={closeMenu}>Projects</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/strengths" onClick={() => setIsOpen(false)}>Strengths</NavLink>
+          <NavLink to="/publications" onClick={closeMenu}>Publications</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/projects" onClick={() => setIsOpen(false)}>Projects</NavLink>
+          <NavLink to="/skills" onClick={closeMenu}>Skills</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/publications" onClick={() => setIsOpen(false)}>Publications</NavLink>
+          <NavLink to="/strengths" onClick={closeMenu}>Strengths</NavLink>
         </NavItem>
         <NavItem>
-          <NavLink to="/contact" onClick={() => setIsOpen(false)}>Contact</NavLink>
+          <NavLink to="/contact" onClick={closeMenu}>Contact</NavLink>
         </NavItem>
+        <MobileThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </MobileThemeToggle>
       </NavMenu>
       <NavBtn>
         <ThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
           {theme === 'dark' ? <FaSun /> : <FaMoon />}
         </ThemeToggle>
-        <NavBtnLink href="/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</NavBtnLink>
+        <NavBtnLink href={`${process.env.PUBLIC_URL}/resume.pdf`} target="_blank" rel="noopener noreferrer">Resume</NavBtnLink>
       </NavBtn>
     </Nav>
   );

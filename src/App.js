@@ -1,11 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { ThemeContext } from './context/ThemeContext';
 import { useContext } from 'react';
-import styled, { ThemeProvider as StyledThemeProvider, createGlobalStyle } from 'styled-components';
+import { ThemeProvider as StyledThemeProvider, createGlobalStyle } from 'styled-components';
 import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import PageTransition from './components/PageTransition';
 import Home from './pages/Home';
 import About from './pages/About';
 import Career from './pages/Career';
@@ -14,6 +15,8 @@ import Strengths from './pages/Strengths';
 import Projects from './pages/Projects';
 import Publications from './pages/Publications';
 import Contact from './pages/Contact';
+import QRCode from './pages/QRCode';
+import Testimonials from './pages/Testimonials';
 
 const GlobalStyle = createGlobalStyle`
   html, body, #root, .App {
@@ -52,16 +55,20 @@ function AppContent() {
       <Router>
         <div className="App">
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/career" element={<Career />} />
-            <Route path="/skills" element={<Skills />} />
-            <Route path="/strengths" element={<Strengths />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/publications" element={<Publications />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
+          <PageTransition>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/career" element={<Career />} />
+              <Route path="/skills" element={<Skills />} />
+              <Route path="/strengths" element={<Strengths />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/publications" element={<Publications />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/qrcode" element={<QRCode />} />
+              <Route path="/testimonials" element={<Testimonials />} />
+            </Routes>
+          </PageTransition>
           <Footer />
         </div>
       </Router>
