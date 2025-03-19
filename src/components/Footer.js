@@ -11,6 +11,7 @@ const FooterContainer = styled.footer`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: 'Montserrat', sans-serif;
 `;
 
 const SocialIcons = styled.div`
@@ -24,6 +25,7 @@ const SocialIconLink = styled.a`
   font-size: 1.5rem;
   margin: 0 1rem;
   transition: all 0.3s ease-in-out;
+  font-family: 'Montserrat', sans-serif;
 
   svg {
     width: 20px;
@@ -40,6 +42,8 @@ const Copyright = styled.p`
   font-size: 0.9rem;
   text-align: center;
   margin-bottom: 0.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
 `;
 
 const ViewportNotice = styled.div`
@@ -49,11 +53,8 @@ const ViewportNotice = styled.div`
   margin-bottom: 0.2rem;
   padding: 2px 4px;
   font-size: 0.6rem;
-  max-width: 60%;
-  margin-left: auto;
-  margin-right: auto;
-  color: #a6b1e1;
-  opacity: 0.6;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
   
   svg {
     margin-right: 3px;
@@ -79,6 +80,7 @@ const FooterLink = styled(Link)`
   margin: 0 1rem;
   font-size: 0.9rem;
   transition: all 0.3s ease-in-out;
+  font-family: 'Montserrat', sans-serif;
 
   &:hover {
     color: ${props => props.theme.highlight};
@@ -105,11 +107,12 @@ const Footer = () => {
       <FooterNav>
         <FooterLink to="/">Home</FooterLink>
         <FooterLink to="/about">About</FooterLink>
+        <FooterLink to="/career">Career</FooterLink>
         <FooterLink to="/projects">Projects</FooterLink>
         <FooterLink to="/publications">Publications</FooterLink>
         <FooterLink to="/contact">Contact</FooterLink>
       </FooterNav>
-      <Copyright> {new Date().getFullYear()} Arun Boddapati. All rights reserved.</Copyright>
+      <Copyright>&copy; 2025 Arun Boddapati. All rights reserved.</Copyright>
     </FooterContainer>
   );
 };

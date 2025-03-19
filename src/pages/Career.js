@@ -83,22 +83,25 @@ const TimelineItem = styled.div`
     content: attr(data-year);
     position: absolute;
     top: 20px;
-    width: 40px;
-    height: 40px;
-    background: ${props => props.theme.highlight};
+    width: 50px;
+    height: 50px;
+    background: ${props => props.theme.background};
+    border: 3px solid ${props => props.theme.highlight};
     border-radius: 50%;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 0.8rem;
+    color: ${props => props.theme.highlight};
+    font-size: 0.9rem;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
   }
   &:nth-child(odd):before {
-    right: -20px;
+    right: -25px;
   }
   &:nth-child(even):before {
-    left: -20px;
+    left: -25px;
   }
 `;
 
