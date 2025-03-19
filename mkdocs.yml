@@ -1,0 +1,58 @@
+site_name: Arun Bodd Portfolio
+site_description: Documentation for Arun Bodd's portfolio website
+site_author: Arun Bodd
+site_url: https://arunbodd.github.io/Portfolio/
+
+# Repository
+repo_name: arunbodd/Portfolio
+repo_url: https://github.com/arunbodd/Portfolio
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2023 Arun Boddapati
+
+# Theme configuration
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: teal
+    accent: light blue
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Portfolio:
+    - About: portfolio/about.md
+    - Career: portfolio/career.md
+    - Skills: portfolio/skills.md
+    - Strengths: portfolio/strengths.md
+    - Projects: portfolio/projects.md
+    - Publications: portfolio/publications.md
+  - Documentation:
+    - Setup: documentation/setup.md
+    - Development: documentation/development.md
+    - Deployment: documentation/deployment.md
+  - Contact: contact.md
