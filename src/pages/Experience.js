@@ -146,9 +146,20 @@ const ProjectLink = styled.a`
 const Experience = () => {
   const experiences = [
     {
+      title: "Lead Scientist",
+      company: "Booz Allen Hamilton",
+      period: "03/2025 - Present",
+      location: "Atlanta, Georgia",
+      responsibilities: [
+        "Develop and implement bioinformatics pipelines for pathogen surveillance and public health at CDC.",
+        "Collaborate across cross-functional teams on AMD-P project to ensure efficient deployment of pathogen-related pipelines."
+      ],
+      links: []
+    },
+    {
       title: "Bioinformatics Scientist",
       company: "Leidos",
-      period: "06/2022 - Present",
+      period: "07/2022 - 01/2025",
       location: "Atlanta, Georgia",
       responsibilities: [
         "Lead workflow developer for Aquascope – a NextFlow pipeline for early detection of National wastewater sequencing (NWSS) of SARS-CoV-2 variants of concern via targeted amplicon sequencing. Helped reduce turnaround time for CDC in reporting the results to The White House.",
@@ -170,7 +181,7 @@ const Experience = () => {
     {
       title: "Sr. Bioinformatics Analyst",
       company: "Emory Primate Research Center",
-      period: "09/2020 - 06/2022",
+      period: "07/2020 - 07/2022",
       location: "Atlanta, Georgia",
       responsibilities: [
         "Lead analyst for Wastewater assessment of COVID-19 from wastewater plants in Atlanta, GA using workflow management tools (Snakemake) and programming tools (R and Python).",
@@ -183,7 +194,7 @@ const Experience = () => {
     {
       title: "Bioinformatics Analyst II",
       company: "Leidos Biomedical Research",
-      period: "04/2018 - 09/2020",
+      period: "04/2018 - 06/2020",
       location: "Bethesda, Maryland",
       responsibilities: [
         "Performed comprehensive preliminary and exploratory data analysis for gene expression studies across various NIAID projects, leveraging Microarray, RNA-Seq, and Single Cell RNA sequencing data to uncover new leads and insights.",

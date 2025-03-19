@@ -42,4 +42,5 @@ export const CompanyLogo = ({ size }) => (
   </LogoContainer>
 );
 
-export default { EmoryLogo, CompanyLogo };
+const Logos = { EmoryLogo, CompanyLogo };
+export default Logos;

@@ -111,10 +111,17 @@ const ProjectContent = styled.div`
   flex-direction: column;
 `;
 
+const ProjectHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.75rem;
+`;
+
 const ProjectTitle = styled.h3`
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
   color: ${props => props.theme.textLightSlate};
+  padding-top: 1.5rem;
 `;
 
 const ProjectDescription = styled.p`
@@ -167,15 +174,19 @@ const NoResults = styled.p`
 
 const CategoryBadge = styled.div`
   position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 4px 8px;
-  border-radius: 4px;
+  top: 0;
+  right: 0;
+  padding: 6px 12px;
+  border-radius: 0 8px 0 8px;
   font-size: 0.75rem;
   font-weight: 600;
   background-color: ${props => props.theme.highlight};
   color: ${props => props.theme.navy};
   opacity: 0.9;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const Projects = () => {
@@ -199,15 +210,6 @@ const Projects = () => {
       github: "https://github.com/arunbodd/Serum-Proteomics",
       demo: null,
       category: "Proteomics"
-    },
-    {
-      id: 3,
-      title: "arunbodd.github.io",
-      description: "Personal portfolio website showcasing projects, publications, and professional experience built with modern web technologies.",
-      tech: ["React", "JavaScript", "HTML/CSS", "Styled Components"],
-      github: "https://github.com/arunbodd/arunbodd.github.io",
-      demo: "https://arunbodd.github.io",
-      category: "Website Development"
     },
     {
       id: 4,
@@ -310,7 +312,9 @@ const Projects = () => {
               <ProjectCard key={project.id}>
                 <CategoryBadge>{project.category}</CategoryBadge>
                 <ProjectContent>
-                  <ProjectTitle>{project.title}</ProjectTitle>
+                  <ProjectHeader>
+                    <ProjectTitle>{project.title}</ProjectTitle>
+                  </ProjectHeader>
                   <ProjectDescription>{project.description}</ProjectDescription>
                   <TechStack>
                     {project.tech.map((tech, index) => (

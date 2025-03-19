@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Typed from 'typed.js';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
+import Testimonials from '../components/Testimonials';
 
 const HeroContainer = styled.div`
   background: ${props => props.theme.background};
@@ -114,6 +116,7 @@ const Home = () => {
   const typedEl = useRef(null);
 
   useEffect(() => {
+    // Wait for the DOM to be fully loaded
     const options = {
       strings: [
         'Bioinformatics Scientist',
@@ -124,18 +127,28 @@ const Home = () => {
       typeSpeed: 50,
       backSpeed: 50,
       backDelay: 1000,
-      loop: true
+      loop: true,
+      cursorChar: '|',
+      smartBackspace: true
     };
     
-    const typed = new Typed(typedEl.current, options);
-    
-    return () => {
-      typed.destroy();
-    };
+    // Check if the element exists before initializing Typed
+    if (typedEl.current) {
+      const typed = new Typed(typedEl.current, options);
+      
+      return () => {
+        typed.destroy();
+      };
+    }
   }, []);
 
   return (
     <>
+      <SEO 
+        title="Home" 
+        description="Arun Boddapati is a Lead Scientist specializing in bioinformatics, genomics, and machine learning with expertise in developing computational pipelines."
+        keywords="bioinformatics, genomics, data science, machine learning, computational biology"
+      />
       <HeroContainer id="home">
         <HeroContent>
           <HeroGreeting>Hi, my name is</HeroGreeting>
@@ -157,6 +170,7 @@ const Home = () => {
           </HeroBtnWrapper>
         </HeroContent>
       </HeroContainer>
+      <Testimonials />
     </>
   );
 };
