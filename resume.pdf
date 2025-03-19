@@ -15,41 +15,61 @@ endobj
 <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>>
 endobj
 6 0 obj
-<</Length 676>>
+<</Length 1200>>
 stream
 BT
 /F1 24 Tf
-50 700 Td
+50 740 Td
 (Arun Kumar Boddapati) Tj
 /F1 16 Tf
 0 -30 Td
-(Bioinformatics Scientist) Tj
+(Lead Scientist) Tj
 /F1 12 Tf
 0 -20 Td
 (Email: arunbodd@outlook.com | Location: Atlanta, GA) Tj
 0 -20 Td
 (LinkedIn: linkedin.com/in/arunbodd) Tj
+
 /F1 14 Tf
 0 -40 Td
+(Skills) Tj
+/F1 12 Tf
+0 -20 Td
+(Python, R, Bash/Shell, Machine Learning, Genomics, Metagenomics,) Tj
+0 -20 Td
+(Transcriptomics, Immunoinformatics, Data Visualization, Nextflow, Docker, Git) Tj
+
+/F1 14 Tf
+0 -30 Td
+(Strengths) Tj
+/F1 12 Tf
+0 -20 Td
+(Problem Solving, Data Analysis, Pipeline Development, Statistical Analysis,) Tj
+0 -20 Td
+(Scientific Writing, Collaboration, Communication, Project Management) Tj
+
+/F1 14 Tf
+0 -30 Td
 (Experience) Tj
 /F1 12 Tf
 0 -20 Td
 (Lead Scientist - Booz Allen Hamilton | 03/2025 - Present) Tj
-0 -20 Td
+0 -15 Td
 (Bioinformatics Scientist - Leidos | 07/2022 - 01/2025) Tj
-0 -20 Td
+0 -15 Td
 (Sr. Bioinformatics Analyst - Emory Primate Research Center | 07/2020 - 07/2022) Tj
-0 -20 Td
+0 -15 Td
 (Bioinformatics Analyst II - Leidos Biomedical Research | 04/2018 - 06/2020) Tj
+
 /F1 14 Tf
-0 -40 Td
+0 -30 Td
 (Education) Tj
 /F1 12 Tf
 0 -20 Td
 (M.S. in Bioinformatics - Indiana University-Purdue University | 2016-2017) Tj
-0 -20 Td
+0 -15 Td
 (M.S. in Biomedical Science - Symbiosis School of Biological Sciences | 2012-2014) Tj
-0 -20 Td
+0 -15 Td
 (Bachelor's in Biotechnology - Sreenidhi Institute of Science and Technology | 2007-2011) Tj
 ET
 endstream
@@ -66,5 +86,5 @@ xref
 trailer
 <</Size 7 /Root 1 0 R>>
 startxref
-1048
+1573
 %%EOF
