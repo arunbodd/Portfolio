@@ -2,15 +2,17 @@ import React, { createContext, useState, useEffect } from 'react';
 
 // Define theme colors
 export const darkTheme = {
-  background: '#1a1a2e',
-  lightNavy: '#16213e',
-  navy: '#0f3460',
-  highlight: '#e94560',
-  textSlate: '#a6b1e1',
-  textLightSlate: '#e0e1dd',
-  textWhite: '#ffffff',
-  navBackground: '#1a1a2e',
-  cardBackground: '#16213e',
+  background: '#121212',      // Dark gray background
+  lightNavy: '#1e1e1e',       // Slightly lighter gray
+  navy: '#2d2d2d',            // Medium gray
+  highlight: '#00ff41',       // Bright Matrix green for primary highlights
+  textSlate: '#b0b0b0',       // Neutral gray text
+  textLightSlate: '#e0e0e0',  // Light gray text
+  textWhite: '#ffffff',       // White text
+  navBackground: '#121212',   // Same as background
+  cardBackground: '#1e1e1e',  // Same as lightNavy
+  highlightTint: 'rgba(0, 255, 65, 0.15)', // Matrix green with transparency for hover effects
+  accentRed: '#ff3e3e',       // Vibrant red for secondary accents
 };
 
 export const lightTheme = {
@@ -50,7 +52,7 @@ export const ThemeProvider = ({ children }) => {
 
   // Add highlightTint to darkTheme if not present
   const currentTheme = theme === 'dark' 
-    ? { ...darkTheme, highlightTint: 'rgba(233, 69, 96, 0.1)' } 
+    ? darkTheme 
     : lightTheme;
 
   return (

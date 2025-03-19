@@ -21,14 +21,16 @@ const Nav = styled.nav`
 const Logo = styled(Link)`
   color: ${props => props.theme.highlight};
   font-size: 1.8rem;
-  font-weight: bold;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
   text-decoration: none;
   padding: 0 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
   
   &:hover {
-    color: ${props => props.theme.textWhite};
+    color: ${props => props.theme === 'dark' ? props.theme.accentRed : props.theme.textWhite};
   }
 `;
 
@@ -71,6 +73,9 @@ const NavLink = styled(Link)`
   height: 100%;
   cursor: pointer;
   font-size: 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   transition: all 0.3s ease;
   
   &:hover {
@@ -99,8 +104,8 @@ const NavBtnLink = styled.a`
   border-radius: 4px;
   background: transparent;
   padding: 10px 22px;
-  color: ${props => props.theme.highlight};
-  border: 1px solid ${props => props.theme.highlight};
+  color: ${props => props.theme === 'dark' ? props.theme.accentRed : props.theme.highlight};
+  border: 1px solid ${props => props.theme === 'dark' ? props.theme.accentRed : props.theme.highlight};
   outline: none;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
@@ -109,24 +114,28 @@ const NavBtnLink = styled.a`
   
   &:hover {
     transition: all 0.3s ease-in-out;
-    background: rgba(100, 255, 218, 0.1);
+    background: ${props => props.theme === 'dark' ? 'rgba(255, 62, 62, 0.1)' : 'rgba(100, 255, 218, 0.1)'};
   }
 `;
 
 const ThemeToggle = styled.button`
-  background: transparent;
+  background: ${props => props.theme.navBackground};
   color: ${props => props.theme.highlight};
-  border: none;
+  border: 2px solid ${props => props.theme.highlight};
+  border-radius: 50%;
   cursor: pointer;
   font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  padding: 0.5rem;
-  margin-right: 12px;
+  padding: 0.6rem;
+  margin-right: 16px;
+  height: 45px;
+  width: 45px;
   
   &:hover {
+    background: rgba(0, 255, 65, 0.15);
     transform: rotate(30deg);
   }
 `;
@@ -137,7 +146,9 @@ const MobileThemeToggle = styled(ThemeToggle)`
   @media screen and (max-width: 768px) {
     display: flex;
     margin: 20px auto;
-    font-size: 2rem;
+    font-size: 1.8rem;
+    height: 55px;
+    width: 55px;
   }
 `;
 
@@ -223,7 +234,7 @@ const Navbar = () => {
         <ThemeToggle onClick={toggleTheme} aria-label="Toggle theme">
           {theme === 'dark' ? <FaSun /> : <FaMoon />}
         </ThemeToggle>
-        <NavBtnLink href={`${process.env.PUBLIC_URL}/resume.pdf`} target="_blank" rel="noopener noreferrer">Resume</NavBtnLink>
+        <NavBtnLink href={`${process.env.PUBLIC_URL}/resume.pdf`} target="_blank" rel="noopener noreferrer" theme={theme}>Resume</NavBtnLink>
       </NavBtn>
     </Nav>
   );
