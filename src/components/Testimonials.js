@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FaQuoteLeft, FaQuoteRight, FaChevronLeft, FaChevronRight, FaLinkedin } from 'react-icons/fa';
 
 const TestimonialsContainer = styled.div`
   background: ${props => props.theme.background};
   color: ${props => props.theme.textSlate};
-  padding: 80px calc((100vw - 1200px) / 2);
+  padding: 20px 0; // Removed calc() padding, using parent padding now.
+  width: 100%; // Ensure it takes full width of its parent wrapper
+  max-width: 600px; // Optional: Constrain width if needed within the right panel
   
   @media screen and (max-width: 768px) {
-    padding: 60px 24px;
+    padding: 15px 0; // Adjust vertical padding if needed for smaller screens
+    max-width: 100%; // Allow full width on smaller screens if stacked
   }
 `;
 
@@ -132,36 +135,6 @@ const LinkedInLink = styled.a`
   }
 `;
 
-const SliderControls = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
-  gap: 20px;
-`;
-
-const SliderButton = styled.button`
-  background: transparent;
-  border: 1px solid ${props => props.theme.highlight};
-  color: ${props => props.theme.highlight};
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(100, 255, 218, 0.1);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
 const SliderDots = styled.div`
   display: flex;
   justify-content: center;
@@ -235,6 +208,15 @@ const Testimonials = () => {
     setCurrentIndex(index);
   };
   
+  // Automatic slideshow effect
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      nextTestimonial();
+    }, 10000); // Change slide every 10 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on unmount
+  }, []); // Empty dependency array ensures this runs only once on mount
+
   // Function to highlight the name "Arun" in text
   const highlightName = (text) => {
     const parts = text.split(/(\bArun\b)/g);
@@ -272,15 +254,6 @@ const Testimonials = () => {
               </AuthorInfo>
             </TestimonialAuthor>
           </TestimonialCard>
-          
-          <SliderControls>
-            <SliderButton onClick={prevTestimonial}>
-              <FaChevronLeft />
-            </SliderButton>
-            <SliderButton onClick={nextTestimonial}>
-              <FaChevronRight />
-            </SliderButton>
-          </SliderControls>
           
           <SliderDots>
             {testimonials.map((_, index) => (

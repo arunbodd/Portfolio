@@ -10,23 +10,27 @@ const HeroContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-  padding: 0 calc((100vw - 1200px) / 2);
-  height: 100vh;
+  align-items: center;
+  flex: 1;
+  padding: 40px;
   position: relative;
   z-index: 1;
-  
+
+  @media screen and (max-width: 1024px) {
+    width: 100%;
+    flex: none;
+    padding: 100px 40px 50px 40px;
+    align-items: flex-start;
+  }
+
   @media screen and (max-width: 768px) {
-    height: auto;
-    padding-top: 100px;
-    padding-bottom: 100px;
+    padding: 80px 24px 40px 24px;
   }
 `;
 
 const HeroContent = styled.div`
-  max-width: 1200px;
+  max-width: 650px;
   width: 100%;
-  padding: 0 24px;
 `;
 
 const HeroGreeting = styled.p`
@@ -42,7 +46,7 @@ const HeroH1 = styled.h1`
   font-size: 80px;
   font-weight: 600;
   margin-bottom: 24px;
-  
+
   @media screen and (max-width: 768px) {
     font-size: 40px;
   }
@@ -53,7 +57,7 @@ const HeroH2 = styled.h2`
   font-size: 60px;
   font-weight: 600;
   margin-bottom: 24px;
-  
+
   @media screen and (max-width: 768px) {
     font-size: 32px;
   }
@@ -64,7 +68,7 @@ const HeroP = styled.p`
   font-size: 24px;
   max-width: 600px;
   margin-bottom: 35px;
-  
+
   @media screen and (max-width: 768px) {
     font-size: 18px;
   }
@@ -77,7 +81,7 @@ const TypedSpan = styled.span`
 const HeroBtnWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  
+
   @media screen and (max-width: 768px) {
     flex-direction: column;
   }
@@ -99,16 +103,48 @@ const Button = styled(Link)`
   transition: all 0.2s ease-in-out;
   text-decoration: none;
   margin-right: 20px;
-  
+
   &:hover {
     transition: all 0.2s ease-in-out;
     background: ${({ primary, theme }) => (primary ? theme.highlightTint : theme.highlightTint)};
     color: ${({ primary, theme }) => (primary ? theme.background : theme.highlight)};
   }
-  
+
   @media screen and (max-width: 768px) {
     margin-right: 0;
     margin-bottom: 16px;
+  }
+`;
+
+const PageLayoutContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  min-height: calc(100vh - 80px);
+  width: 100%;
+  background: ${props => props.theme.background};
+
+  @media screen and (max-width: 1024px) {
+    flex-direction: column;
+    min-height: auto;
+  }
+`;
+
+const TestimonialsWrapperForLayout = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: ${props => props.theme.background};
+
+  @media screen and (max-width: 1024px) {
+    width: 100%;
+    flex: none;
+    padding: 20px 40px 40px 40px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 15px 24px 30px 24px;
   }
 `;
 
@@ -116,7 +152,6 @@ const Home = () => {
   const typedEl = useRef(null);
 
   useEffect(() => {
-    // Wait for the DOM to be fully loaded
     const options = {
       strings: [
         'Bioinformatics Scientist',
@@ -131,11 +166,10 @@ const Home = () => {
       cursorChar: '|',
       smartBackspace: true
     };
-    
-    // Check if the element exists before initializing Typed
+
     if (typedEl.current) {
       const typed = new Typed(typedEl.current, options);
-      
+
       return () => {
         typed.destroy();
       };
@@ -149,28 +183,32 @@ const Home = () => {
         description="Arun Boddapati is a Lead Scientist specializing in bioinformatics, genomics, and machine learning with expertise in developing computational pipelines."
         keywords="bioinformatics, genomics, data science, machine learning, computational biology"
       />
-      <HeroContainer id="home">
-        <HeroContent>
-          <HeroGreeting>Hi, my name is</HeroGreeting>
-          <HeroH1>Arun Boddapati.</HeroH1>
-          <HeroH2>
-            I'm a <TypedSpan ref={typedEl}></TypedSpan>
-          </HeroH2>
-          <HeroP>
-            I specialize in developing computational solutions for complex biological problems,
-            with expertise in genomics, machine learning, and data science.
-          </HeroP>
-          <HeroBtnWrapper>
-            <Button to="/projects" primary="true">
-              View My Work
-            </Button>
-            <Button to="/contact">
-              Get In Touch
-            </Button>
-          </HeroBtnWrapper>
-        </HeroContent>
-      </HeroContainer>
-      <Testimonials />
+      <PageLayoutContainer>
+        <HeroContainer id="home">
+          <HeroContent>
+            <HeroGreeting>Hi, my name is</HeroGreeting>
+            <HeroH1>Arun Boddapati.</HeroH1>
+            <HeroH2>
+              I'm a <TypedSpan ref={typedEl}></TypedSpan>
+            </HeroH2>
+            <HeroP>
+              I specialize in developing computational solutions for complex biological problems,
+              with expertise in genomics, machine learning, and data science.
+            </HeroP>
+            <HeroBtnWrapper>
+              <Button to="/projects" primary="true">
+                View My Work
+              </Button>
+              <Button to="/contact">
+                Get In Touch
+              </Button>
+            </HeroBtnWrapper>
+          </HeroContent>
+        </HeroContainer>
+        <TestimonialsWrapperForLayout>
+          <Testimonials />
+        </TestimonialsWrapperForLayout>
+      </PageLayoutContainer>
     </>
   );
 };
