@@ -68,7 +68,7 @@ const AboutText = styled.div`
 
 const CanvasImage = styled.canvas`
   width: 100%;
-  border-radius: 5px;
+  border-radius: 50%;
   border: 2px solid ${props => props.theme.highlight};
   filter: grayscale(20%);
   transition: all 0.3s ease;
