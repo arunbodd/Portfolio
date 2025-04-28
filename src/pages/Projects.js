@@ -195,15 +195,25 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
+      title: "VCP NULISA-Seq RShiny App",
+      description: "An RShiny web application for analyzing NULISA-Seq data, potentially related to Valosin-containing protein (VCP).",
+      tech: ["R", "RShiny", "Bioinformatics"],
+      github: "https://github.com/arunbodd/VCP_NULISA-Seq_Rshiny",
+      demo: "https://arunbodd.shinyapps.io/VCP_Proteomics_Analysis/",
+      category: "Web App"
+    },
+    {
+      id: 2,
       title: "NexAws-AI",
       description: "A framework for integrating AI pipelines with Nextflow and AWS infrastructure for scalable and efficient data processing.",
       tech: ["Nextflow", "AWS", "AI", "Machine Learning"],
       github: "https://github.com/arunbodd/NexAws-AI",
       demo: null,
-      category: "Nextflow and AWS"
+      category: "Nextflow and AWS",
+      isPrivate: true
     },
     {
-      id: 2,
+      id: 3,
       title: "Serum-Proteomics",
       description: "A pipeline for analyzing serum proteomics data to identify biomarkers and protein signatures in various disease states.",
       tech: ["Proteomics", "Mass Spectrometry", "R", "Data Analysis"],
@@ -273,7 +283,7 @@ const Projects = () => {
       github: "https://github.com/CCBR/NIAID/tree/master/WES_QC",
       demo: null,
       category: "Snakemake"
-    }
+    },
   ];
   
   // Extract unique categories for filter buttons
@@ -323,9 +333,15 @@ const Projects = () => {
                   </TechStack>
                   <ProjectLinks>
                     {project.github && (
-                      <ProjectLink href={project.github} target="_blank" rel="noopener noreferrer">
-                        <FaGithub /> GitHub
-                      </ProjectLink>
+                      project.isPrivate ? (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'grey' }}>
+                          <FaGithub /> GitHub (Private)
+                        </span>
+                      ) : (
+                        <ProjectLink href={project.github} target="_blank" rel="noopener noreferrer">
+                          <FaGithub /> GitHub
+                        </ProjectLink>
+                      )
                     )}
                     {project.demo && (
                       <ProjectLink href={project.demo} target="_blank" rel="noopener noreferrer">
