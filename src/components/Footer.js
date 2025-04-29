@@ -94,7 +94,7 @@ const Footer = () => {
         <SocialIconLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
           <FaGithub />
         </SocialIconLink>
-        <SocialIconLink href="https://linkedin.com/in/arunboddapati" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <SocialIconLink href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
           <FaLinkedin />
         </SocialIconLink>
         <SocialIconLink href="mailto:arunbodd@outlook.com" aria-label="Email">
