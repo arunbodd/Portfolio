@@ -106,7 +106,6 @@ const Footer = () => {
       </ViewportNotice>
       <FooterNav>
         <FooterLink to="/">Home</FooterLink>
-        <FooterLink to="/about">About</FooterLink>
         <FooterLink to="/career">Career</FooterLink>
         <FooterLink to="/projects">Projects</FooterLink>
         <FooterLink to="/publications">Publications</FooterLink>
