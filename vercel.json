@@ -1,0 +1,17 @@
+{
+  "git": {
+    "deploymentEnabled": {
+      "dev": true,
+      "main": false
+    }
+  },
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+} 
