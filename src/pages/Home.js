@@ -32,27 +32,13 @@ const HeroContent = styled.div`
   max-width: 650px;
   width: 100%;
   text-align: center;
-  padding-right: 120px;
-  
-  @media screen and (max-width: 1200px) {
-    padding-right: 80px;
-  }
-  
-  @media screen and (max-width: 1024px) {
-    padding-right: 0;
-  }
 `;
 
 const ProfileImageContainer = styled.div`
   position: absolute;
-  top: 80px;
-  left: 400px;
+  top: 100px;
+  left: 200px;
   z-index: 2;
-
-  @media screen and (max-width: 1200px) {
-    left: 320px;
-    top: 90px;
-  }
 
   @media screen and (max-width: 1024px) {
     display: none;
@@ -60,8 +46,8 @@ const ProfileImageContainer = styled.div`
 `;
 
 const ProfileImage = styled.canvas`
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   border: 2px solid ${props => props.theme.highlight};
   filter: grayscale(20%);
