@@ -293,6 +293,16 @@ const Projects = () => {
       demo: null,
       category: "Snakemake"
     },
+    {
+      id: 12,
+      title: "Cyclone",
+      description: "A scalable bioinformatics pipeline implemented in Nextflow for genotyping and haplotype assignment of Cyclospora spp. from amplicon paired-end sequencing data.",
+      tech: ["Bioinformatics", "Fungal Surveillance", "Nextflow"],
+      github: "https://github.com/cdcent/oamd-bio-cyclone",
+      demo: null,
+      category: "Nextflow",
+      isPrivate: true
+    },
   ];
   
   // Extract unique categories for filter buttons
