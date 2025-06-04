@@ -197,16 +197,13 @@ const Navbar = () => {
 
   return (
     <Nav scrollNav={scrollNav}>
-      <Logo to="/">Arun Boddapati</Logo>
+      <Logo to="/">λ BioCompute</Logo>
       <MobileIcon onClick={toggle}>
         {isOpen ? <FaTimes /> : <FaBars />}
       </MobileIcon>
       <NavMenu isOpen={isOpen}>
         <NavItem>
           <NavLink to="/" onClick={closeMenu}>Home</NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink to="/about" onClick={closeMenu}>About</NavLink>
         </NavItem>
         <NavItem>
           <NavLink to="/career" onClick={closeMenu}>Career</NavLink>

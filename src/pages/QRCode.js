@@ -2,7 +2,7 @@ import React, { useContext, useRef } from 'react';
 import styled from 'styled-components';
 import QRCode from 'react-qr-code';
 import { ThemeContext } from '../context/ThemeContext';
-import { FaDownload, FaShareAlt } from 'react-icons/fa';
+import { FaShareAlt } from 'react-icons/fa';
 
 const QRCodeContainer = styled.div`
   background: ${props => props.theme.background};

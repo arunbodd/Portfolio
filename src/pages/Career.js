@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaCalendarAlt, FaMapMarkerAlt, FaBuilding } from 'react-icons/fa';
+import { FaCalendarAlt, FaMapMarkerAlt, FaBuilding, FaCheckCircle } from 'react-icons/fa';
 import { EmoryLogo, CompanyLogo } from '../components/CompanyLogos';
 
 const PageContainer = styled.div`
@@ -105,29 +105,6 @@ const TimelineItem = styled.div`
   }
 `;
 
-const TimelineItemDot = styled.div`
-  position: absolute;
-  left: -10px;
-  top: 0;
-  width: 20px;
-  height: 20px;
-  background-color: ${props => props.theme.highlight};
-  border-radius: 50%;
-  z-index: 2;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: calc(100% + 40px);
-    background-color: ${props => props.theme.highlight};
-    left: -20px;
-  }
-`;
-
 const Content = styled.div`
   background-color: ${props => props.theme.cardBackground};
   padding: 20px;
@@ -155,15 +132,29 @@ const MetaItem = styled.div`
   }
 `;
 
-const Description = styled.ul`
+const Description = styled.div`
   margin-top: 1rem;
-  list-style-type: disc;
-  list-style-position: inside;
   color: ${props => props.theme.textSlate};
+`;
+
+const Achievement = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
   
-  li {
-    margin: 0;
-    padding-left: 0;
+  svg {
+    color: ${props => props.theme.highlight};
+    margin-right: 0.75rem;
+    margin-top: 0.3rem;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  
+  span {
+    line-height: 1.5;
+    flex: 1;
   }
 `;
 
@@ -215,10 +206,23 @@ const Career = () => {
       period: "03/2025 - Present",
       location: "Atlanta, Georgia",
       description: [
-        "Develop and implement bioinformatics pipelines for pathogen surveillance and public health at CDC.",
-        "Collaborate across cross-functional teams on AMD-P project to ensure efficient deployment of pathogen-related pipelines."
-      ],
-      links: []
+        "Developer for bioinformatics pipeline Cyclone (not public yet), enhancing CDC's public health response capabilities to Cyclospora outbreaks.",
+        "Implemented scalable solutions using NextFlow and AWS, optimizing data processing for epidemiology studies.",
+        "Fostering collaboration across cross-functional teams to deploy pathogen-related pipelines on the Advanced Molecular Detection Platform."      ],
+      links: [
+        {
+          name: "CDC AMD Platform",
+          url: "https://www.cdc.gov/amd/index.html",
+        },
+        {
+          name: "NexAI",
+          url: "https://github.com/arunbodd/nf-core_guidelines_validator/tree/dev",
+        },
+        {
+          name: "NexAI Documentation",
+          url: "https://github.com/arunbodd/nf-core_guidelines_validator/blob/dev/README.md",
+        }
+      ]
     },
     {
       title: "Bioinformatics Scientist",
@@ -330,7 +334,10 @@ const Career = () => {
                   <Location>{exp.location}</Location>
                   <Description>
                     {exp.description.map((item, i) => (
-                      <li key={i}>{item}</li>
+                      <Achievement key={i}>
+                        <FaCheckCircle />
+                        <span>{item}</span>
+                      </Achievement>
                     ))}
                   </Description>
                   <ExperienceLinks>
@@ -366,7 +373,7 @@ const Career = () => {
                     </MetaItem>
                   </MetaContainer>
                   <Description>
-                    <li>{edu.description}</li>
+                    <span>{edu.description}</span>
                   </Description>
                 </Content>
               </TimelineItem>
