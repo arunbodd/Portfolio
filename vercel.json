@@ -5,9 +5,12 @@
       "main": false
     }
   },
-  "buildCommand": "npm run build",
+  "buildCommand": "PUBLIC_URL=/ npm run build",
   "outputDirectory": "build",
   "installCommand": "npm install",
+  "env": {
+    "PUBLIC_URL": "/"
+  },
   "rewrites": [
     {
       "source": "/(.*)",
