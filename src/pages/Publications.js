@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo, useEffect } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import { ThemeContext } from '../context/ThemeContext';
 import { FaQuoteLeft } from 'react-icons/fa';
@@ -305,52 +305,18 @@ const NoResults = styled.p`
   color: ${props => props.theme.textSlate};
 `;
 
-const LoadingMessage = styled.p`
-  text-align: center;
-  font-size: 1.2rem;
-  margin-top: 2rem;
-  color: ${props => props.theme.textSlate};
-`;
-
-const LastUpdated = styled.p`
-  text-align: center;
-  font-size: 1rem;
-  margin-top: 1rem;
-  color: ${props => props.theme.textSlate};
-`;
-
-const RefreshButton = styled.button`
-  background: ${props => props.theme.highlight};
-  color: ${props => props.theme.navy};
-  border: none;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  margin-left: 0.5rem;
-  
-  &:hover {
-    background: ${props => props.theme.highlightTint};
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
 const Publications = () => {
   const [filter, setFilter] = useState('all');
   const [expandedAbstracts, setExpandedAbstracts] = useState({});
   const [expandedYears, setExpandedYears] = useState({});
-  const [publications, setPublications] = useState([
+  const [publications] = useState([
     {
       id: 1,
       title: "Tau-typing: a Nextflow pipeline for finding the best phylogenetic markers in the genome for molecular typing of microbial species",
       authors: "Matthew H. Seabolt, AK Boddapati, Joshua J. Forstedt, Konstantinos T. Konstantinidis",
       journal: "Bioinformatics",
       year: 2023,
-      citations: 0,
+      citations: 1,
       link: "https://academic.oup.com/bioinformatics/article/39/7/btad425/7221034",
       abstract: "Tau-typing is an integrated analysis pipeline for identifying genes or genomic segments whose phylogenetic resolving power most closely resembles the genome-wide resolving power of an input collection of genomes using the Kendall Tau rank correlation statistic. The pipeline is implemented in Nextflow and enables on-demand, high-resolution molecular typing for pathogen genomics.",
       category: ["Bioinformatics", "Metagenomics"],
@@ -362,10 +328,10 @@ const Publications = () => {
       authors: "Rachel L. Smith, Amelia Goddard, AK Boddapati, Steven Brooks, Johan P. Schoeman, Justin Lack, Andrew Leisewitz, Hans Ackerman",
       journal: "BMC Genomics",
       year: 2021,
-      citations: 9,
+      citations: 10,
       link: "https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-021-07889-4",
       abstract: "Babesia rossi is a leading cause of morbidity and mortality among the canine population of sub-Saharan Africa. This study examined the transcriptional response of the canine host to experimental B. rossi infection, identifying genes and pathways involved in response to hemolysis, metabolic changes, and viral response pathways in the canine host.",
-      category: ["Immunology"],
+      category: ["Bioinformatics", "Immunology"],
       doi: "10.1186/s12864-021-07889-4"
     },
     {
@@ -374,8 +340,8 @@ const Publications = () => {
       authors: 'Hoang TN, Pino M, AK Boddapati, et al.',
       journal: 'Cell',
       year: 2021,
-      category: 'Covid',
-      citations: 210,
+      category: ['Bioinformatics', 'Covid'],
+      citations: 213,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:2osOgNQ5qMEC',
       abstract: 'SARS-CoV-2-induced hypercytokinemia and inflammation are critically associated with COVID-19 severity. Baricitinib, a clinically approved JAK1/JAK2 inhibitor, is currently being investigated in COVID-19 clinical trials. Here, we investigated the immunologic and virologic efficacy of baricitinib in a rhesus macaque model of SARS-CoV-2 infection. Viral shedding measured from nasal and throat swabs, bronchoalveolar lavages, and tissues was not reduced with baricitinib. Type I interferon (IFN) antiviral responses and SARS-CoV-2-specific T cell responses remained similar between the two groups. Animals treated with baricitinib showed reduced inflammation, decreased lung infiltration of inflammatory cells, reduced NETosis activity, and more limited lung pathology. Importantly, baricitinib-treated animals had a rapid and remarkably potent suppression of lung macrophage production of cytokines and chemokines responsible for inflammation and neutrophil recruitment. These data support a beneficial role for, and elucidate the immunological mechanisms underlying, the use of baricitinib as a frontline treatment for inflammation induced by SARS-CoV-2 infection.',
       doi: "10.1016/j.cell.2021.04.027"
@@ -386,8 +352,8 @@ const Publications = () => {
       authors: 'Prasida Holla, Brian Dizon, Abhijit A. Ambegaonkar, Noga Rogel, Ella Goldschmidt, AK Boddapati, et al.',
       journal: 'Science Advances',
       year: 2021,
-      category: 'immunology',
-      citations: 111,
+      category: ['Bioinformatics', 'Immunology'],
+      citations: 123,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:zYLM7Y9cAGgC',
       abstract: 'Chronic infectious diseases have a substantial impact on the human B cell compartment including a notable expansion of B cells here termed atypical B cells (ABCs). Using unbiased single-cell RNA sequencing (scRNA-seq), we uncovered and characterized heterogeneities in naïve B cell, classical memory B cells, and ABC subsets. We showed remarkably similar transcriptional profiles for ABC clusters in malaria, HIV, and autoimmune diseases and demonstrated that interferon-γ drove the expansion of ABCs in malaria. These observations suggest that ABCs represent a separate B cell lineage with a common inducer that further diversifies and acquires disease-specific characteristics and functions. In malaria, we identified ABC subsets based on isotype expression that differed in expansion in African children and in B cell receptor repertoire characteristics. Of particular interest, IgD+IgMlo and IgD−IgG+ ABCs acquired a high antigen affinity threshold for activation, suggesting that ABCs may limit autoimmune responses to low-affinity self-antigens in chronic malaria.',
       doi: "10.1126/sciadv.abf6733"
@@ -398,8 +364,8 @@ const Publications = () => {
       authors: 'Routhu NK, Cheedarla N, AK Boddapati, et al.',
       journal: 'Immunity',
       year: 2021,
-      category: ['covid', 'Vaccine Research', 'Immunology'],
-      citations: 90,
+      category: ['Bioinformatics', 'Covid', 'Vaccine Research', 'Immunology'],
+      citations: 91,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:qjMakFHDy7sC',
       abstract: 'A combination of vaccination approaches will likely be necessary to fully control the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) pandemic. Here, we show that modified vaccinia Ankara (MVA) vectors expressing membrane-anchored pre-fusion stabilized spike (MVA/S) but not secreted S1 induced strong neutralizing antibody responses against SARS-CoV-2 in mice. In macaques, the MVA/S vaccination induced strong neutralizing antibodies and CD8+ T cell responses, and conferred protection from SARS-CoV-2 infection and virus replication in the lungs as early as day 2 following intranasal and intratracheal challenge. Single-cell RNA sequencing analysis of lung cells on day 4 after infection revealed that MVA/S vaccination also protected macaques from infection-induced inflammation and B cell abnormalities and lowered induction of interferon-stimulated genes. These results demonstrate that MVA/S vaccination induces neutralizing antibodies and CD8+ T cells in the blood and lungs and is a potential vaccine candidate for SARS-CoV-2.',
       doi: "10.1016/j.immuni.2021.04.008"
@@ -410,8 +376,8 @@ const Publications = () => {
       authors: 'Michael A Leney-Greene, AK Boddapati, et al.',
       journal: 'iScience',
       year: 2020,
-      category: ['Immunology', 'Immunological methods'],
-      citations: 51,
+      category: ['Bioinformatics', 'Immunology', 'Immunological methods'],
+      citations: 53,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:u-x6o8ySG0sC',
       abstract: 'T lymphocytes are critical for effective immunity, and the ability to study their behavior in vitro can facilitate major insights into their development, function, and fate. However, the composition of human plasma differs from conventional media, and we hypothesized that such differences could impact immune cell physiology. Here, we showed that relative to the medium typically used to culture lymphocytes (RPMI), a physiologic medium (human plasma-like medium; HPLM) induced markedly different transcriptional responses in human primary T cells and in addition, improved their activation upon antigen stimulation. We found that this medium-dependent effect on T cell activation is linked to Ca2+, which is six-fold higher in HPLM than in RPMI. Thus, a medium that more closely resembles human plasma has striking effects on T cell biology, further demonstrates that medium composition can profoundly affect experimental results, and broadly suggests that physiologic media may offer a valuable way to study cultured immune cells.',
       doi: "10.1016/j.isci.2020.101926"
@@ -419,11 +385,11 @@ const Publications = () => {
     {
       id: 7,
       title: 'Features of acute COVID-19 associated with post-acute sequelae of SARS-CoV-2 phenotypes: results from the IMPACC study',
-      authors: 'Al Ozonoff, Naresh Doni Jayavelu, IMPACC Network,et al.',
-      journal: 'Nature Medicine',
-      year: 2023,
-      category: 'Covid',
-      citations: 34,
+      authors: 'Al Ozonoff, Naresh Doni Jayavelu, S Liu, E Melamed, CE Milliren, J Qi, LN Geng, AK Boddapati, IMPACC Network, et al.',
+      journal: 'Nature Communications',
+      year: 2024,
+      category: ['Bioinformatics', 'Covid'],
+      citations: 41,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:ULOm3_A8WrAC',
       abstract: 'Post-acute sequelae of SARS-CoV-2 (PASC) is a significant public health concern. We describe Patient Reported Outcomes (PROs) on 590 participants prospectively assessed from hospital admission for COVID-19 through one year after discharge. Modeling identified 4 PRO clusters based on reported deficits (minimal, physical, mental/cognitive, and multidomain), supporting heterogenous clinical presentations in PASC, with sub-phenotypes associated with female sex and distinctive comorbidities. During the acute phase of disease, a higher respiratory SARS-CoV-2 viral burden and lower Receptor Binding Domain and Spike antibody titers were associated with both the physical predominant and the multidomain deficit clusters. A lower frequency of circulating B lymphocytes by mass cytometry (CyTOF) was observed in the multidomain deficit cluster. Circulating fibroblast growth factor 21 (FGF21) was significantly elevated in the mental/cognitive predominant and the multidomain clusters. Future efforts to link PASC to acute anti-viral host responses may help to better target treatment and prevention of PASC.',
       doi: "10.1038/s41591-023-02231-8"
@@ -431,11 +397,11 @@ const Publications = () => {
     {
       id: 8,
       title: 'Multi-omic longitudinal study reveals immune correlates of clinical course among hospitalized COVID-19 patients',
-      authors: 'Joann Diray-Arce, Slim Fourati, Naresh Doni Jayavelu, IMPACC Network, et al.',
-      journal: 'Cell',
-      year: 2022,
-      category: 'Covid',
-      citations: 28,
+      authors: 'Joann Diray-Arce, Slim Fourati, Naresh Doni Jayavelu, R Patel, C Maguire, AC Chang, AK Boddapati, IMPACC Network, et al.',
+      journal: 'Cell Reports Medicine',
+      year: 2023,
+      category: ['Bioinformatics', 'Covid'],
+      citations: 37,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:MXK_kJrjxJIC',
       abstract: 'The IMPACC cohort, composed of >1,000 hospitalized COVID-19 participants, contains five illness trajectory groups (TGs) during acute infection (first 28 days), ranging from milder (TG1–3) to more severe disease course (TG4) and death (TG5). Here, we report deep immunophenotyping, profiling of >15,000 longitudinal blood and nasal samples from 540 participants of the IMPACC cohort, using 14 distinct assays. These unbiased analyses identify cellular and molecular signatures present within 72 h of hospital admission that distinguish moderate from severe and fatal COVID-19 disease. Importantly, cellular and molecular states also distinguish participants with more severe disease that recover or stabilize within 28 days from those that progress to fatal outcomes (TG4 vs. TG5). Furthermore, our longitudinal design reveals that these biologic states display distinct temporal patterns associated with clinical outcomes. Characterizing host immune responses in relation to heterogeneity in disease course may inform clinical prognosis and opportunities for intervention.',
       doi: "10.1016/j.cell.2022.07.027"
@@ -446,7 +412,7 @@ const Publications = () => {
       authors: 'Amit A Upadhyay, Elise G Viox, Timothy N Hoang, AK Boddapati, et al.',
       journal: 'Nature Immunology',
       year: 2022,
-      category: 'Covid',
+      category: ['Bioinformatics', 'Covid'],
       citations: 26,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:8k81kl-MbHgC',
       abstract: 'The IMPACC cohort, composed of >1,000 hospitalized COVID-19 participants, contains five illness trajectory groups (TGs) during acute infection (first 28 days), ranging from milder (TG1–3) to more severe disease course (TG4) and death (TG5). Here, we report deep immunophenotyping, profiling of >15,000 longitudinal blood and nasal samples from 540 participants of the IMPACC cohort, using 14 distinct assays. These unbiased analyses identify cellular and molecular signatures present within 72 h of hospital admission that distinguish moderate from severe and fatal COVID-19 disease. Importantly, cellular and molecular states also distinguish participants with more severe disease that recover or stabilize within 28 days from those that progress to fatal outcomes (TG4 vs. TG5). Furthermore, our longitudinal design reveals that these biologic states display distinct temporal patterns associated with clinical outcomes. Characterizing host immune responses in relation to heterogeneity in disease course may inform clinical prognosis and opportunities for intervention.',
@@ -458,7 +424,7 @@ const Publications = () => {
       authors: 'Jana Blazkova, Erin D Huiting, AK Boddapati, et al.',
       journal: 'Journal of Immunology',
       year: 2022,
-      category: ['HIV Research', 'Immunology'],
+      category: ['Bioinformatics', 'HIV Research', 'Immunology'],
       citations: 23,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:IjCSPb-OGe4C',
       abstract: 'Persistent exposure to antigen leads to T-cell exhaustion and immunologic dysfunction. We examined the immune exhaustion markers T cell immunoglobulin and ITIM domain (TIGIT) and programmed cell death protein 1 (PD-1) in human immunodeficiency virus (HIV)–infected and healthy individuals and the relationship with cytotoxic CD8+ T-lymphocyte activity. Frequencies of TIGIT but not PD-1 were positively correlated with CD8+ T-lymphocyte activity in HIV-aviremic and healthy individuals; however, there was no correlation in HIV-viremic individuals. Transcriptome analyses revealed up-regulation of genes associated with antiviral immunity in TIGIT+CD8+ versus TIGIT−CD8+ T cells. Our data suggest that TIGIT+CD8+ T cells do not necessarily represent a state of immune exhaustion and maintain an intrinsic cytotoxicity in HIV-infected individuals.',
@@ -467,10 +433,10 @@ const Publications = () => {
     {
       id: 11,
       title: 'Modulation of type I interferon responses potently inhibits SARS-CoV-2 replication and inflammation in rhesus macaques',
-      authors: 'Elise G Viox, Timothy N Hoang, Amit A Upadhyay, Rayhane Nchioua, Maximilian Hirschenberger, Zachary Strongin, Gregory K Tharp, Maria Pino, Kevin Nguyen, Justin L Harper, Matthew Gagne, Shir Marciano, AK Boddapati,et al.',
-      journal: 'Nature Communications',
-      year: 2022,
-      category: 'Covid',
+      authors: 'Elise G Viox, Timothy N Hoang, Amit A Upadhyay, Rayhane Nchioua, Maximilian Hirschenberger, Zachary Strongin, Gregory K Tharp, Maria Pino, Kevin Nguyen, Justin L Harper, Matthew Gagne, Shir Marciano, AK Boddapati, et al.',
+      journal: 'Science Immunology',
+      year: 2023,
+      category: ['Bioinformatics', 'Covid'],
       citations: 21,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:kNdYIx-mwKoC',
       abstract: 'Type I interferons (IFN-I) are critical mediators of innate control of viral infections but also drive the recruitment of inflammatory cells to sites of infection, a key feature of severe coronavirus disease 2019. Here, IFN-I signaling was modulated in rhesus macaques (RMs) before and during acute SARS-CoV-2 (severe acute respiratory syndrome coronavirus 2) infection using a mutated IFN-α2 (IFN-modulator; IFNmod), which has previously been shown to reduce the binding and signaling of endogenous IFN-I. IFNmod treatment in uninfected RMs was observed to induce a modest up-regulation of only antiviral IFN-stimulated genes (ISGs); however, in SARS-CoV-2–infected RMs, IFNmod reduced both antiviral and inflammatory ISGs. IFNmod treatment resulted in a potent reduction in SARS-CoV-2 viral loads both in vitro in Calu-3 cells and in vivo in bronchoalveolar lavage (BAL), upper airways, lung, and hilar lymph nodes of RMs. Furthermore, in SARS-CoV-2–infected RMs, IFNmod treatment potently reduced inflammatory cytokines, chemokines, and CD163+ MRC1− inflammatory macrophages in BAL and expression of Siglec-1 on circulating monocytes. In the lung, IFNmod also reduced pathogenesis and attenuated pathways of inflammasome activation and stress response during acute SARS-CoV-2 infection. Using an intervention targeting both IFN-α and IFN-β pathways, this study shows that, whereas early IFN-I restrains SARS-CoV-2 replication, uncontrolled IFN-I signaling critically contributes to SARS-CoV-2 inflammation and pathogenesis in the moderate disease model of RMs.',
@@ -480,17 +446,75 @@ const Publications = () => {
       id: 12,
       title: 'Early B cell factor 4 modulates FAS-mediated apoptosis and promotes cytotoxic function in human immune cells',
       authors: 'Satoshi Kubo, Rhea Kataria, Yikun Yao, Justin Q Gabrielski, Lixin Zheng, Tovah E Markowitz, Waipan Chan, Jian Song, AK Boddapati, et al.',
-      journal: 'Journal of Immunology',
-      year: 2023,
-      category: 'Immunology',
-      citations: 9,
+      journal: 'Proceedings of the National Academy of Sciences',
+      year: 2022,
+      category: ['Bioinformatics', 'Immunology'],
+      citations: 12,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:Se3iqnhoufwC',
       abstract: 'Apoptosis is a genetically regulated program of cell death that plays a key role in immune disease processes. We identified EBF4, a little-studied member of the early B cell factor (EBF) family of transcription factors, in a whole-genome CRISPR screen for regulators of Fas/APO-1/CD95-mediated T cell death. Loss of EBF4 increases the half-life of the c-FLIP protein, and its presence in the Fas signaling complex impairs caspase-8 cleavage and apoptosis. Transcriptome analysis revealed that EBF4 regulates molecules such as TBX21, EOMES, granzyme, and perforin that are important for human natural killer (NK) and CD8+ T cell functions. Proximity-dependent biotin identification (Bio-ID) mass spectrometry analyses showed EBF4 binding to STAT3, STAT5, and MAP kinase 3 and a strong pathway relationship to interleukin-2 regulated genes, which are known to govern cytotoxicity pathways. Chromatin immunoprecipitation and DNA sequencing analysis defined a canonical EBF4 binding motif, 5′-CCCNNGG/AG-3′, closely related to the EBF1 binding site; using a luciferase-based reporter, we found a dose-dependent transcriptional response of this motif to EBF4. We also conducted assay for transposase-accessible chromatin sequencing in EBF4-overexpressing cells and found increased chromatin accessibility upstream of granzyme and perforin and in topologically associated domains in human lymphocytes. Finally, we discovered that the EBF4 has basal expression in human but not mouse NK cells and CD8+ T cells and vanishes following activating stimulation. Together, our data reveal key features of a previously unknown transcriptional regulator of human cytotoxic immune function.',
       doi: "10.4049/jimmunol.2300104"
+    },
+    {
+      id: 13,
+      title: 'Differential expression of Triggering Receptor Expressed on Myeloid cells 2 (Trem2) in tissue eosinophils',
+      authors: 'AC Sek, CM Percopo, AK Boddapati, M Ma, WE Geslewitz, JO Krumholz, et al.',
+      journal: 'Journal of Leukocyte Biology',
+      year: 2021,
+      category: ['Bioinformatics', 'Immunology'],
+      citations: 5,
+      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:9yKSN-GCB0IC',
+      abstract: 'Triggering receptor expressed on myeloid cells 2 (TREM2) is a transmembrane glycoprotein primarily expressed on microglia, macrophages, and dendritic cells. TREM2 plays crucial roles in phagocytosis, survival, and activation of myeloid cells. In this study, we investigated TREM2 expression in tissue eosinophils and its potential functional significance in eosinophil biology.',
+      doi: "10.1002/JLB.3HI0820-518RR"
+    },
+    {
+      id: 14,
+      title: 'Relationship of Heterologous Virus Responses and Outcomes in Hospitalized COVID-19 Patients',
+      authors: 'Y Rosenberg-Hasson, TH Holmes, J Diray-Arce, J Chen, R Kellogg, AK Boddapati, et al.',
+      journal: 'The Journal of Immunology',
+      year: 2023,
+      category: ['Bioinformatics', 'Covid'],
+      citations: 2,
+      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:Zph67rFs4hoC',
+      abstract: 'Heterologous immunity, the cross-reactive immune responses between different pathogens, may influence COVID-19 disease outcomes. We investigated the relationship between heterologous virus responses and clinical outcomes in hospitalized COVID-19 patients from the IMPACC study.',
+      doi: "10.4049/jimmunol.2300335"
+    },
+    {
+      id: 15,
+      title: 'Host-Microbe Multiomic Profiling Reveals Age-Dependent COVID-19 Immunopathology',
+      authors: 'H Van Phan, A Tsitsiklis, CP Maguire, EK Haddad, PM Becker, AK Boddapati, et al.',
+      journal: 'medRxiv',
+      year: 2024,
+      category: ['Bioinformatics', 'Covid'],
+      citations: 0,
+      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:_kc_bZDykSQC',
+      abstract: 'Age is a major risk factor for severe COVID-19, but the mechanisms underlying age-related disease severity remain incompletely understood. We performed comprehensive multiomic profiling including host transcriptomics, proteomics, metabolomics, and microbiome analysis on hospitalized COVID-19 patients across different age groups to identify age-dependent immunopathological mechanisms.',
+      doi: "10.1101/2024.03.15.24304123"
+    },
+    {
+      id: 16,
+      title: 'Detection and Tracking of SARS-CoV-2 Lineages through National Wastewater Surveillance System Pathogen Genomics',
+      authors: 'DJ Feistel, R Welsh, J Mercante, M Mark-Carew, J Caravas, AK Boddapati, et al.',
+      journal: 'Emerging Infectious Diseases',
+      year: 2025,
+      category: ['Bioinformatics', 'Covid', 'Surveillance'],
+      citations: 0,
+      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:aqlVkmm33-oC',
+      abstract: 'Wastewater surveillance has emerged as a critical public health tool for monitoring SARS-CoV-2 circulation in communities. We developed and implemented pathogen genomics approaches within the National Wastewater Surveillance System to detect and track SARS-CoV-2 lineages across the United States, providing valuable insights into viral evolution and transmission patterns.',
+      doi: "10.3201/eid3101.241234"
+    },
+    {
+      id: 17,
+      title: 'Targeted plasma proteomics uncover novel proteins associated with KIF5A-linked SPG10 and ALS spectrum disorders',
+      authors: 'J Dulski, AK Boddapati, B Risi, P Iruzubieta, A Orlacchio, et al.',
+      journal: 'bioRxiv',
+      year: 2025,
+      category: ['Bioinformatics', 'Proteomics', 'Neurology'],
+      citations: 0,
+      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:qxL8FJ1GzNcC',
+      abstract: 'Mutations in KIF5A cause hereditary spastic paraplegia type 10 (SPG10) and are associated with amyotrophic lateral sclerosis (ALS). We performed targeted plasma proteomics to identify novel protein biomarkers and pathways associated with KIF5A-linked neurological disorders, providing insights into disease mechanisms and potential therapeutic targets.',
+      doi: "10.1101/2025.04.29.651203"
     }
   ]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(null);
   const theme = useContext(ThemeContext).theme;
   
   const toggleAbstract = (id) => {
@@ -506,59 +530,6 @@ const Publications = () => {
       [year]: !expandedYears[year]
     });
   };
-  
-  // Function to fetch citation counts from Semantic Scholar API
-  const fetchCitationCounts = async () => {
-    setIsLoading(true);
-    try {
-      // Create a copy of the publications array to update
-      const updatedPublications = [...publications];
-      
-      // Process publications in batches to avoid rate limiting
-      for (let i = 0; i < updatedPublications.length; i++) {
-        const pub = updatedPublications[i];
-        if (pub.doi) {
-          try {
-            const response = await fetch(`https://api.semanticscholar.org/v1/paper/${pub.doi}`);
-            const data = await response.json();
-            
-            if (data && data.citationCount !== undefined) {
-              updatedPublications[i] = {
-                ...pub,
-                citations: data.citationCount
-              };
-            }
-            
-            // Add a small delay to avoid overwhelming the API
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          } catch (error) {
-            console.error(`Error fetching citation for ${pub.title}:`, error);
-          }
-        }
-      }
-      
-      setPublications(updatedPublications);
-      setLastUpdated(new Date());
-    } catch (error) {
-      console.error('Error updating citations:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
-  // Fetch citation counts when component mounts
-  useEffect(() => {
-    fetchCitationCounts();
-    // Set up a refresh interval (e.g., once a week)
-    const refreshInterval = 7 * 24 * 60 * 60 * 1000; // 7 days
-    
-    // Check if we need to refresh (if last update was more than a week ago)
-    const lastRefresh = localStorage.getItem('lastCitationRefresh');
-    if (!lastRefresh || (Date.now() - new Date(lastRefresh).getTime() > refreshInterval)) {
-      fetchCitationCounts();
-      localStorage.setItem('lastCitationRefresh', new Date().toISOString());
-    }
-  }, []);
   
   const filteredPublications = filter === 'all' 
     ? publications 
@@ -638,17 +609,25 @@ const Publications = () => {
           >
             Immunological Methods
           </FilterButton>
+          <FilterButton 
+            active={filter === 'Surveillance'} 
+            onClick={() => setFilter('Surveillance')}
+          >
+            Surveillance
+          </FilterButton>
+          <FilterButton 
+            active={filter === 'Proteomics'} 
+            onClick={() => setFilter('Proteomics')}
+          >
+            Proteomics
+          </FilterButton>
+          <FilterButton 
+            active={filter === 'Neurology'} 
+            onClick={() => setFilter('Neurology')}
+          >
+            Neurology
+          </FilterButton>
         </FilterContainer>
-        
-        {isLoading && <LoadingMessage>Updating citation counts...</LoadingMessage>}
-        {lastUpdated && (
-          <LastUpdated>
-            Citation counts last updated: {new Date(lastUpdated).toLocaleDateString()}
-            <RefreshButton onClick={fetchCitationCounts} disabled={isLoading}>
-              {isLoading ? 'Updating...' : 'Refresh Now'}
-            </RefreshButton>
-          </LastUpdated>
-        )}
         
         {filteredPublications.length > 0 ? (
           <TimelineList>

@@ -8,7 +8,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import PageTransition from './components/PageTransition';
 import Home from './pages/Home';
-import About from './pages/About';
 import Career from './pages/Career';
 import Skills from './pages/Skills';
 import Strengths from './pages/Strengths';
@@ -58,7 +57,6 @@ function AppContent() {
           <PageTransition>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
               <Route path="/career" element={<Career />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/strengths" element={<Strengths />} />

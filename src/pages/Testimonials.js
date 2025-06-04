@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaQuoteLeft, FaQuoteRight, FaLinkedin } from 'react-icons/fa';
+import { FaLinkedin } from 'react-icons/fa';
 import SEO from '../components/SEO';
 
 const TestimonialsPageContainer = styled.div`
@@ -153,10 +153,10 @@ const testimonials = [
     text: "It is a pleasure to recommend Arun, an exceptional Bioinformatics Scientist whose work has significantly contributed to advancing public health research. I had the privilege of collaborating with him on several projects, and I was continually impressed by his technical expertise, leadership, and dedication to mentoring others in the field. He possesses a rare combination of deep knowledge of bioinformatics, innovative problem-solving skills, and an unwavering commitment to improving public health outcomes. His ability to analyze complex datasets, develop robust workflows, and communicate findings effectively has been invaluable in addressing pressing health challenges and resulting in the publication of manuscripts. What truly makes Arun stand out is his passion for mentorship and he consistently goes above and beyond to support colleagues, trainees, and early-career professionals by sharing his knowledge, providing guidance, and fostering an inclusive and collaborative environment. ",
     name: "Dr. Suchitra Chavan",
     title: "Bioinformatician at Leidos",
-    linkedin: "https://www.linkedin.com/in/suchitra-chavan-623580213/"
+    linkedin: "https://www.linkedin.com/in/suchitra-c-623580213/"
   },
   {
-    text: "I am pleased to recommend my colleague and friend, Arun Kumar Boddapati, a highly skilled researcher in genomics and transcriptomics. I have had the pleasure of working at the Emory National Primate Research Center Genomics Core at the time when Arun joined. I was impressed by his technical expertise and problem-solving abilities, consistently producing insightful results from complex datasets. Arun is a collaborative team player who is always willing to share knowledge and mentor others. He has helped and guided me several times, and I find him super approchable. He is passionate about staying current with the latest trends in genomics and demonstrates a strong commitment to ongoing learning. I am confident that Arun will continue to excel and contribute meaningfully to any future endeavors in genomics and transcriptomics.",
+    text: "I am pleased to recommend my colleague and friend, Arun, a highly skilled researcher in genomics and transcriptomics. I have had the pleasure of working at the Emory National Primate Research Center Genomics Core at the time when Arun joined. I was impressed by his technical expertise and problem-solving abilities, consistently producing insightful results from complex datasets. Arun is a collaborative team player who is always willing to share knowledge and mentor others. He has helped and guided me several times, and I find him super approchable. He is passionate about staying current with the latest trends in genomics and demonstrates a strong commitment to ongoing learning. I am confident that Arun will continue to excel and contribute meaningfully to any future endeavors in genomics and transcriptomics.",
     name: "Dr. Prachi Gupta",
     title: "Computational Biologist",
     linkedin: "https://www.linkedin.com/in/prachi-gupta-b861059/"

@@ -195,6 +195,15 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
+      title: "NexAI",
+      description: "A RAG-based AI agent that analyzes Nextflow pipelines for compliance with nf-core guidelines. Uses documentation-based validation and AI-powered analysis to provide detailed compliance reports and recommendations.",
+      tech: ["Nextflow", "AI", "RAG"],
+      github: "https://github.com/arunbodd/nf-core_guidelines_validator/tree/dev",
+      demo: null,
+      category: "AI"
+    },
+    {
+      id: 2,
       title: "VCP NULISA-Seq RShiny App",
       description: "An RShiny web application for analyzing NULISA-Seq data, potentially related to Valosin-containing protein (VCP).",
       tech: ["R", "RShiny", "Bioinformatics"],
@@ -203,7 +212,7 @@ const Projects = () => {
       category: "Web App"
     },
     {
-      id: 2,
+      id: 3,
       title: "NexAws-AI",
       description: "A framework for integrating AI pipelines with Nextflow and AWS infrastructure for scalable and efficient data processing.",
       tech: ["Nextflow", "AWS", "AI", "Machine Learning"],
@@ -213,7 +222,7 @@ const Projects = () => {
       isPrivate: true
     },
     {
-      id: 3,
+      id: 4,
       title: "Serum-Proteomics",
       description: "A pipeline for analyzing serum proteomics data to identify biomarkers and protein signatures in various disease states.",
       tech: ["Proteomics", "Mass Spectrometry", "R", "Data Analysis"],
@@ -222,7 +231,7 @@ const Projects = () => {
       category: "Proteomics"
     },
     {
-      id: 4,
+      id: 5,
       title: "mycosnp-nf",
       description: "A Nextflow-based pipeline for analyzing mycological single nucleotide polymorphisms to track fungal outbreaks and evolution.",
       tech: ["Nextflow", "Genomics", "SNP Analysis", "Docker"],
@@ -231,7 +240,7 @@ const Projects = () => {
       category: "Nextflow"
     },
     {
-      id: 5,
+      id: 6,
       title: "Ebola_Hackthon",
       description: "A project developed during a hackathon for analyzing Ebola virus genomic data to track outbreak transmission and evolution.",
       tech: ["Nextflow", "Viral Genomics", "Phylogenetics", "Bioinformatics"],
@@ -240,7 +249,7 @@ const Projects = () => {
       category: "Nextflow"
     },
     {
-      id: 6,
+      id: 7,
       title: "aquascope",
       description: "CDC's wastewater surveillance analysis pipeline for detecting and monitoring pathogens including SARS-CoV-2 variants.",
       tech: ["Nextflow", "Metagenomics", "Wastewater Analysis", "COVID-19"],
@@ -249,7 +258,7 @@ const Projects = () => {
       category: "Nextflow"
     },
     {
-      id: 7,
+      id: 8,
       title: "tautyping-nf",
       description: "A Nextflow pipeline for finding optimal phylogenetic markers in microbial genomes using Kendall Tau correlation statistics.",
       tech: ["Nextflow", "Phylogenetics", "Microbial Genomics", "Python"],
@@ -258,7 +267,7 @@ const Projects = () => {
       category: "Nextflow"
     },
     {
-      id: 8,
+      id: 9,
       title: "RM_Baricitinib_manuscript",
       description: "Analysis code for single-cell RNA sequencing data investigating the effects of Baricitinib treatment in SARS-CoV-2 infected rhesus macaques.",
       tech: ["scRNA-seq", "R", "Bioinformatics", "COVID-19"],
@@ -267,7 +276,7 @@ const Projects = () => {
       category: "scRNA Analysis"
     },
     {
-      id: 9,
+      id: 10,
       title: "CRISPR_Cas9_gRNA",
       description: "A toolkit for designing and analyzing CRISPR-Cas9 guide RNAs for precise genome editing experiments.",
       tech: ["CRISPR", "Genome Editing", "Python", "Bioinformatics"],
@@ -276,7 +285,7 @@ const Projects = () => {
       category: "CRISPR"
     },
     {
-      id: 10,
+      id: 11,
       title: "WES_QC",
       description: "A Snakemake-based quality control pipeline for Whole Exome Sequencing data in the NIAID repository.",
       tech: ["Snakemake", "WES", "Quality Control", "Bioinformatics"],
