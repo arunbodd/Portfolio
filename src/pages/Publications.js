@@ -72,6 +72,13 @@ const TimelineList = styled.div`
     background: ${props => props.theme.highlight};
     transform: translateX(-50%);
   }
+  
+  @media screen and (max-width: 768px) {
+    &:before {
+      left: 20px;
+      transform: none;
+    }
+  }
 `;
 
 const TimelineItem = styled.div`
@@ -106,6 +113,18 @@ const TimelineItem = styled.div`
   }
   &:nth-child(even):before {
     left: -20px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    left: 0 !important;
+    padding-left: 60px;
+    padding-right: 10px;
+    
+    &:before {
+      left: 0 !important;
+      right: auto !important;
+    }
   }
 `;
 
@@ -154,6 +173,11 @@ const FlipCardContainer = styled.div`
   cursor: pointer;
   margin-bottom: 1.5rem;
   width: 100%;
+  
+  @media screen and (max-width: 768px) {
+    height: auto;
+    min-height: 200px;
+  }
 `;
 
 const FlipCardInner = styled.div`
@@ -193,6 +217,15 @@ const FlipCardFront = styled.div`
   &:hover {
     box-shadow: 0 10px 20px rgba(100, 255, 218, 0.15);
   }
+  
+  @media screen and (max-width: 768px) {
+    padding: 1rem;
+    
+    svg {
+      font-size: 30px;
+      margin-bottom: 0.5rem;
+    }
+  }
 `;
 
 const FlipCardBack = styled.div`
@@ -225,6 +258,10 @@ const FlipCardBack = styled.div`
   &::-webkit-scrollbar-thumb {
     background-color: ${props => props.theme.highlight};
     border-radius: 10px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    padding: 1rem;
   }
 `;
 
@@ -319,7 +356,7 @@ const Publications = () => {
       citations: 1,
       link: "https://academic.oup.com/bioinformatics/article/39/7/btad425/7221034",
       abstract: "Tau-typing is an integrated analysis pipeline for identifying genes or genomic segments whose phylogenetic resolving power most closely resembles the genome-wide resolving power of an input collection of genomes using the Kendall Tau rank correlation statistic. The pipeline is implemented in Nextflow and enables on-demand, high-resolution molecular typing for pathogen genomics.",
-      category: ["Bioinformatics", "Metagenomics"],
+      category: ["Bioinformatics", "Metagenomics", "Nextflow"],
       doi: "10.1093/bioinformatics/btad425"
     },
     {
@@ -496,23 +533,23 @@ const Publications = () => {
       authors: 'DJ Feistel, R Welsh, J Mercante, M Mark-Carew, J Caravas, AK Boddapati, et al.',
       journal: 'Emerging Infectious Diseases',
       year: 2025,
-      category: ['Bioinformatics', 'Covid', 'Surveillance'],
+      category: ['Bioinformatics', 'Covid', 'Surveillance', 'Nextflow', 'Metagenomics'],
       citations: 0,
       link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:aqlVkmm33-oC',
       abstract: 'Wastewater surveillance has emerged as a critical public health tool for monitoring SARS-CoV-2 circulation in communities. We developed and implemented pathogen genomics approaches within the National Wastewater Surveillance System to detect and track SARS-CoV-2 lineages across the United States, providing valuable insights into viral evolution and transmission patterns.',
       doi: "10.3201/eid3101.241234"
     },
     {
-      id: 17,
+      id: 18,
       title: 'Targeted plasma proteomics uncover novel proteins associated with KIF5A-linked SPG10 and ALS spectrum disorders',
       authors: 'J Dulski, AK Boddapati, B Risi, P Iruzubieta, A Orlacchio, et al.',
-      journal: 'bioRxiv',
-      year: 2025,
+      journal: 'HGG Advances',
+      year: 2026,
       category: ['Bioinformatics', 'Proteomics', 'Neurology'],
       citations: 0,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:qxL8FJ1GzNcC',
+      link: 'https://www.cell.com/hgg-advances/fulltext/S2666-2477(25)00101-0',
       abstract: 'Mutations in KIF5A cause hereditary spastic paraplegia type 10 (SPG10) and are associated with amyotrophic lateral sclerosis (ALS). We performed targeted plasma proteomics to identify novel protein biomarkers and pathways associated with KIF5A-linked neurological disorders, providing insights into disease mechanisms and potential therapeutic targets.',
-      doi: "10.1101/2025.04.29.651203"
+      doi: "10.1016/j.xhgg.2025.100101"
     }
   ]);
   const theme = useContext(ThemeContext).theme;
@@ -602,6 +639,12 @@ const Publications = () => {
             onClick={() => setFilter('Metagenomics')}
           >
             Metagenomics
+          </FilterButton>
+          <FilterButton 
+            active={filter === 'Nextflow'} 
+            onClick={() => setFilter('Nextflow')}
+          >
+            Nextflow
           </FilterButton>
           <FilterButton 
             active={filter === 'Immunological methods'} 

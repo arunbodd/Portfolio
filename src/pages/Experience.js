@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaExternalLinkAlt, FaBriefcase, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
 const ExperienceContainer = styled.div`
   max-width: 1200px;
@@ -148,11 +148,22 @@ const Experience = () => {
     {
       title: "Lead Scientist",
       company: "Booz Allen Hamilton",
-      period: "03/2025 - Present",
+      period: "03/2025 to 01/2026",
       location: "Atlanta, Georgia",
       responsibilities: [
         "Develop and implement bioinformatics pipelines for pathogen surveillance and public health at CDC.",
         "Collaborate across cross-functional teams on AMD-P project to ensure efficient deployment of pathogen-related pipelines."
+      ],
+      links: []
+    },
+    {
+      title: "Founding Bioinformatics Engineer",
+      company: "Mamidi Health",
+      period: "Volunteer - 2025 - Present",
+      location: "Remote",
+      responsibilities: [
+        "Lead bioinformatics development for health technology startup focused on personalized medicine.",
+        "Design and implement computational pipelines for genomic data analysis and biomarker discovery."
       ],
       links: []
     },

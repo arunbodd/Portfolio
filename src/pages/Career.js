@@ -66,6 +66,13 @@ const TimelineList = styled.div`
     background: ${props => props.theme.highlight};
     transform: translateX(-50%);
   }
+  
+  @media screen and (max-width: 768px) {
+    &:before {
+      left: 25px;
+      transform: none;
+    }
+  }
 `;
 
 const TimelineItem = styled.div`
@@ -102,6 +109,18 @@ const TimelineItem = styled.div`
   }
   &:nth-child(even):before {
     left: -25px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    left: 0 !important;
+    padding-left: 60px;
+    padding-right: 10px;
+    
+    &:before {
+      left: 0 !important;
+      right: auto !important;
+    }
   }
 `;
 
@@ -200,10 +219,29 @@ const Location = styled.div`
 const Career = () => {
   const experiences = [
     {
+      title: "Founding Bioinformatics Engineer",
+      company: "Mamidi Health",
+      logoComponent: CompanyLogo,
+      period: "01/2026 - Present (Volunteer)",
+      location: "Remote",
+      description: [
+        "Lead bioinformatics development for health technology startup focused on personalized medicine and chronic disease management.",
+        "Design and implement computational pipelines for genomic data analysis, biomarker discovery, and health data integration.",
+        "Develop AI-driven tools for personalized health recommendations and risk assessment.",
+        "Collaborate with medical professionals to translate research findings into actionable health insights."
+      ],
+      links: [
+        {
+          name: "AIVA Portal",
+          url: "https://chat.aivaportal.com/",
+        }
+      ]
+    },
+    {
       title: "Lead Scientist",
       company: "Booz Allen Hamilton",
       logoComponent: CompanyLogo,
-      period: "03/2025 - Present",
+      period: "03/2025 to 01/2026",
       location: "Atlanta, Georgia",
       description: [
         "Developer for bioinformatics pipeline Cyclone (not public yet), enhancing CDC's public health response capabilities to Cyclospora outbreaks.",

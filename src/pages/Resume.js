@@ -351,7 +351,7 @@ const Resume = () => {
               <CareerItem>
                 <JobTitle>Lead Scientist</JobTitle>
                 <Company>Booz Allen Hamilton</Company>
-                <Period>03/2025 - Present</Period>
+                <Period>03/2025 to 01/2026</Period>
                 <Description>
                   Develop and implement bioinformatics pipelines for pathogen surveillance and public health at CDC. Collaborate across cross-functional teams on AMD-P project to ensure efficient deployment of pathogen-related pipelines.
                 </Description>
