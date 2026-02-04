@@ -7,6 +7,7 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import PageTransition from './components/PageTransition';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Career from './pages/Career';
 import Skills from './pages/Skills';
@@ -15,7 +16,6 @@ import Projects from './pages/Projects';
 import Publications from './pages/Publications';
 import Contact from './pages/Contact';
 import QRCode from './pages/QRCode';
-import Testimonials from './pages/Testimonials';
 
 const GlobalStyle = createGlobalStyle`
   html, body, #root, .App {
@@ -54,6 +54,7 @@ function AppContent() {
       <Router>
         <div className="App">
           <Navbar />
+          <ScrollToTop />
           <PageTransition>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -64,7 +65,6 @@ function AppContent() {
               <Route path="/publications" element={<Publications />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/qrcode" element={<QRCode />} />
-              <Route path="/testimonials" element={<Testimonials />} />
             </Routes>
           </PageTransition>
           <Footer />

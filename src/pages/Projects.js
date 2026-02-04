@@ -208,8 +208,9 @@ const Projects = () => {
       description: "An RShiny web application for analyzing NULISA-Seq data, potentially related to Valosin-containing protein (VCP).",
       tech: ["R", "RShiny", "Bioinformatics"],
       github: "https://github.com/arunbodd/VCP_NULISA-Seq_Rshiny",
-      demo: "https://arunbodd.shinyapps.io/VCP_Proteomics_Analysis/",
-      category: "Web App"
+      demo: null,
+      category: "Web App",
+      isPrivate: true
     },
     {
       id: 3,

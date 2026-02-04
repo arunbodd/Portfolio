@@ -23,8 +23,8 @@ const HeroContainer = styled.div`
   z-index: 1;
 
   @media screen and (max-width: 768px) {
-    padding: 40px 24px;
-    min-height: 60vh;
+    padding: 30px 20px;
+    min-height: 50vh;
   }
 `;
 
@@ -156,10 +156,10 @@ const Button = styled(Link)`
 const AboutContainer = styled.div`
   background: ${props => props.theme.background};
   color: ${props => props.theme.textSlate};
-  padding: 60px calc((100vw - 1200px) / 2);
+  padding: 50px calc((100vw - 1200px) / 2);
   
   @media screen and (max-width: 768px) {
-    padding: 40px 24px;
+    padding: 30px 20px;
   }
 `;
 
@@ -219,10 +219,10 @@ const AboutText = styled.div`
 const CareerHighlightsContainer = styled.div`
   background: ${props => props.theme.background};
   color: ${props => props.theme.textSlate};
-  padding: 60px calc((100vw - 1200px) / 2);
+  padding: 50px calc((100vw - 1200px) / 2);
   
   @media screen and (max-width: 768px) {
-    padding: 40px 24px;
+    padding: 30px 20px;
   }
 `;
 
@@ -279,10 +279,10 @@ const HighlightText = styled.p`
 const TestimonialsContainer = styled.div`
   background: ${props => props.theme.background};
   color: ${props => props.theme.textSlate};
-  padding: 60px calc((100vw - 1200px) / 2);
+  padding: 50px calc((100vw - 1200px) / 2);
   
   @media screen and (max-width: 768px) {
-    padding: 40px 24px;
+    padding: 30px 20px;
   }
 `;
 
@@ -294,9 +294,13 @@ const TestimonialsWrapper = styled.div`
 
 const TestimonialsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   grid-gap: 2rem;
   margin-top: 40px;
+  
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
   
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -454,7 +458,7 @@ const testimonials = [
   {
     text: "It is a pleasure to recommend Arun, an exceptional Bioinformatics Scientist whose work has significantly contributed to advancing public health research. I had the privilege of collaborating with him on several projects, and I was continually impressed by his technical expertise, leadership, and dedication to mentoring others in the field. He possesses a rare combination of deep knowledge of bioinformatics, innovative problem-solving skills, and an unwavering commitment to improving public health outcomes. His ability to analyze complex datasets, develop robust workflows, and communicate findings effectively has been invaluable in addressing pressing health challenges and resulting in the publication of manuscripts. What truly makes him stand out is his passion for mentorship and he consistently goes above and beyond to support colleagues, trainees, and early-career professionals by sharing his knowledge, providing guidance, and fostering an inclusive and collaborative environment.",
     name: "Dr. Suchitra Chavan",
-    title: "Bioinformatician at Leidos",
+    title: "Bioinformatician",
     linkedin: "https://www.linkedin.com/in/suchitra-c-623580213/",
     preview: "Exceptional scientist whose work has significantly contributed to advancing public health research..."
   },
@@ -471,6 +475,13 @@ const testimonials = [
     title: "Bioinformatics Scientist",
     linkedin: "https://www.linkedin.com/in/tkmamidi/",
     preview: "Consistently impressed by his expertise, work ethic, and forward-thinking approach..."
+  },
+  {
+    text: "I've had the opportunity to directly supervise Arun, and have consistently seen his strong passion, drive, and proactive approach to innovation. He's constantly looking for ways to implement cutting edge solutions to streamline processes. Overall, he brings solid technical ability and is quick to explore new ideas and tools that may benefit his team!",
+    name: "Dr. Gabriela Huelgas Morales",
+    title: "Bioinformatics Scientist",
+    linkedin: "https://www.linkedin.com/in/gabriela-huelgas-morales-0896b8b3/",
+    preview: "Strong passion, drive, and proactive approach to innovation..."
   }
 ];
 
@@ -563,15 +574,15 @@ const Home = () => {
           <SectionTitle>About</SectionTitle>
           <AboutText>
             <p>
-              My journey into bioinformatics began with a simple fascination: <span className="highlight-text">how can we decode the language of life itself?</span> As a Bioinformatics Scientist, I've spent years transforming this curiosity into computational solutions that span the entire spectrum of biological discovery—from unraveling the complexities of COVID-19 immunopathology to investigating neurological disorders through proteomics.
+              My journey into bioinformatics began with a simple fascination: <span className="highlight-text">how can we decode the language of life itself?</span> As a Bioinformatics Scientist, I've spent years transforming this curiosity into computational solutions that span the entire spectrum of biological discovery - from unraveling the complexities of COVID-19 immunopathology to investigating neurological disorders through proteomics.
             </p>
             
             <p>
-              My research has taken me through diverse biological landscapes—analyzing host-microbe interactions in COVID-19 patients, developing surveillance systems for pathogen genomics, investigating protein signatures in ALS spectrum disorders, and tracking SARS-CoV-2 lineages through national wastewater surveillance networks. Each dataset tells a unique story, and I specialize in <span className="highlight-text">extracting meaningful narratives from complex biological data</span> that drive real-world impact in public health and clinical research.
+              My research has taken me through diverse biological landscapes - analyzing host-microbe interactions in COVID-19 patients, developing surveillance systems for pathogen genomics, investigating protein signatures in ALS spectrum disorders, and tracking SARS-CoV-2 lineages through national wastewater surveillance networks. Each dataset tells a unique story, and I specialize in <span className="highlight-text">extracting meaningful narratives from complex biological data</span> that drive real-world impact in public health and clinical research.
             </p>
             
             <p>
-              What energizes me most is the collaborative nature of modern bioinformatics—working alongside clinicians, wet-lab researchers, and public health officials to transform raw data into actionable insights. Whether it's contributing to high-impact publications in Cell or developing tools that enhance disease surveillance capabilities, I believe that <span className="highlight-text">the best discoveries happen at the intersection of curiosity, collaboration, and computational innovation</span>.
+              What energizes me most is the collaborative nature of modern bioinformatics - working alongside clinicians, wet-lab researchers, and public health officials to transform raw data into actionable insights. Whether it's contributing to high-impact publications in Cell or developing tools that enhance disease surveillance capabilities, I believe that <span className="highlight-text">the best discoveries happen at the intersection of curiosity, collaboration, and computational innovation</span>.
             </p>
           </AboutText>
         </AboutWrapper>
@@ -580,26 +591,51 @@ const Home = () => {
       {/* Career Highlights Section */}
       <CareerHighlightsContainer id="career-highlights">
         <CareerHighlightsWrapper>
-          <SectionTitle>Select Career Highlights</SectionTitle>
+          <SectionTitle>Impact Snapshot</SectionTitle>
           <HighlightsList>
             <HighlightItem>
               <HighlightText>
-                Developed an AI-driven tool leveraging Retrieval-Augmented Generation (RAG) to evaluate NextFlow pipelines for compliance with nf-core standards, enhancing reproducibility and adherence to best practices.
+                Co-designed and helped launch AIVA, translating genomic analyst workflows into an interactive, phenotype-aware variant interpretation experience used for rare disease diagnostics.
               </HighlightText>
             </HighlightItem>
             <HighlightItem>
               <HighlightText>
-                Developed a NextFlow pipeline Aquascope, enhancing SARS-CoV-2 wastewater reporting at CDC and state public health labs.
+                Deployed and maintained over five production-grade pipelines supporting genomics and clinical research programs.
               </HighlightText>
             </HighlightItem>
             <HighlightItem>
               <HighlightText>
-                Achieved a top score in WHO's global mock Mpox response, ranking among top 8 of 80+ disease surveillance teams across the globe.
+                Work featured on the Cell cover (Jan'21) for contributions to NHP pre-clinical trials evaluating Baricitinib as a therapeutic for severe COVID-19.
               </HighlightText>
             </HighlightItem>
             <HighlightItem>
               <HighlightText>
-                Authored a paper on Baricitinib treatment of SARS-CoV-2 in Rhesus macaques published in Cell with 200+ citations.
+                Achieved $100K in saved costs of PBMC RNA-Seq library preparation costs for the IMPACC study through identifying duplication rates in Quality Control in collaboration with UCSF.
+              </HighlightText>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightText>
+                Serving as volunteer bioinformatics consultant for the Cure VCP Disease Foundation, supporting grant-funded research at Emory University (Dr. Pant Lab).
+              </HighlightText>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightText>
+                Provided bioinformatics support for more than four multi-institutional national programs, including NIH/NIAID, CDC (NCEZID, OAMD, DDRI, NWSS, NCHHSTP, DFWED), Emory Primate Center, and Emory Vaccine Center, advancing pathogen surveillance, pre-clinical trials and vaccine development.
+              </HighlightText>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightText>
+                Integrated three major regulatory and clinical compliance frameworks into pipelines: Section 508, HIPAA, and CLIA.
+              </HighlightText>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightText>
+                Achieved gains of 40-60% reduction in analysis and reporting time across multiple projects by implementing and optimizing Nextflow-based pipelines.
+              </HighlightText>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightText>
+                Mentored and trained over 20 scientists and engineers from the CDC and Emory Primate Center through workshops on Nextflow, HPC workflows, and transcriptomics (CITE-Seq).
               </HighlightText>
             </HighlightItem>
           </HighlightsList>
