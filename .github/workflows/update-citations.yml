@@ -3,11 +3,10 @@ name: Update citation count
 # Refreshes public/data/scholar.json from Google Scholar once a month so the
 # citation number on the site stays current without manual edits.
 #
-# NOTE: GitHub only fires `schedule` triggers from the workflow file on the
-# repository's DEFAULT branch. This site deploys from `dev`, so this workflow
-# checks out, updates, and pushes `dev` explicitly. For the monthly cron to
-# fire, this file must also exist on the default branch (merge it there once).
-# You can always run it on demand via the "Run workflow" button.
+# Runs from `main` (the default branch and the source of the GitHub Pages
+# deploy). It updates and pushes scholar.json on `main`; the subsequent push
+# triggers the Pages deploy so the new number goes live automatically.
+# You can also run it on demand via the "Run workflow" button.
 
 on:
   schedule:
@@ -21,10 +20,10 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout dev
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
-          ref: dev
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -43,7 +42,7 @@ jobs:
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add public/data/scholar.json
             git commit -m "chore: auto-update Google Scholar citation count"
-            git push origin dev
+            git push origin main
           else
             echo "No change to citation count."
           fi
