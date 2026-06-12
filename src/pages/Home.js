@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import Typed from 'typed.js';
 import { FaQuoteLeft, FaLinkedin, FaArrowRight, FaArrowDown } from 'react-icons/fa';
@@ -9,18 +9,8 @@ import Magnetic from '../components/anim/Magnetic';
 import CountUp from '../components/anim/CountUp';
 import { scrollToSection } from '../components/SmoothScroll';
 import useScholar from '../hooks/useScholar';
+import { ThemeContext } from '../context/ThemeContext';
 import { Container, Eyebrow, Card } from '../components/ui';
-
-// The hero is an always-dark "stage" (the glowing WebGL helix needs a dark
-// backdrop), so its text uses fixed light colors rather than theme tokens.
-const STAGE = {
-  aqua: '#34e3c8',
-  white: '#ffffff',
-  light: '#e7ecf6',
-  dim: '#aab3c8',
-  muted: '#5c6479',
-  border: 'rgba(255, 255, 255, 0.18)',
-};
 
 /* ───────────────────────── HERO ───────────────────────── */
 const Hero = styled.section`
@@ -29,22 +19,25 @@ const Hero = styled.section`
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: #05060b;
-  color: ${STAGE.light};
+  background: ${(p) => p.theme.background};
+  color: ${(p) => p.theme.textLightSlate};
 `;
 
 const HeroCanvasWrap = styled.div`
   position: absolute;
   inset: 0;
   z-index: 0;
-  /* Strong left-side scrim so the visual never fights the headline */
+  /* Strong left-side scrim (matched to the theme) so the visual never fights
+     the headline. */
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(90deg, rgba(5,6,11,0.92) 0%, rgba(5,6,11,0.72) 38%, rgba(5,6,11,0.12) 62%, transparent 78%),
-      radial-gradient(55% 75% at 16% 55%, rgba(5,6,11,0.9), transparent 72%);
+    background: ${(p) => (p.theme.mode === 'light'
+    ? `linear-gradient(90deg, rgba(246,248,252,0.94) 0%, rgba(246,248,252,0.78) 38%, rgba(246,248,252,0.18) 62%, transparent 78%),
+       radial-gradient(55% 75% at 16% 55%, rgba(246,248,252,0.92), transparent 72%)`
+    : `linear-gradient(90deg, rgba(5,6,11,0.92) 0%, rgba(5,6,11,0.72) 38%, rgba(5,6,11,0.12) 62%, transparent 78%),
+       radial-gradient(55% 75% at 16% 55%, rgba(5,6,11,0.9), transparent 72%)`)};
     pointer-events: none;
   }
 `;
@@ -60,7 +53,7 @@ const HeroContent = styled.div`
 
 const Greeting = styled.p`
   font-family: ${(p) => p.theme.fontMono};
-  color: ${STAGE.aqua};
+  color: ${(p) => p.theme.highlight};
   font-size: 0.95rem;
   letter-spacing: 0.12em;
   margin-bottom: 22px;
@@ -72,7 +65,7 @@ const Name = styled.h1`
   font-weight: 700;
   line-height: 0.98;
   margin: 0 0 10px;
-  color: ${STAGE.white};
+  color: ${(p) => p.theme.textWhite};
   span { display: block; overflow: hidden; }
   span > span { display: inline-block; }
 `;
@@ -80,19 +73,19 @@ const Name = styled.h1`
 const Role = styled.h2`
   font-size: clamp(1.35rem, 3.4vw, 2.3rem);
   font-weight: 500;
-  color: ${STAGE.dim};
+  color: ${(p) => p.theme.textSlate};
   margin: 8px 0 28px;
   opacity: 0;
   line-height: 1.2;
   /* Reserve two lines so the typewriter never reflows the content below it. */
   min-height: 2.4em;
-  .typed { color: ${STAGE.light}; }
-  .typed-cursor { color: ${STAGE.aqua}; font-weight: 300; }
+  .typed { color: ${(p) => p.theme.textLightSlate}; }
+  .typed-cursor { color: ${(p) => p.theme.highlight}; font-weight: 300; }
 `;
 
 const HeroText = styled.p`
   font-size: clamp(1rem, 2vw, 1.2rem);
-  color: ${STAGE.dim};
+  color: ${(p) => p.theme.textSlate};
   max-width: 560px;
   line-height: 1.75;
   margin-bottom: 38px;
@@ -123,11 +116,9 @@ const PrimaryBtn = styled.a`
   &:hover svg { transform: translateX(5px); }
 `;
 
-// Hero-stage buttons — fixed colors so they always read on the dark stage.
-const HeroPrimaryBtn = styled(PrimaryBtn)`
-  background: linear-gradient(120deg, #34e3c8 0%, #7c83ff 100%);
-  color: #05060b;
-`;
+// The hero primary button is just the standard gradient pill (works on both
+// themes — gradient fill with dark text).
+const HeroPrimaryBtn = PrimaryBtn;
 
 const GhostBtn = styled.a`
   cursor: pointer;
@@ -137,10 +128,10 @@ const GhostBtn = styled.a`
   padding: 15px 30px;
   border-radius: 999px;
   font-weight: 600;
-  color: ${STAGE.light};
-  border: 1px solid ${STAGE.border};
+  color: ${(p) => p.theme.textLightSlate};
+  border: 1px solid var(--border-strong);
   transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
-  &:hover { border-color: ${STAGE.aqua}; color: ${STAGE.aqua}; }
+  &:hover { border-color: ${(p) => p.theme.highlight}; color: ${(p) => p.theme.highlight}; }
 `;
 
 const ScrollHint = styled.div`
@@ -157,7 +148,7 @@ const ScrollHint = styled.div`
   font-size: 0.7rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: ${STAGE.muted};
+  color: ${(p) => p.theme.textMuted};
   svg { animation: bob 1.8s var(--ease) infinite; }
   @keyframes bob { 0%,100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(6px); opacity: 1; } }
   @media (max-width: 768px) { display: none; }
@@ -299,6 +290,7 @@ const Home = () => {
   const typedEl = useRef(null);
   const heroRef = useRef(null);
   const scholar = useScholar();
+  const { isDark } = useContext(ThemeContext);
   const stats = makeStats(scholar);
 
   const go = (e, id) => {
@@ -345,14 +337,14 @@ const Home = () => {
     <>
       <Hero ref={heroRef} id="top">
         <HeroCanvasWrap>
-          <NeuralHero />
+          <NeuralHero key={isDark ? 'dark' : 'light'} dark={isDark} />
         </HeroCanvasWrap>
         <HeroInner>
           <HeroContent>
             <Greeting className="greeting">{'// hello, world — my name is'}</Greeting>
             <Name>
               <span className="name-line"><span>Arun</span></span>
-              <span className="name-line"><span className="grad-bright">Boddapati.</span></span>
+              <span className="name-line"><span className="grad-text">Boddapati.</span></span>
             </Name>
             <Role className="role">I'm a <span className="typed" ref={typedEl} /></Role>
             <HeroText className="herotext">

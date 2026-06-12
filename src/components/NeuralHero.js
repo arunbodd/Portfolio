@@ -45,7 +45,7 @@ function makeGlowTexture() {
  * hemispheres: glowing neurons, dim synaptic links between neighbors,
  * and bright signal pulses travelling along random synapses.
  */
-const NeuralHero = () => {
+const NeuralHero = ({ dark = true }) => {
   const canvasRef = useRef(null);
   const [webglOk, setWebglOk] = useState(true);
 
@@ -83,8 +83,11 @@ const NeuralHero = () => {
     group.scale.setScalar(isMobile ? 0.8 : 0.92);
     scene.add(group);
 
-    const aqua = new THREE.Color('#34e3c8');
-    const indigo = new THREE.Color('#7c83ff');
+    // On a dark stage the network glows (additive); on light it needs solid,
+    // saturated dark inks (normal blending) to stay visible.
+    const blend = dark ? THREE.AdditiveBlending : THREE.NormalBlending;
+    const aqua = new THREE.Color(dark ? '#34e3c8' : '#0c9f88');
+    const indigo = new THREE.Color(dark ? '#7c83ff' : '#5159e0');
     const glow = makeGlowTexture();
 
     // ── Neurons: a rounded cerebrum (two hemispheres) + a brain stem ──
@@ -161,7 +164,7 @@ const NeuralHero = () => {
       vertexColors: true,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: blend,
     });
     group.add(new THREE.Points(neuronGeo, neuronMat));
 
@@ -190,8 +193,8 @@ const NeuralHero = () => {
     const lineMat = new THREE.LineBasicMaterial({
       vertexColors: true,
       transparent: true,
-      opacity: 0.32,
-      blending: THREE.AdditiveBlending,
+      opacity: dark ? 0.32 : 0.5,
+      blending: blend,
     });
     group.add(new THREE.LineSegments(lineGeo, lineMat));
 
@@ -211,11 +214,11 @@ const NeuralHero = () => {
     const sigMat = new THREE.PointsMaterial({
       size: 0.3,
       map: glow,
-      color: 0xffffff,
+      color: dark ? 0xffffff : 0x0b8f7a,
       transparent: true,
       opacity: 0.95,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: blend,
     });
     group.add(new THREE.Points(sigGeo, sigMat));
 
@@ -242,9 +245,9 @@ const NeuralHero = () => {
         map: glow,
         vertexColors: true,
         transparent: true,
-        opacity: 0.45,
+        opacity: dark ? 0.45 : 0.3,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
+        blending: blend,
       }),
     );
     scene.add(dust);
@@ -375,6 +378,9 @@ const NeuralHero = () => {
       glow.dispose();
       renderer.dispose();
     };
+    // `dark` is fixed per mount (the parent remounts via key on theme change),
+    // so it intentionally isn't a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
