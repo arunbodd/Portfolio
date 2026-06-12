@@ -310,11 +310,11 @@ const entries = [
         tagline: 'Product development and executive AI advisory across clinical-AI and translational research.',
         metrics: ['Multi-agent orchestrator', 'Decoupled LLM core', 'Live Nextflow trace parser'],
         description: [
-          '<b>CodAIs — Agentic Pipeline Compliance & Orchestration:</b> Built a deterministic, multi-agent orchestrator for Nextflow bioinformatics pipelines with interactive CLI and web interfaces.',
+          '<b>CodArIs — Agentic Pipeline Compliance & Orchestration:</b> Built a deterministic, multi-agent orchestrator for Nextflow bioinformatics pipelines with interactive CLI and web interfaces.',
           'Architected a decoupled LLM system isolating the intelligence layer from a pure-Python execution engine, using strict Pydantic models to eliminate token bloat and prevent silent failures.',
           'Engineered a FastAPI weblog receiver that parses live Nextflow traces, delivering real-time job status and deterministic failure classification independent of the Seqera Platform.',
         ],
-        links: [{ name: 'CodAIs', url: 'https://arunbodd.github.io/codaris/' }],
+        links: [{ name: 'CodArIs', url: 'https://arunbodd.github.io/codaris/' }],
       },
       {
         title: 'Strategy Advisor & Bioinformatics Consultant',
