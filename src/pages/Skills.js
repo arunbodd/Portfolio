@@ -1,229 +1,168 @@
 import React from 'react';
 import styled from 'styled-components';
-import { 
-  FaDna, 
-  FaCode, 
-  FaStream, 
-  FaBrain,
-  FaUsers,
-  FaTools
+import {
+  FaBrain, FaDna, FaStream, FaCode, FaTools, FaUsers,
+  FaLightbulb, FaRocket, FaPuzzlePiece, FaTasks, FaExchangeAlt, FaClock, FaChalkboardTeacher, FaHandshake,
 } from 'react-icons/fa';
+import Reveal from '../components/anim/Reveal';
+import { Section, Container, PageHeader, Eyebrow } from '../components/ui';
 
-const PageContainer = styled.div`
-  background: ${props => props.theme.background};
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const SkillsContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  color: ${props => props.theme.textSlate};
-  width: 100%;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  color: ${props => props.theme.textLightSlate};
-  position: relative;
-  text-align: center;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: ${props => props.theme.highlight};
-  }
-`;
-
-const Introduction = styled.p`
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin: 2rem auto;
-  max-width: 800px;
-  text-align: center;
-`;
-
-const TwoColumnContainer = styled.div`
+const Bento = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  margin-top: 3rem;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  @media (max-width: 760px) { grid-template-columns: 1fr; }
 `;
 
-const SkillsColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
-  color: ${props => props.theme.textLightSlate};
-  text-align: left;
+const Tile = styled.div`
   position: relative;
-  padding-bottom: 1rem;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: ${props => props.theme.highlight};
+  background: ${(p) => p.theme.lightNavy};
+  border: 1px solid var(--border);
+  border-radius: ${(p) => p.theme.borderRadius};
+  padding: 30px;
+  overflow: hidden;
+  transition: transform 0.5s var(--ease), border-color 0.5s var(--ease);
+  &:hover { transform: translateY(-6px); border-color: var(--border-strong); }
+
+  &.wide { grid-column: 1 / -1; }
+  &.featured {
+    background: ${(p) => p.theme.gradientSoft};
+    border-color: var(--border-strong);
+  }
+
+  .head { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .icon {
+    flex-shrink: 0;
+    width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px;
+    background: ${(p) => p.theme.highlightTint};
+    color: ${(p) => p.theme.highlight};
+    font-size: 1.4rem;
+  }
+  h3 { font-size: 1.2rem; color: ${(p) => p.theme.textLightSlate}; margin: 0; }
+  &.featured h3 { font-size: 1.5rem; }
+  p { font-size: 0.92rem; line-height: 1.6; color: ${(p) => p.theme.textSlate}; margin: 0 0 18px; }
+`;
+
+const Chips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  span {
+    font-family: ${(p) => p.theme.fontMono};
+    font-size: 0.76rem;
+    padding: 5px 12px;
+    border-radius: 8px;
+    color: ${(p) => p.theme.textLightSlate};
+    background: rgba(127, 127, 127, 0.08);
+    border: 1px solid var(--border);
   }
 `;
 
-const SkillsGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+const StripHead = styled.div`
+  margin: 96px 0 24px;
+  h2 { font-size: clamp(1.7rem, 4vw, 2.3rem); color: ${(p) => p.theme.textLightSlate}; }
 `;
 
-const SkillItem = styled.div`
-  background-color: ${props => props.theme.lightNavy};
-  border-radius: 8px;
-  padding: 2rem;
-  transition: all 0.3s ease;
-  height: 100%;
+const Traits = styled.div`
   display: flex;
-  flex-direction: column;
-  
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  }
+  flex-wrap: wrap;
+  gap: 12px;
 `;
 
-const IconContainer = styled.div`
-  font-size: 2.5rem;
-  color: ${props => props.theme.highlight};
-  margin-bottom: 1.5rem;
-  display: flex;
+const Trait = styled.div`
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  background-color: rgba(100, 255, 218, 0.1);
-  margin: 0 auto 1.5rem;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: ${(p) => p.theme.lightNavy};
+  border: 1px solid var(--border);
+  color: ${(p) => p.theme.textLightSlate};
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease);
+  svg { color: ${(p) => p.theme.highlight}; font-size: 1rem; }
+  &:hover { transform: translateY(-3px); border-color: ${(p) => p.theme.highlight}; }
 `;
 
-const SkillTitle = styled.h3`
-  font-size: 1.5rem;
-  color: ${props => props.theme.textLightSlate};
-  margin-bottom: 1rem;
-  text-align: center;
-`;
-
-const SkillDescription = styled.p`
-  font-size: 1rem;
-  line-height: 1.6;
-  text-align: center;
-  flex-grow: 1;
-`;
-
-const Skills = () => {
-  const technicalSkills = [
-    {
-      title: "Bioinformatics & Genomics",
-      icon: <FaDna />,
-      description: "Expert in NGS analysis, infectious diseases, immunology, repertoire sequencing, epidemiology, single-cell analysis, cite-seq, metagenomics, and proteomics."
-    },
-    {
-      title: "Programming & Development",
-      icon: <FaCode />,
-      description: "Proficient in R, RShiny, Quarto, Python, PyTorch, Shell scripting, HTML, and CSS for developing robust bioinformatics applications."
-    },
-    {
-      title: "Pipelines & Infrastructure",
-      icon: <FaStream />,
-      description: "Expert in Nextflow, nf-core, Snakemake, WDL, Docker/Singularity, AWS, Azure, CI/CD, Slurm, PBS, and SunGridEngine for building scalable bioinformatics infrastructure."
-    },
-    {
-      title: "Machine Learning & AI",
-      icon: <FaBrain />,
-      description: "Experienced in TensorFlow, PyTorch, Scikit-learn, regression, classification, generative neural networks, NLP, large language models, deep learning, MCP servers, agentic tooling, and prompt engineering."
-    },
-    {
-      title: "Technical Excellence",
-      icon: <FaTools />,
-      description: "Comprehensive expertise in Git version control, Linux/Unix systems, high-performance computing (HPC), data visualization, statistical analysis, and scientific communication."
-    }
-  ];
-
-  const leadershipSkills = [
-    {
-      title: "Leadership & Management",
-      icon: <FaUsers />,
-      description: "Strong capabilities in project management, team building, quality management, mentorship, Scrum methodology, and Jira for effective team coordination."
-    },
-    {
-      title: "Mentorship & Talent Development",
-      icon: <FaUsers />,
-      description: "Experienced in 1:1 coaching, technical skill development programs, performance feedback, junior scientist training, and upskilling initiatives to build high-performing teams."
-    }
-  ];
-
-  return (
-    <PageContainer>
-      <SkillsContainer>
-        <Title>Skills</Title>
-        
-        <Introduction>
-          My expertise spans across bioinformatics, software development, data science, and leadership. 
-          These skills enable me to deliver innovative solutions for complex biological and computational challenges while building high-performing teams.
-        </Introduction>
-        
-        <TwoColumnContainer>
-          <SkillsColumn>
-            <SectionTitle>Technical Skills</SectionTitle>
-            <SkillsGrid>
-              {technicalSkills.map((skill, index) => (
-                <SkillItem key={index}>
-                  <IconContainer>
-                    {skill.icon}
-                  </IconContainer>
-                  <SkillTitle>{skill.title}</SkillTitle>
-                  <SkillDescription>{skill.description}</SkillDescription>
-                </SkillItem>
-              ))}
-            </SkillsGrid>
-          </SkillsColumn>
-
-          <SkillsColumn>
-            <SectionTitle>Leadership & Management</SectionTitle>
-            <SkillsGrid>
-              {leadershipSkills.map((skill, index) => (
-                <SkillItem key={index}>
-                  <IconContainer>
-                    {skill.icon}
-                  </IconContainer>
-                  <SkillTitle>{skill.title}</SkillTitle>
-                  <SkillDescription>{skill.description}</SkillDescription>
-                </SkillItem>
-              ))}
-            </SkillsGrid>
-          </SkillsColumn>
-        </TwoColumnContainer>
-      </SkillsContainer>
-    </PageContainer>
-  );
+const featured = {
+  title: 'Machine Learning & AI',
+  icon: <FaBrain />,
+  description: 'LLMs, RAG architecture, and agentic systems applied to life-sciences research — building decoupled, deterministic AI that holds strict reproducibility and validation standards.',
+  tools: ['LLMs', 'RAG', 'Agentic tooling', 'MCP servers', 'Prompt Engineering', 'LangGraph', 'PyTorch', 'TensorFlow', 'scikit-learn', 'NLP', 'Knowledge Graphs'],
 };
+
+const domains = [
+  { title: 'Bioinformatics & Genomics', icon: <FaDna />, description: 'NGS analysis across infectious disease, immunology, and surveillance.', tools: ['scRNA-seq', 'CITE-seq', 'Metagenomics', 'Proteomics', 'Variant Calling', 'Spatial'] },
+  { title: 'Pipelines & Infrastructure', icon: <FaStream />, description: 'Scalable, reproducible workflows on HPC and cloud.', tools: ['Nextflow', 'nf-core', 'Snakemake', 'WDL', 'Docker', 'Singularity', 'AWS', 'Azure', 'Slurm', 'CI/CD'] },
+  { title: 'Programming & Development', icon: <FaCode />, description: 'From analysis to production apps and dashboards.', tools: ['Python', 'R', 'RShiny', 'Quarto', 'FastAPI', 'Pydantic', 'SQL', 'Bash'] },
+  { title: 'Technical Excellence', icon: <FaTools />, description: 'The fundamentals behind dependable, well-communicated science.', tools: ['Git', 'Linux / HPC', 'Data Viz', 'Statistics', 'Reproducibility', 'Sci Comm'] },
+];
+
+const leadership = {
+  title: 'Leadership & Mentorship',
+  icon: <FaUsers />,
+  description: 'Building and growing high-performing teams — from mentoring junior scientists and CDC trainees to product strategy and cross-functional delivery.',
+  tools: ['Team Building', '1:1 Coaching', 'Project Management', 'Scrum', 'Jira', 'Talent Development', 'Stakeholder Mgmt'],
+};
+
+const traits = [
+  { label: 'Curiosity', icon: <FaLightbulb /> },
+  { label: 'Initiative', icon: <FaRocket /> },
+  { label: 'Problem Solving', icon: <FaPuzzlePiece /> },
+  { label: 'Project Management', icon: <FaTasks /> },
+  { label: 'Teamwork', icon: <FaUsers /> },
+  { label: 'Adaptability', icon: <FaExchangeAlt /> },
+  { label: 'Time & Resource Management', icon: <FaClock /> },
+  { label: 'Mentoring', icon: <FaChalkboardTeacher /> },
+  { label: 'Client Relations', icon: <FaHandshake /> },
+];
+
+const Skills = () => (
+  <Section id="skills">
+    <Container>
+      <PageHeader index="04" eyebrow="Toolbox" title="Skills" lead="A capability map spanning AI/ML, bioinformatics, pipelines, and leadership — built to ship solutions for complex biological and computational challenges." />
+
+      <Bento>
+        <Reveal style={{ gridColumn: '1 / -1' }}>
+          <Tile className="wide featured">
+            <div className="head"><span className="icon">{featured.icon}</span><h3>{featured.title}</h3></div>
+            <p>{featured.description}</p>
+            <Chips>{featured.tools.map((t) => <span key={t}>{t}</span>)}</Chips>
+          </Tile>
+        </Reveal>
+
+        {domains.map((d) => (
+          <Reveal key={d.title}>
+            <Tile>
+              <div className="head"><span className="icon">{d.icon}</span><h3>{d.title}</h3></div>
+              <p>{d.description}</p>
+              <Chips>{d.tools.map((t) => <span key={t}>{t}</span>)}</Chips>
+            </Tile>
+          </Reveal>
+        ))}
+
+        <Reveal style={{ gridColumn: '1 / -1' }}>
+          <Tile className="wide">
+            <div className="head"><span className="icon">{leadership.icon}</span><h3>{leadership.title}</h3></div>
+            <p>{leadership.description}</p>
+            <Chips>{leadership.tools.map((t) => <span key={t}>{t}</span>)}</Chips>
+          </Tile>
+        </Reveal>
+      </Bento>
+
+      <Reveal><StripHead><Eyebrow>How I work</Eyebrow><h2>The way I operate.</h2></StripHead></Reveal>
+      <Reveal>
+        <Traits>
+          {traits.map((t) => (
+            <Trait key={t.label}>{t.icon} {t.label}</Trait>
+          ))}
+        </Traits>
+      </Reveal>
+    </Container>
+  </Section>
+);
 
 export default Skills;

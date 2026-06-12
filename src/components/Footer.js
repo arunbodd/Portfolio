@@ -1,118 +1,123 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import { FaGithub, FaLinkedin, FaEnvelope, FaDesktop } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { scrollToSection } from './SmoothScroll';
 
 const FooterContainer = styled.footer`
-  background-color: ${props => props.theme.navBackground};
-  color: ${props => props.theme.textSlate};
-  padding: 3rem 0;
+  border-top: 1px solid var(--border);
+  background: ${(p) => p.theme.background};
+  padding: 60px 32px 40px;
+  margin-top: 40px;
+`;
+
+const Inner = styled.div`
+  max-width: var(--maxw);
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  font-family: 'Montserrat', sans-serif;
+  gap: 26px;
 `;
 
-const SocialIcons = styled.div`
+const Brand = styled(Link)`
   display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: ${(p) => p.theme.fontDisplay};
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: ${(p) => p.theme.textLightSlate};
+  span.mark {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 9px;
+    background: ${(p) => p.theme.gradient};
+    color: #05060b;
+  }
+`;
+
+const Nav = styled.div`
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 1.5rem;
-`;
-
-const SocialIconLink = styled.a`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 1.5rem;
-  margin: 0 1rem;
-  transition: all 0.3s ease-in-out;
-  font-family: 'Montserrat', sans-serif;
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  &:hover {
-    color: ${props => props.theme.highlight};
-    transform: translateY(-3px);
+  gap: 26px;
+  button {
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: ${(p) => p.theme.textSlate};
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s var(--ease);
+    &:hover { color: ${(p) => p.theme.highlight}; }
   }
 `;
 
-const Copyright = styled.p`
-  font-size: 0.9rem;
+const Social = styled.div`
+  display: flex;
+  gap: 16px;
+  a {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    color: ${(p) => p.theme.textSlate};
+    font-size: 1.1rem;
+    transition: all 0.3s var(--ease);
+    &:hover { color: ${(p) => p.theme.highlight}; border-color: ${(p) => p.theme.highlight}; transform: translateY(-3px); }
+  }
+`;
+
+const Copy = styled.p`
+  font-size: 0.82rem;
+  color: ${(p) => p.theme.textMuted};
+  margin: 0;
   text-align: center;
-  margin-bottom: 0.5rem;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
 `;
 
-const ViewportNotice = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.2rem;
-  padding: 2px 4px;
-  font-size: 0.6rem;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
-  
-  svg {
-    margin-right: 3px;
-    color: #a6b1e1;
-    font-size: 0.6em;
-    transform: scale(0.2);
-  }
-  
-  @media screen and (min-width: 1024px) {
-    display: none;
-  }
-`;
-
-const FooterNav = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-`;
-
-const FooterLink = styled(Link)`
-  color: ${props => props.theme.textLightSlate};
-  text-decoration: none;
-  margin: 0 1rem;
-  font-size: 0.9rem;
-  transition: all 0.3s ease-in-out;
-  font-family: 'Montserrat', sans-serif;
-
-  &:hover {
-    color: ${props => props.theme.highlight};
-  }
-`;
+const footerLinks = [
+  { id: 'top', label: 'Home' },
+  { id: 'career', label: 'Career' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'publications', label: 'Publications' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'contact', label: 'Contact' },
+];
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const go = useCallback(
+    (id) => {
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => scrollToSection(id), 450);
+      } else {
+        scrollToSection(id);
+      }
+    },
+    [location.pathname, navigate],
+  );
+
   return (
-    <FooterContainer>
-      <SocialIcons>
-        <SocialIconLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-          <FaGithub />
-        </SocialIconLink>
-        <SocialIconLink href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-          <FaLinkedin />
-        </SocialIconLink>
-        <SocialIconLink href="mailto:arunbodd@outlook.com" aria-label="Email">
-          <FaEnvelope />
-        </SocialIconLink>
-      </SocialIcons>
-      <ViewportNotice>
-        <FaDesktop /> This website is best viewed on a desktop or laptop computer
-      </ViewportNotice>
-      <FooterNav>
-        <FooterLink to="/">Home</FooterLink>
-        <FooterLink to="/career">Career</FooterLink>
-        <FooterLink to="/projects">Projects</FooterLink>
-        <FooterLink to="/publications">Publications</FooterLink>
-        <FooterLink to="/contact">Contact</FooterLink>
-      </FooterNav>
-      <Copyright>&copy; 2025 Arun Boddapati. All rights reserved.</Copyright>
-    </FooterContainer>
+  <FooterContainer>
+    <Inner>
+      <Brand to="/" onClick={(e) => { if (location.pathname === '/') e.preventDefault(); go('top'); }}><span className="mark">λ</span> Arun Boddapati</Brand>
+      <Nav>
+        {footerLinks.map((l) => (
+          <button key={l.id} type="button" onClick={() => go(l.id)}>{l.label}</button>
+        ))}
+      </Nav>
+      <Social>
+        <a href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><FaGithub /></a>
+        <a href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FaLinkedin /></a>
+        <a href="mailto:arunbodd@outlook.com" aria-label="Email"><FaEnvelope /></a>
+      </Social>
+      <Copy>© {new Date().getFullYear()} Arun Boddapati · Built with React, Three.js & GSAP</Copy>
+    </Inner>
+  </FooterContainer>
   );
 };
 

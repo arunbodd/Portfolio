@@ -1,686 +1,490 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Typed from 'typed.js';
-import { Link } from 'react-router-dom';
-import { FaQuoteLeft, FaLinkedin } from 'react-icons/fa';
-import SEO from '../components/SEO';
+import { FaQuoteLeft, FaLinkedin, FaArrowRight, FaArrowDown } from 'react-icons/fa';
+import { gsap } from 'gsap';
+import NeuralHero from '../components/NeuralHero';
+import Reveal from '../components/anim/Reveal';
+import Magnetic from '../components/anim/Magnetic';
+import CountUp from '../components/anim/CountUp';
+import { scrollToSection } from '../components/SmoothScroll';
+import useScholar from '../hooks/useScholar';
+import { Container, Eyebrow, Card } from '../components/ui';
 
-const PageContainer = styled.div`
-  background: ${props => props.theme.background};
+// The hero is an always-dark "stage" (the glowing WebGL helix needs a dark
+// backdrop), so its text uses fixed light colors rather than theme tokens.
+const STAGE = {
+  aqua: '#34e3c8',
+  white: '#ffffff',
+  light: '#e7ecf6',
+  dim: '#aab3c8',
+  muted: '#5c6479',
+  border: 'rgba(255, 255, 255, 0.18)',
+};
+
+/* ───────────────────────── HERO ───────────────────────── */
+const Hero = styled.section`
+  position: relative;
   min-height: 100vh;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #05060b;
+  color: ${STAGE.light};
 `;
 
-const HeroContainer = styled.div`
-  background: ${props => props.theme.background};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 70vh;
-  padding: 60px 40px;
-  position: relative;
-  z-index: 1;
-
-  @media screen and (max-width: 768px) {
-    padding: 30px 20px;
-    min-height: 50vh;
+const HeroCanvasWrap = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* Strong left-side scrim so the visual never fights the headline */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(5,6,11,0.92) 0%, rgba(5,6,11,0.72) 38%, rgba(5,6,11,0.12) 62%, transparent 78%),
+      radial-gradient(55% 75% at 16% 55%, rgba(5,6,11,0.9), transparent 72%);
+    pointer-events: none;
   }
+`;
+
+const HeroInner = styled(Container)`
+  position: relative;
+  z-index: 2;
 `;
 
 const HeroContent = styled.div`
-  max-width: 650px;
-  width: 100%;
-  text-align: center;
+  max-width: 720px;
 `;
 
-const ProfileImageContainer = styled.div`
-  position: absolute;
-  top: 100px;
-  left: 200px;
-  z-index: 2;
-
-  @media screen and (max-width: 1024px) {
-    display: none;
-  }
+const Greeting = styled.p`
+  font-family: ${(p) => p.theme.fontMono};
+  color: ${STAGE.aqua};
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 22px;
+  opacity: 0;
 `;
 
-const ProfileImage = styled.canvas`
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 2px solid ${props => props.theme.highlight};
-  filter: grayscale(20%);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    filter: grayscale(0%);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
-  }
+const Name = styled.h1`
+  font-size: clamp(3rem, 9vw, 6.6rem);
+  font-weight: 700;
+  line-height: 0.98;
+  margin: 0 0 10px;
+  color: ${STAGE.white};
+  span { display: block; overflow: hidden; }
+  span > span { display: inline-block; }
 `;
 
-const HeroGreeting = styled.p`
-  color: ${props => props.theme.highlight};
-  font-size: 16px;
-  font-weight: 400;
-  margin-bottom: 20px;
-  font-family: 'Fira Code', monospace;
+const Role = styled.h2`
+  font-size: clamp(1.35rem, 3.4vw, 2.3rem);
+  font-weight: 500;
+  color: ${STAGE.dim};
+  margin: 8px 0 28px;
+  opacity: 0;
+  line-height: 1.2;
+  /* Reserve two lines so the typewriter never reflows the content below it. */
+  min-height: 2.4em;
+  .typed { color: ${STAGE.light}; }
+  .typed-cursor { color: ${STAGE.aqua}; font-weight: 300; }
 `;
 
-const HeroH1 = styled.h1`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 80px;
-  font-weight: 600;
-  margin-bottom: 24px;
-
-  @media screen and (max-width: 768px) {
-    font-size: 40px;
-  }
+const HeroText = styled.p`
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: ${STAGE.dim};
+  max-width: 560px;
+  line-height: 1.75;
+  margin-bottom: 38px;
+  opacity: 0;
 `;
 
-const HeroH2 = styled.h2`
-  color: ${props => props.theme.textSlate};
-  font-size: 40px;
-  font-weight: 600;
-  margin-bottom: 24px;
-
-  @media screen and (max-width: 768px) {
-    font-size: 26px;
-  }
-  
-  @media screen and (max-width: 480px) {
-    font-size: 22px;
-  }
-`;
-
-const HeroP = styled.p`
-  color: ${props => props.theme.textSlate};
-  font-size: 24px;
-  max-width: 600px;
-  margin: 0 0 35px 0;
-
-  @media screen and (max-width: 768px) {
-    font-size: 18px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    margin: 0 auto 35px auto;
-  }
-`;
-
-const TypedSpan = styled.span`
-  color: ${props => props.theme.highlight};
-`;
-
-const HeroBtnWrapper = styled.div`
+const Buttons = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-  }
+  flex-wrap: wrap;
+  gap: 18px;
+  opacity: 0;
 `;
 
-const Button = styled(Link)`
-  border-radius: 4px;
-  background: ${({ primary, theme }) => (primary ? theme.highlight : 'transparent')};
-  white-space: nowrap;
-  padding: ${({ big }) => (big ? '14px 48px' : '12px 30px')};
-  color: ${({ primary, theme }) => (primary ? theme.background : theme.highlight)};
-  font-size: ${({ fontBig }) => (fontBig ? '20px' : '16px')};
-  outline: none;
-  border: ${({ primary, theme }) => (primary ? 'none' : `1px solid ${theme.highlight}`)};
+const PrimaryBtn = styled.a`
   cursor: pointer;
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  margin-right: 20px;
-
-  &:hover {
-    transition: all 0.2s ease-in-out;
-    background: ${({ primary, theme }) => (primary ? theme.highlightTint : theme.highlightTint)};
-    color: ${({ primary, theme }) => (primary ? theme.background : theme.highlight)};
-  }
-
-  @media screen and (max-width: 768px) {
-    margin-right: 0;
-    margin-bottom: 16px;
-  }
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #05060b;
+  background: ${(p) => p.theme.gradient};
+  box-shadow: 0 12px 40px -12px rgba(52, 227, 200, 0.5);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  svg { transition: transform 0.3s var(--ease); }
+  &:hover { box-shadow: 0 18px 50px -10px rgba(124, 131, 255, 0.55); }
+  &:hover svg { transform: translateX(5px); }
 `;
 
-// About Section Styles
-const AboutContainer = styled.div`
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textSlate};
-  padding: 50px calc((100vw - 1200px) / 2);
-  
-  @media screen and (max-width: 768px) {
-    padding: 30px 20px;
+// Hero-stage buttons — fixed colors so they always read on the dark stage.
+const HeroPrimaryBtn = styled(PrimaryBtn)`
+  background: linear-gradient(120deg, #34e3c8 0%, #7c83ff 100%);
+  color: #05060b;
+`;
+
+const GhostBtn = styled.a`
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: ${STAGE.light};
+  border: 1px solid ${STAGE.border};
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+  &:hover { border-color: ${STAGE.aqua}; color: ${STAGE.aqua}; }
+`;
+
+const ScrollHint = styled.div`
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: ${(p) => p.theme.fontMono};
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: ${STAGE.muted};
+  svg { animation: bob 1.8s var(--ease) infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(6px); opacity: 1; } }
+  @media (max-width: 768px) { display: none; }
+`;
+
+/* ──────────────────────── STATS ───────────────────────── */
+const Section = styled.section`
+  padding: 100px 0;
+  @media (max-width: 768px) { padding: 70px 0; }
+`;
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+`;
+
+const Stat = styled.div`
+  text-align: center;
+  padding: 30px 16px;
+  border: 1px solid var(--border);
+  border-radius: ${(p) => p.theme.borderRadius};
+  background: ${(p) => p.theme.lightNavy};
+  .num {
+    font-family: ${(p) => p.theme.fontDisplay};
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    background: ${(p) => p.theme.gradient};
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
+  .label { font-size: 0.85rem; color: ${(p) => p.theme.textSlate}; margin-top: 6px; }
 `;
 
-const AboutWrapper = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-`;
-
-const SectionTitle = styled.h2`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 32px;
-  margin-bottom: 16px;
-  position: relative;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 70px;
-    height: 3px;
-    background: ${props => props.theme.highlight};
+/* ──────────────────────── ABOUT ───────────────────────── */
+const SectionHead = styled.div`
+  margin-bottom: 50px;
+  h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: ${(p) => p.theme.textLightSlate};
   }
 `;
 
 const AboutText = styled.div`
-  margin-top: 30px;
-  text-align: center;
-  
+  max-width: 860px;
   p {
-    color: ${props => props.theme.textSlate};
-    margin-bottom: 24px;
-    font-size: 18px;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    line-height: 1.85;
+    color: ${(p) => p.theme.textSlate};
+    margin-bottom: 26px;
+  }
+  .hl { color: ${(p) => p.theme.textLightSlate}; font-weight: 600; }
+`;
+
+/* ─────────────────── IMPACT HIGHLIGHTS ─────────────────── */
+const HighlightsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+`;
+
+const HCard = styled(Card)`
+  padding: 26px;
+  .idx { font-family: ${(p) => p.theme.fontMono}; font-size: 0.8rem; color: ${(p) => p.theme.highlight}; margin-bottom: 14px; }
+  p { font-size: 0.98rem; line-height: 1.6; color: ${(p) => p.theme.textLightSlate}; margin: 0; }
+`;
+
+/* ─────────────────── TESTIMONIALS ─────────────────── */
+const TGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 24px;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+`;
+
+const TCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  .quote { color: ${(p) => p.theme.highlight}; font-size: 1.6rem; opacity: 0.5; margin-bottom: 16px; }
+  .text {
+    color: ${(p) => p.theme.textSlate};
+    font-size: 0.95rem;
     line-height: 1.7;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
   }
-  
-  .highlight-text {
-    color: ${props => props.theme.highlight};
-    font-weight: 600;
-  }
-  
-  a {
-    color: ${props => props.theme.highlight};
-    text-decoration: none;
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+  &:hover .text { -webkit-line-clamp: 30; }
+  .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .name { color: ${(p) => p.theme.textLightSlate}; font-weight: 600; font-size: 0.92rem; }
+  .title { color: ${(p) => p.theme.highlight}; font-size: 0.8rem; }
+  a { color: ${(p) => p.theme.textSlate}; font-size: 1.2rem; transition: color 0.3s var(--ease); }
+  a:hover { color: ${(p) => p.theme.highlight}; }
 `;
 
-// Career Highlights Section Styles
-const CareerHighlightsContainer = styled.div`
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textSlate};
-  padding: 50px calc((100vw - 1200px) / 2);
-  
-  @media screen and (max-width: 768px) {
-    padding: 30px 20px;
-  }
-`;
-
-const CareerHighlightsWrapper = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-`;
-
-const HighlightsList = styled.div`
-  margin-top: 30px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 1.5rem;
-  
-  @media screen and (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    grid-gap: 1rem;
-  }
-`;
-
-const HighlightItem = styled.div`
-  background: ${props => props.theme.lightNavy};
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 4px solid ${props => props.theme.highlight};
-  transition: all 0.3s ease;
-  position: relative;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(100, 255, 218, 0.15);
-  }
-  
-  &:before {
-    content: '★';
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    color: ${props => props.theme.highlight};
-    font-size: 1.5rem;
-  }
-`;
-
-const HighlightText = styled.p`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 1rem;
-  line-height: 1.5;
-  margin: 0;
-  padding-right: 1.5rem;
-`;
-
-// Testimonials Section Styles
-const TestimonialsContainer = styled.div`
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textSlate};
-  padding: 50px calc((100vw - 1200px) / 2);
-  
-  @media screen and (max-width: 768px) {
-    padding: 30px 20px;
-  }
-`;
-
-const TestimonialsWrapper = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-`;
-
-const TestimonialsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-gap: 2rem;
-  margin-top: 40px;
-  
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-  
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
-    grid-gap: 1.5rem;
-  }
-`;
-
-const FlipCardContainer = styled.div`
-  background-color: transparent;
-  perspective: 1000px;
-  height: 300px;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  width: 100%;
-`;
-
-const FlipCardInner = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
+/* ─────────────────── CTA ─────────────────── */
+const CTA = styled(Container)`
   text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  
-  ${FlipCardContainer}:hover & {
-    transform: rotateY(180deg);
-  }
+  padding: 110px 32px;
+  h2 { font-size: clamp(2.2rem, 6vw, 4rem); color: ${(p) => p.theme.textWhite}; margin-bottom: 20px; }
+  p { color: ${(p) => p.theme.textSlate}; max-width: 540px; margin: 0 auto 38px; font-size: 1.1rem; }
 `;
 
-const FlipCardFront = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: ${props => props.theme.lightNavy};
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  
-  svg {
-    color: ${props => props.theme.highlight};
-    font-size: 40px;
-    margin-bottom: 1rem;
-  }
-  
-  &:hover {
-    box-shadow: 0 10px 20px rgba(100, 255, 218, 0.15);
-  }
-`;
+const highlights = [
+  'Led the 4-month commercial launch of AIVA, a multi-agentic clinical variant-interpretation platform — validating a 94% case-solve rate and 80.5% F1 on phenotype-driven prioritization.',
+  'Engineered Lintelligence, an enterprise LLM-RAG framework that automated validation workflows and reduced onboarding cycles by 85%.',
+  'Principal architect of Aquascope (v1.0–v3.1) — the national SARS-CoV-2 wastewater surveillance pipeline whose results informed federal pandemic-response policy.',
+  'Co-first-authored a scRNA-seq / CITE-seq baricitinib study published in Cell, complementing the FDA Emergency Use Authorization of baricitinib for COVID-19.',
+  'Built a deterministic multi-agent orchestrator (CodAIs) for Nextflow pipelines, isolating the LLM layer from a pure-Python engine with strict Pydantic contracts.',
+  'Developed a probabilistic classifier (81% accuracy) accelerating target identification and biomarker discovery in lung-remodeling pathways.',
+  'Lead bioinformatician for IMPACC (5,000 patients, 15 centers); built an AWS transcriptomics QC pipeline cutting processing time by 60%.',
+  'Deployed 6 production-grade Nextflow modules for national outbreak surveillance (Cyclone), cutting analysis turnaround by 40%.',
+  'Trained CDC researchers and epidemiologists on Nextflow, containerization, HPC, and transcriptomic analysis across high-visibility national programs.',
+];
 
-const FlipCardBack = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: ${props => props.theme.navy};
-  color: ${props => props.theme.textLightSlate};
-  transform: rotateY(180deg);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 1.5rem;
-  overflow-y: auto;
-  text-align: left;
-  box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
-  
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: ${props => props.theme.lightNavy};
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background-color: ${props => props.theme.highlight};
-    border-radius: 10px;
-  }
-`;
-
-const TestimonialPreview = styled.h3`
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  color: ${props => props.theme.textLightSlate};
-  text-align: center;
-  line-height: 1.4;
-`;
-
-const TestimonialAuthorPreview = styled.p`
-  font-style: italic;
-  color: ${props => props.theme.highlight};
-  font-size: 1rem;
-  text-align: center;
-  margin-top: auto;
-`;
-
-const TestimonialText = styled.p`
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  color: ${props => props.theme.textLightSlate};
-`;
-
-const TestimonialAuthor = styled.div`
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid ${props => props.theme.highlight};
-`;
-
-const AuthorName = styled.h4`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 1rem;
-  margin: 0 0 5px 0;
-`;
-
-const AuthorTitle = styled.p`
-  color: ${props => props.theme.highlight};
-  font-size: 0.9rem;
-  margin: 0 0 10px 0;
-`;
-
-const LinkedInLink = styled.a`
-  color: ${props => props.theme.textSlate};
-  font-size: 18px;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    color: ${props => props.theme.highlight};
-  }
-`;
+const makeStats = (scholar) => [
+  { num: '9+', label: 'Years in AI & genomics' },
+  { num: `${scholar.citations}`, label: `Citations · h-index ${scholar.hIndex}` },
+  { num: '80.5%', label: 'Variant classification F1' },
+  { num: '85%', label: 'Faster pipeline onboarding' },
+];
 
 const testimonials = [
-  {
-    text: "I met Arun during my bioinformatics internship at Leidos in the summer of 2023. We were coworkers on the SciComp team and interacted daily. He has a wide variety of computational skills and is especially adept at solving complex computational problems. For example, he led a project with another intern to produce a machine learning model to generate sequencing data for a specific disease model. He was involved in other projects with different requirements, and has expertise in cluster computing, AWS, NextFlow, Python, and many other areas. He was a go-to person when I needed help with my own projects. He was very personable and easy to work with, and always had good insights for solutions and how to implement them. Overall, I would highly recommend him as a computational expert and as a leader in group settings and customer service.",
-    name: "Charlotte Royer, MS, Georgia Institute of Technology",
-    title: "Senior Bioinformatics Analyst",
-    linkedin: "https://www.linkedin.com/in/royercj-oo5515b219/",
-    preview: "Wide variety of computational skills and especially adept at solving complex problems..."
-  },
-  {
-    text: "In the short time I've worked with Arun, he has demonstrated exceptional expertise, particularly in developing and optimizing workflows using Nextflow, Snakemake, and containerization tools. His contributions to transcriptomics and metagenomics projects have been impactful, and his ability to work efficiently on HPC and cloud platforms is impressive. He would be a strong asset to any team looking for a skilled and proactive bioinformatician.",
-    name: "Paramita Chatterjee, Ph.D, MBA",
-    title: "Scientific Operations Lead",
-    linkedin: "https://www.linkedin.com/in/paramitachatterjee2022/",
-    preview: "Demonstrated exceptional expertise in developing and optimizing workflows..."
-  },
-  {
-    text: "It is a pleasure to recommend Arun, an exceptional Bioinformatics Scientist whose work has significantly contributed to advancing public health research. I had the privilege of collaborating with him on several projects, and I was continually impressed by his technical expertise, leadership, and dedication to mentoring others in the field. He possesses a rare combination of deep knowledge of bioinformatics, innovative problem-solving skills, and an unwavering commitment to improving public health outcomes. His ability to analyze complex datasets, develop robust workflows, and communicate findings effectively has been invaluable in addressing pressing health challenges and resulting in the publication of manuscripts. What truly makes him stand out is his passion for mentorship and he consistently goes above and beyond to support colleagues, trainees, and early-career professionals by sharing his knowledge, providing guidance, and fostering an inclusive and collaborative environment.",
-    name: "Dr. Suchitra Chavan",
-    title: "Bioinformatician",
-    linkedin: "https://www.linkedin.com/in/suchitra-c-623580213/",
-    preview: "Exceptional scientist whose work has significantly contributed to advancing public health research..."
-  },
-  {
-    text: "I am pleased to recommend my colleague and friend, Arun Kumar Boddapati, a highly skilled researcher in genomics and transcriptomics. I have had the pleasure of working at the Emory National Primate Research Center Genomics Core when he joined. I was impressed by his technical expertise and problem-solving abilities, consistently producing insightful results from complex datasets. He is a collaborative team player who is always willing to share knowledge and mentor others. He has helped and guided me several times, and I find him super approachable. He is passionate about staying current with the latest trends in genomics and demonstrates a strong commitment to ongoing learning. I am confident that he will continue to excel and contribute meaningfully to any future endeavors in genomics and transcriptomics.",
-    name: "Dr. Prachi Gupta",
-    title: "Computational Biologist",
-    linkedin: "https://www.linkedin.com/in/prachi-gupta-b861059/",
-    preview: "Highly skilled researcher in genomics and transcriptomics with exceptional technical expertise..."
-  },
-  {
-    text: "I had the privilege of collaborating with Arun on several projects during my masters and since. I am consistently impressed by his expertise, work ethic, and forward-thinking approach. He combines technical prowess and strategic insight, making him a standout professional. As a mentor, he has successfully guided junior scientists and interns, ensuring their professional growth while driving project success. During our time working together, he demonstrated exceptional skills in bioinformatics pipeline development, database design, and next-generation sequencing (NGS) data analysis. His development of the Aquascope pipeline significantly reduced analysis time by 80%, greatly enhancing the efficiency of wastewater monitoring efforts. He approaches every task with dedication, enthusiasm, and a focus on excellence. Even without a PhD - he has co-authored and contributed to several high impact journals. It is rare to find someone who balances vision and execution as seamlessly as he does. I am confident that his contributions will continue to make a significant impact in any endeavor he undertakes. I wholeheartedly recommend him to anyone seeking a dynamic, results-driven professional who consistently exceeds expectations.",
-    name: "Dr. Tarun Mamidi",
-    title: "Bioinformatics Scientist",
-    linkedin: "https://www.linkedin.com/in/tkmamidi/",
-    preview: "Consistently impressed by his expertise, work ethic, and forward-thinking approach..."
-  },
-  {
-    text: "I've had the opportunity to directly supervise Arun, and have consistently seen his strong passion, drive, and proactive approach to innovation. He's constantly looking for ways to implement cutting edge solutions to streamline processes. Overall, he brings solid technical ability and is quick to explore new ideas and tools that may benefit his team!",
-    name: "Dr. Gabriela Huelgas Morales",
-    title: "Bioinformatics Scientist",
-    linkedin: "https://www.linkedin.com/in/gabriela-huelgas-morales-0896b8b3/",
-    preview: "Strong passion, drive, and proactive approach to innovation..."
-  }
+  { text: "I met Arun during my bioinformatics internship at Leidos in the summer of 2023. We were coworkers on the SciComp team and interacted daily. He has a wide variety of computational skills and is especially adept at solving complex computational problems. For example, he led a project with another intern to produce a machine learning model to generate sequencing data for a specific disease model. He was a go-to person when I needed help with my own projects. Overall, I would highly recommend him as a computational expert and as a leader in group settings and customer service.", name: 'Charlotte Royer, MS', title: 'Senior Bioinformatics Analyst', linkedin: 'https://www.linkedin.com/in/royercj-oo5515b219/' },
+  { text: "In the short time I've worked with Arun, he has demonstrated exceptional expertise, particularly in developing and optimizing workflows using Nextflow, Snakemake, and containerization tools. His contributions to transcriptomics and metagenomics projects have been impactful, and his ability to work efficiently on HPC and cloud platforms is impressive. He would be a strong asset to any team looking for a skilled and proactive bioinformatician.", name: 'Paramita Chatterjee, Ph.D, MBA', title: 'Scientific Operations Lead', linkedin: 'https://www.linkedin.com/in/paramitachatterjee2022/' },
+  { text: "It is a pleasure to recommend Arun, an exceptional Bioinformatics Scientist whose work has significantly contributed to advancing public health research. I was continually impressed by his technical expertise, leadership, and dedication to mentoring others. He possesses a rare combination of deep knowledge of bioinformatics, innovative problem-solving skills, and an unwavering commitment to improving public health outcomes. What truly makes him stand out is his passion for mentorship.", name: 'Dr. Suchitra Chavan', title: 'Bioinformatician', linkedin: 'https://www.linkedin.com/in/suchitra-c-623580213/' },
+  { text: "I am pleased to recommend my colleague and friend, Arun, a highly skilled researcher in genomics and transcriptomics. I was impressed by his technical expertise and problem-solving abilities, consistently producing insightful results from complex datasets. He is a collaborative team player who is always willing to share knowledge and mentor others. He is passionate about staying current with the latest trends in genomics.", name: 'Dr. Prachi Gupta', title: 'Computational Biologist', linkedin: 'https://www.linkedin.com/in/prachi-gupta-b861059/' },
+  { text: "I have had the privilege of collaborating with Arun on several projects. He combines technical prowess and strategic insight, making him a standout professional. His development of the Aquascope pipeline significantly reduced analysis time by 80%, greatly enhancing the efficiency of wastewater monitoring efforts. Even without a PhD, he has co-authored several high impact journals. It is rare to find someone who balances vision and execution as seamlessly as he does.", name: 'Dr. Tarun Mamidi', title: 'Bioinformatics Scientist', linkedin: 'https://www.linkedin.com/in/tkmamidi/' },
+  { text: "I've had the opportunity to directly supervise Arun, and have consistently seen his strong passion, drive, and proactive approach to innovation. He's constantly looking for ways to implement cutting edge solutions to streamline processes. Overall, he brings solid technical ability and is quick to explore new ideas and tools that may benefit his team!", name: 'Dr. Gabriela Huelgas Morales', title: 'Bioinformatics Scientist', linkedin: 'https://www.linkedin.com/in/gabriela-huelgas-morales-0896b8b3/' },
 ];
 
 const Home = () => {
   const typedEl = useRef(null);
-  const canvasRef = useRef(null);
+  const heroRef = useRef(null);
+  const scholar = useScholar();
+  const stats = makeStats(scholar);
+
+  const go = (e, id) => {
+    e.preventDefault();
+    scrollToSection(id);
+  };
 
   useEffect(() => {
-    const options = {
-      strings: [
-        'Bioinformatics Scientist',
-        'Machine Learning Expert',
-        'Data Scientist',
-        'Genomics Researcher'
-      ],
-      typeSpeed: 50,
-      backSpeed: 50,
-      backDelay: 2000,
+    const typed = new Typed(typedEl.current, {
+      strings: ['AI / ML Data Science Lead', 'Translational Bioinformatician', 'LLM & Agentic Systems Architect', 'Genomics Researcher'],
+      typeSpeed: 55,
+      backSpeed: 30,
+      backDelay: 1800,
       loop: true,
-      cursorChar: '|',
-      smartBackspace: true
-    };
-
-    if (typedEl.current) {
-      const typed = new Typed(typedEl.current, options);
-
-      return () => {
-        typed.destroy();
-      };
-    }
+      smartBackspace: true,
+    });
+    return () => typed.destroy();
   }, []);
 
   useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = "https://avatars.githubusercontent.com/u/22992035?v=4";
-    
-    img.onload = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      
-      const ctx = canvas.getContext('2d');
-      
-      // Set canvas dimensions to match image
-      canvas.width = img.width;
-      canvas.height = img.height;
-      
-      // Draw the image
-      ctx.drawImage(img, 0, 0);
-    };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ctx = gsap.context(() => {
+      const nameSpans = heroRef.current.querySelectorAll('.name-line > span');
+      if (reduce) {
+        gsap.set(['.greeting', '.role', '.herotext', '.herobtns', nameSpans], { opacity: 1, y: 0 });
+        return;
+      }
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.from('.greeting', { opacity: 0, y: 20, duration: 0.6 }, 0.2)
+        .set('.greeting', { opacity: 1 }, '>-0.01')
+        .from(nameSpans, { yPercent: 110, duration: 1, stagger: 0.12 }, 0.3)
+        .to('.role', { opacity: 1, y: 0, duration: 0.6 }, '-=0.5')
+        .from('.role', { y: 20, duration: 0.6 }, '<')
+        .to('.herotext', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .from('.herotext', { y: 20, duration: 0.6 }, '<')
+        .to('.herobtns', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
+        .from('.herobtns', { y: 20, duration: 0.6 }, '<');
+      gsap.to('.greeting', { opacity: 1, duration: 0 });
+    }, heroRef);
+    return () => ctx.revert();
   }, []);
 
   return (
-    <PageContainer>
-      <SEO 
-        title="Home" 
-        description="Lead Scientist developing computational solutions for biological problems. Expertise in bioinformatics, genomics, and machine learning pipelines."
-        keywords="bioinformatics, genomics, data science, machine learning, computational biology"
-      />
-      
-      {/* Hero Section */}
-      <HeroContainer id="home">
-        <HeroContent>
-          <ProfileImageContainer>
-            <ProfileImage ref={canvasRef} />
-          </ProfileImageContainer>
-          <HeroGreeting>Hi, my name is</HeroGreeting>
-          <HeroH1>Arun Boddapati.</HeroH1>
-          <HeroH2>
-            I'm a <TypedSpan ref={typedEl}></TypedSpan>
-          </HeroH2>
-          <HeroP>
-            Developing computational solutions for complex biological problems.
-            Transforming genomics data into actionable insights through AI and machine learning.
-          </HeroP>
-          <HeroBtnWrapper>
-            <Button to="/projects" primary="true">
-              View My Work
-            </Button>
-            <Button to="/contact">
-              Get In Touch
-            </Button>
-          </HeroBtnWrapper>
-        </HeroContent>
-      </HeroContainer>
+    <>
+      <Hero ref={heroRef} id="top">
+        <HeroCanvasWrap>
+          <NeuralHero />
+        </HeroCanvasWrap>
+        <HeroInner>
+          <HeroContent>
+            <Greeting className="greeting">{'// hello, world — my name is'}</Greeting>
+            <Name>
+              <span className="name-line"><span>Arun</span></span>
+              <span className="name-line"><span className="grad-bright">Boddapati.</span></span>
+            </Name>
+            <Role className="role">I'm a <span className="typed" ref={typedEl} /></Role>
+            <HeroText className="herotext">
+              I translate unstructured multi-omics, proteomics, and spatial data into rigorous,
+              production-grade AI — accelerating target identification and biomarker discovery
+              through LLM-RAG frameworks and agentic systems.
+            </HeroText>
+            <Buttons className="herobtns">
+              <Magnetic strength={0.3}><HeroPrimaryBtn href="#projects" onClick={(e) => go(e, 'projects')}>View My Work <FaArrowRight /></HeroPrimaryBtn></Magnetic>
+              <Magnetic strength={0.3}><GhostBtn href="#contact" onClick={(e) => go(e, 'contact')}>Get In Touch</GhostBtn></Magnetic>
+            </Buttons>
+          </HeroContent>
+        </HeroInner>
+        <ScrollHint>Scroll <FaArrowDown /></ScrollHint>
+      </Hero>
 
-      {/* About Section */}
-      <AboutContainer id="about">
-        <AboutWrapper>
-          <SectionTitle>About</SectionTitle>
-          <AboutText>
-            <p>
-              My journey into bioinformatics began with a simple fascination: <span className="highlight-text">how can we decode the language of life itself?</span> As a Bioinformatics Scientist, I've spent years transforming this curiosity into computational solutions that span the entire spectrum of biological discovery - from unraveling the complexities of COVID-19 immunopathology to investigating neurological disorders through proteomics.
-            </p>
-            
-            <p>
-              My research has taken me through diverse biological landscapes - analyzing host-microbe interactions in COVID-19 patients, developing surveillance systems for pathogen genomics, investigating protein signatures in ALS spectrum disorders, and tracking SARS-CoV-2 lineages through national wastewater surveillance networks. Each dataset tells a unique story, and I specialize in <span className="highlight-text">extracting meaningful narratives from complex biological data</span> that drive real-world impact in public health and clinical research.
-            </p>
-            
-            <p>
-              What energizes me most is the collaborative nature of modern bioinformatics - working alongside clinicians, wet-lab researchers, and public health officials to transform raw data into actionable insights. Whether it's contributing to high-impact publications in Cell or developing tools that enhance disease surveillance capabilities, I believe that <span className="highlight-text">the best discoveries happen at the intersection of curiosity, collaboration, and computational innovation</span>.
-            </p>
-          </AboutText>
-        </AboutWrapper>
-      </AboutContainer>
+      {/* Stats */}
+      <Section>
+        <Container>
+          <Reveal stagger>
+            <StatsGrid>
+              {stats.map((s) => (
+                <Stat key={s.label}>
+                  <div className="num"><CountUp value={s.num} /></div>
+                  <div className="label">{s.label}</div>
+                </Stat>
+              ))}
+            </StatsGrid>
+          </Reveal>
+        </Container>
+      </Section>
 
-      {/* Career Highlights Section */}
-      <CareerHighlightsContainer id="career-highlights">
-        <CareerHighlightsWrapper>
-          <SectionTitle>Impact Snapshot</SectionTitle>
-          <HighlightsList>
-            <HighlightItem>
-              <HighlightText>
-                Co-designed and helped launch AIVA, translating genomic analyst workflows into an interactive, phenotype-aware variant interpretation experience used for rare disease diagnostics.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Deployed and maintained over five production-grade pipelines supporting genomics and clinical research programs.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Work featured on the Cell cover (Jan'21) for contributions to NHP pre-clinical trials evaluating Baricitinib as a therapeutic for severe COVID-19.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Achieved $100K in saved costs of PBMC RNA-Seq library preparation costs for the IMPACC study through identifying duplication rates in Quality Control in collaboration with UCSF.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Serving as volunteer bioinformatics consultant for the Cure VCP Disease Foundation, supporting grant-funded research at Emory University (Dr. Pant Lab).
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Provided bioinformatics support for more than four multi-institutional national programs, including NIH/NIAID, CDC (NCEZID, OAMD, DDRI, NWSS, NCHHSTP, DFWED), Emory Primate Center, and Emory Vaccine Center, advancing pathogen surveillance, pre-clinical trials and vaccine development.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Integrated three major regulatory and clinical compliance frameworks into pipelines: Section 508, HIPAA, and CLIA.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Achieved gains of 40-60% reduction in analysis and reporting time across multiple projects by implementing and optimizing Nextflow-based pipelines.
-              </HighlightText>
-            </HighlightItem>
-            <HighlightItem>
-              <HighlightText>
-                Mentored and trained over 20 scientists and engineers from the CDC and Emory Primate Center through workshops on Nextflow, HPC workflows, and transcriptomics (CITE-Seq).
-              </HighlightText>
-            </HighlightItem>
-          </HighlightsList>
-        </CareerHighlightsWrapper>
-      </CareerHighlightsContainer>
+      {/* About */}
+      <Section id="about">
+        <Container>
+          <Reveal>
+            <SectionHead>
+              <Eyebrow>About</Eyebrow>
+              <h2>Where AI meets the language of life.</h2>
+            </SectionHead>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <AboutText>
+              <p>
+                I'm an <span className="hl">AI / ML Data Science Lead</span> with 9+ years applying
+                machine learning, large language models, and agentic systems to life-sciences
+                research. My work turns unstructured multi-omics, proteomics, and spatial datasets
+                into rigorous, production-grade AI that accelerates target identification and
+                biomarker discovery.
+              </p>
+              <p>
+                I design <span className="hl">LLM-RAG frameworks, prompt-engineering strategies, and
+                deterministic multi-agent orchestrators</span> that improve operational efficiency
+                while holding strict scientific reproducibility and validation standards — from
+                national pathogen surveillance pipelines to clinical variant-interpretation platforms.
+              </p>
+              <p>
+                What energizes me most is the bridge between disciplines — translating AI capability
+                into translational, clinical, and cell-therapy workflows alongside clinicians and
+                researchers. I believe{' '}
+                <span className="hl">the best systems are both intelligent and accountable</span>.
+              </p>
+            </AboutText>
+          </Reveal>
+        </Container>
+      </Section>
 
-      {/* Testimonials Section */}
-      <TestimonialsContainer id="testimonials">
-        <TestimonialsWrapper>
-          <SectionTitle>What People Say</SectionTitle>
-          <TestimonialsGrid>
-            {testimonials.map((testimonial, index) => (
-              <FlipCardContainer key={index}>
-                <FlipCardInner>
-                  <FlipCardFront>
-                    <FaQuoteLeft />
-                    <TestimonialPreview>{testimonial.preview}</TestimonialPreview>
-                    <TestimonialAuthorPreview>- {testimonial.name}</TestimonialAuthorPreview>
-                  </FlipCardFront>
-                  <FlipCardBack>
-                    <TestimonialText>
-                      {testimonial.text}
-                    </TestimonialText>
-                    <TestimonialAuthor>
-                      <AuthorName>{testimonial.name}</AuthorName>
-                      <AuthorTitle>{testimonial.title}</AuthorTitle>
-                      {testimonial.linkedin && (
-                        <LinkedInLink 
-                          href={testimonial.linkedin} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          aria-label={`${testimonial.name}'s LinkedIn profile`}
-                        >
-                          <FaLinkedin />
-                        </LinkedInLink>
-                      )}
-                    </TestimonialAuthor>
-                  </FlipCardBack>
-                </FlipCardInner>
-              </FlipCardContainer>
-            ))}
-          </TestimonialsGrid>
-        </TestimonialsWrapper>
-      </TestimonialsContainer>
-    </PageContainer>
+      {/* Impact */}
+      <Section>
+        <Container>
+          <Reveal>
+            <SectionHead>
+              <Eyebrow>Impact Snapshot</Eyebrow>
+              <h2>Selected highlights.</h2>
+            </SectionHead>
+          </Reveal>
+          <Reveal stagger>
+            <HighlightsGrid>
+              {highlights.map((h, i) => (
+                <HCard key={i}>
+                  <div className="idx">{String(i + 1).padStart(2, '0')}</div>
+                  <p>{h}</p>
+                </HCard>
+              ))}
+            </HighlightsGrid>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* Testimonials */}
+      <Section>
+        <Container>
+          <Reveal>
+            <SectionHead>
+              <Eyebrow>Endorsements</Eyebrow>
+              <h2>What people say.</h2>
+            </SectionHead>
+          </Reveal>
+          <Reveal stagger>
+            <TGrid>
+              {testimonials.map((t, i) => (
+                <TCard key={i}>
+                  <div className="quote"><FaQuoteLeft /></div>
+                  <p className="text">{t.text}</p>
+                  <div className="foot">
+                    <div>
+                      <div className="name">{t.name}</div>
+                      <div className="title">{t.title}</div>
+                    </div>
+                    {t.linkedin && (
+                      <a href={t.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${t.name} on LinkedIn`}>
+                        <FaLinkedin />
+                      </a>
+                    )}
+                  </div>
+                </TCard>
+              ))}
+            </TGrid>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* CTA */}
+      <Reveal>
+        <CTA>
+          <Eyebrow style={{ justifyContent: 'center' }}>What's next</Eyebrow>
+          <h2 className="grad-text" style={{ display: 'inline-block' }}>Let's build something.</h2>
+          <p>I'm always open to collaborations in bioinformatics, genomics, and machine learning. Let's talk.</p>
+          <Magnetic strength={0.3}><PrimaryBtn href="#contact" onClick={(e) => go(e, 'contact')}>Say Hello <FaArrowRight /></PrimaryBtn></Magnetic>
+        </CTA>
+      </Reveal>
+    </>
   );
 };
 
