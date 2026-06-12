@@ -2,10 +2,10 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 
 const SEO = ({ title, description, keywords, ogImage }) => {
-  const defaultTitle = 'Arun Boddapati | Bioinformatics Scientist';
-  const defaultDescription = 
-    'Arun Boddapati is a Lead Scientist specializing in bioinformatics, genomics, and machine learning with expertise in developing computational pipelines for analyzing large-scale biological datasets.';
-  const defaultKeywords = 'bioinformatics, genomics, metagenomics, immunology, machine learning, data analysis, computational biology';
+  const defaultTitle = 'Arun Boddapati | AI / ML Data Science Lead';
+  const defaultDescription =
+    'Arun Boddapati is an AI / ML Data Science Lead in translational bioinformatics — building LLM-RAG frameworks, agentic systems, and production-grade pipelines that accelerate target identification and biomarker discovery.';
+  const defaultKeywords = 'AI, machine learning, LLM, agentic AI, RAG, bioinformatics, genomics, multi-omics, proteomics, biomarker discovery, computational biology';
   const defaultOgImage = `${process.env.PUBLIC_URL}/og-image.jpg`;
 
   const seoTitle = title ? `${title} | Arun Boddapati` : defaultTitle;

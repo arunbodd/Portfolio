@@ -2,153 +2,130 @@ import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
   :root {
-    --navy: #0a192f;
-    --light-navy: #112240;
-    --lightest-navy: #233554;
-    --slate: #8892b0;
-    --light-slate: #a8b2d1;
-    --lightest-slate: #ccd6f6;
-    --white: #e6f1ff;
-    --green: #64ffda;
-    --green-tint: rgba(100, 255, 218, 0.1);
-    
-    --font-sans: 'Calibre', 'Inter', 'San Francisco', 'SF Pro Text', -apple-system, system-ui, sans-serif;
-    --font-mono: 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
-    
-    --fz-xxs: 12px;
-    --fz-xs: 13px;
-    --fz-sm: 14px;
-    --fz-md: 16px;
-    --fz-lg: 18px;
-    --fz-xl: 20px;
-    --fz-xxl: 22px;
-    --fz-heading: 32px;
-    
-    --border-radius: 4px;
-    --nav-height: 100px;
-    --nav-scroll-height: 70px;
-    
-    --tab-height: 42px;
-    --tab-width: 120px;
-    
-    --easing: cubic-bezier(0.645, 0.045, 0.355, 1);
-    --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+    /* Static tokens. Color vars (--bg, --aqua, --text…) are injected by the
+       theme-driven GlobalStyle in App.js so they switch with light/dark mode. */
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-display: 'Space Grotesk', 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --maxw: 1360px;
+
+    /* Fallbacks (dark) in case themed style hasn't mounted yet */
+    --bg: #05060b;
+    --surface: #0c0e16;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --aqua: #34e3c8;
+    --indigo: #7c83ff;
+    --text: #e7ecf6;
+    --text-dim: #97a1b8;
+    --text-muted: #5c6479;
+    --grad-from: #34e3c8;
+    --grad-to: #7c83ff;
+    --vignette: rgba(0, 0, 0, 0.55);
   }
+
+  * { box-sizing: border-box; }
 
   html {
-    box-sizing: border-box;
     width: 100%;
-    scroll-behavior: smooth;
+    /* Native smooth-scroll OFF — Lenis owns scrolling */
+    scroll-behavior: auto;
   }
 
-  *,
-  *:before,
-  *:after {
-    box-sizing: inherit;
-  }
-
-  ::selection {
-    background-color: var(--lightest-navy);
-    color: var(--lightest-slate);
-  }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+  .lenis.lenis-stopped { overflow: hidden; }
 
   body {
     margin: 0;
     width: 100%;
-    min-height: 100%;
+    min-height: 100vh;
     overflow-x: hidden;
+    background-color: var(--bg);
+    color: var(--text-dim);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
-    background-color: var(--navy);
-    color: var(--slate);
-    font-family: var(--font-sans);
-    font-size: var(--fz-md);
-    line-height: 1.6;
+    text-rendering: optimizeLegibility;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 0 0 10px 0;
+  /* Subtle film-grain + vignette over everything for depth.
+     No blend-mode: a fixed mix-blend layer forces a full recomposite on every
+     scroll frame, which causes jank. Plain low-opacity grain is nearly free. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9989;
+    pointer-events: none;
+    background: radial-gradient(120% 120% at 50% 0%, transparent 55%, var(--vignette) 100%);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 0.5em 0;
+    font-family: var(--font-display);
     font-weight: 600;
-    color: var(--lightest-slate);
-    line-height: 1.1;
+    color: var(--text);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
   }
 
-  p {
-    margin: 0 0 15px 0;
-  }
+  p { margin: 0 0 1rem 0; }
 
   a {
-    display: inline-block;
     text-decoration: none;
-    text-decoration-skip-ink: auto;
     color: inherit;
-    position: relative;
-    transition: var(--transition);
-    cursor: pointer;
-
-    &:hover,
-    &:focus {
-      color: var(--green);
-    }
+    transition: color 0.3s var(--ease);
   }
 
-  button {
-    cursor: pointer;
-    border: 0;
-    border-radius: 0;
-  }
+  button { cursor: pointer; border: 0; background: none; font-family: inherit; }
 
-  ul, ol {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
+  ul, ol { padding: 0; margin: 0; list-style: none; }
+  img { max-width: 100%; vertical-align: middle; }
 
-  img {
-    width: 100%;
-    max-width: 100%;
-    vertical-align: middle;
-  }
+  ::selection { background: rgba(52, 227, 200, 0.25); color: #fff; }
 
-  svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-    vertical-align: middle;
-  }
-
-  /* Scrollbar Styles */
-  ::-webkit-scrollbar {
-    width: 12px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--navy);
-  }
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb {
-    background-color: var(--lightest-navy);
-    border: 3px solid var(--navy);
+    background: linear-gradient(var(--aqua), var(--indigo));
     border-radius: 10px;
+    border: 2px solid var(--bg);
   }
 
-  /* Fade In Animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* Theme-aware gradient text (darkens in light mode for contrast) */
+  .grad-text {
+    background: linear-gradient(120deg, var(--grad-from), var(--grad-to));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  .fadeIn {
-    animation: fadeIn 0.5s ease forwards;
+  /* Fixed bright gradient — used on the always-dark hero stage */
+  .grad-bright {
+    background: linear-gradient(120deg, #34e3c8, #7c83ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
 `;
 

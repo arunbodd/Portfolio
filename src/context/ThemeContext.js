@@ -1,62 +1,68 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { darkTheme, lightTheme, getTheme } from '../styles/theme';
 
-// Define theme colors
-export const darkTheme = {
-  background: '#121212',      // Dark gray background
-  lightNavy: '#1e1e1e',       // Slightly lighter gray
-  navy: '#2d2d2d',            // Medium gray
-  highlight: '#00ff41',       // Bright Matrix green for primary highlights
-  textSlate: '#b0b0b0',       // Neutral gray text
-  textLightSlate: '#e0e0e0',  // Light gray text
-  textWhite: '#ffffff',       // White text
-  navBackground: '#121212',   // Same as background
-  cardBackground: '#1e1e1e',  // Same as lightNavy
-  highlightTint: 'rgba(0, 255, 65, 0.15)', // Matrix green with transparency for hover effects
-  accentRed: '#ff3e3e',       // Vibrant red for secondary accents
-};
+export { darkTheme, lightTheme };
 
-export const lightTheme = {
-  background: '#ffffff',
-  lightNavy: '#f5f5f5',
-  navy: '#e6e6e6',
-  highlight: '#007acc',
-  textSlate: '#333333',
-  textLightSlate: '#222222',
-  textWhite: '#000000',
-  navBackground: '#ffffff',
-  cardBackground: '#ffffff',
-  highlightTint: 'rgba(0, 122, 204, 0.1)',
-};
-
-export const ThemeContext = createContext();
+export const ThemeContext = createContext({
+  mode: 'dark',
+  theme: darkTheme,
+  currentTheme: darkTheme,
+  isDark: true,
+  toggleTheme: () => {},
+});
 
 export const ThemeProvider = ({ children }) => {
-  // Check for saved theme preference in localStorage or default to dark
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    console.log('Theme retrieved from localStorage:', savedTheme);
-    return savedTheme || 'dark'; // Use saved theme if available, otherwise default to dark
+  const [mode, setMode] = useState(() => {
+    try {
+      return localStorage.getItem('theme-mode') || 'dark';
+    } catch {
+      return 'dark';
+    }
   });
 
-  // Set theme in localStorage when it changes
   useEffect(() => {
-    console.log('Saving theme to localStorage:', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    try {
+      localStorage.setItem('theme-mode', mode);
+    } catch {
+      /* ignore */
+    }
+    const t = getTheme(mode);
+    const root = document.documentElement;
+    root.setAttribute('data-theme', mode);
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    console.log('Toggling theme from', theme, 'to', newTheme);
-    setTheme(newTheme);
-  };
+    // Set CSS custom properties inline on <html> — inline styles win over any
+    // stylesheet :root rule, so the whole palette switches reliably.
+    const vars = {
+      '--bg': t.background,
+      '--surface': t.lightNavy,
+      '--surface-2': t.navy,
+      '--border': t.border,
+      '--border-strong': t.borderStrong,
+      '--aqua': t.highlight,
+      '--indigo': t.accent2,
+      '--magenta': t.accent3,
+      '--text': t.textLightSlate,
+      '--text-dim': t.textSlate,
+      '--text-muted': t.textMuted,
+      '--grad-from': t.gradFrom,
+      '--grad-to': t.gradTo,
+      '--vignette': t.vignette,
+    };
+    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
 
-  // Add highlightTint to darkTheme if not present
-  const currentTheme = theme === 'dark' 
-    ? darkTheme 
-    : lightTheme;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', mode === 'light' ? '#f6f8fc' : '#05060b');
+  }, [mode]);
+
+  const toggleTheme = () => setMode((m) => (m === 'dark' ? 'light' : 'dark'));
+
+  const currentTheme = getTheme(mode);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, currentTheme }}>
+    <ThemeContext.Provider
+      value={{ mode, theme: currentTheme, currentTheme, isDark: mode === 'dark', toggleTheme }}
+    >
       {children}
     </ThemeContext.Provider>
   );

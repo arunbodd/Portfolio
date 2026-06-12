@@ -1,264 +1,351 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { FaEnvelope, FaLinkedin, FaGithub, FaFileAlt, FaQrcode } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
+import { FaEnvelope, FaLinkedin, FaGithub, FaQrcode, FaArrowRight, FaCalendarAlt, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { IoLocationOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
+import Reveal from '../components/anim/Reveal';
+import Magnetic from '../components/anim/Magnetic';
+import { Section, Container, Eyebrow } from '../components/ui';
+import { EMAILJS, isEmailConfigured, CALENDLY_URL, CONTACT_EMAIL } from '../config';
 
-const ContactContainer = styled.div`
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textSlate};
-  padding: 60px calc((100vw - 1200px) / 2);
-  min-height: 70vh;
-  display: flex;
-  align-items: center;
-  
-  @media screen and (max-width: 768px) {
-    padding: 60px 24px;
-  }
+const Head = styled.div`
+  max-width: 760px;
+  margin: 0 auto 60px;
+  text-align: center;
 `;
 
-const ContactWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: 1200px;
+const Big = styled.h1`
+  font-size: clamp(2.8rem, 8vw, 5.5rem);
+  font-weight: 700;
+  color: ${(p) => p.theme.textWhite};
+  margin: 18px 0 22px;
+  line-height: 1;
+`;
+
+const Lead = styled.p`
+  font-size: clamp(1.05rem, 2vw, 1.22rem);
+  color: ${(p) => p.theme.textSlate};
+  max-width: 600px;
   margin: 0 auto;
-  width: 100%;
+  line-height: 1.7;
 `;
 
-const SectionTitle = styled.h2`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 32px;
-  margin-bottom: 40px;
-  position: relative;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 70px;
-    height: 3px;
-    background: ${props => props.theme.highlight};
+const Layout = styled.div`
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: start;
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+`;
+
+const Panel = styled.div`
+  background: ${(p) => p.theme.lightNavy};
+  border: 1px solid var(--border);
+  border-radius: ${(p) => p.theme.borderRadius};
+  padding: 34px;
+  @media (max-width: 560px) { padding: 24px; }
+`;
+
+const PanelTitle = styled.h2`
+  font-size: 1.4rem;
+  color: ${(p) => p.theme.textLightSlate};
+  margin-bottom: 6px;
+`;
+
+const PanelSub = styled.p`
+  font-size: 0.92rem;
+  color: ${(p) => p.theme.textSlate};
+  margin-bottom: 26px;
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+`;
+
+const Field = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-family: ${(p) => p.theme.fontMono};
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: ${(p) => p.theme.textSlate};
+
+  input, textarea {
+    font-family: ${(p) => p.theme.font};
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: ${(p) => p.theme.textLightSlate};
+    background: ${(p) => p.theme.navy};
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+    transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    width: 100%;
+    resize: vertical;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: ${(p) => p.theme.highlight};
+    box-shadow: 0 0 0 3px ${(p) => p.theme.highlightTint};
+  }
+  input::placeholder, textarea::placeholder { color: ${(p) => p.theme.textMuted}; }
+`;
+
+const SubmitBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 28px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #05060b;
+  background: ${(p) => p.theme.gradient};
+  box-shadow: 0 12px 36px -14px rgba(52, 227, 200, 0.5);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), opacity 0.3s var(--ease);
+  svg { transition: transform 0.3s var(--ease); }
+  &:hover:not(:disabled) svg { transform: translateX(4px); }
+  &:disabled { opacity: 0.6; cursor: progress; }
+`;
+
+const Status = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: ${(p) => (p.$kind === 'error' ? 'rgba(224,66,138,0.12)' : p.theme.highlightTint)};
+  color: ${(p) => (p.$kind === 'error' ? p.theme.accent3 : p.theme.highlight)};
+  border: 1px solid ${(p) => (p.$kind === 'error' ? 'rgba(224,66,138,0.3)' : 'var(--border)')};
+`;
+
+const Note = styled.p`
+  font-size: 0.78rem;
+  color: ${(p) => p.theme.textMuted};
+  margin: 14px 0 0;
+`;
+
+const CalCard = styled(Panel)`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  .cal-ic {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px;
+    background: ${(p) => p.theme.highlightTint};
+    color: ${(p) => p.theme.highlight};
+    font-size: 1.4rem;
+    margin-bottom: 6px;
   }
 `;
 
-const ContactContent = styled.div`
-  display: flex;
-  flex-direction: column;
+const BookBtn = styled.button`
+  display: inline-flex;
   align-items: center;
-  text-align: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  /* Filled gradient with dark text — high contrast in both light and dark. */
+  color: #05060b;
+  background: ${(p) => p.theme.gradient};
+  border: none;
+  box-shadow: 0 10px 30px -12px rgba(52, 227, 200, 0.5);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), filter 0.3s var(--ease);
+  svg { color: #05060b; }
+  &:hover { transform: translateY(-2px); filter: brightness(1.06); box-shadow: 0 14px 36px -10px rgba(124, 131, 255, 0.55); }
 `;
 
-const ContactText = styled.p`
-  font-size: 20px;
-  line-height: 1.6;
-  margin-bottom: 40px;
-  max-width: 800px;
-  text-align: center;
-`;
-
-const ContactGrid = styled.div`
+const Tiles = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 30px;
-  width: 100%;
-  max-width: 800px;
-  
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  gap: 12px;
+  margin-top: 8px;
+  @media (max-width: 560px) { grid-template-columns: 1fr; }
 `;
 
-// Flip Card Container
-const FlipCardContainer = styled.div`
-  background-color: transparent;
-  perspective: 1000px;
-  height: 150px;
-  cursor: pointer;
-`;
-
-// Inner container that will be flipped
-const FlipCardInner = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  
-  ${FlipCardContainer}:hover & {
-    transform: rotateY(180deg);
-  }
-`;
-
-// Front of card
-const FlipCardFront = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: ${props => props.theme.cardBackground};
-  border-radius: 8px;
+const Tile = styled.a`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  
-  svg {
-    color: ${props => props.theme.highlight};
-    font-size: 50px;
-    margin-bottom: 10px;
-  }
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: ${(p) => p.theme.navy};
+  border: 1px solid var(--border);
+  color: ${(p) => p.theme.textSlate};
+  transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+  .ic { color: ${(p) => p.theme.highlight}; font-size: 1.15rem; flex-shrink: 0; }
+  .l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-family: ${(p) => p.theme.fontMono}; }
+  .v { font-size: 0.85rem; color: ${(p) => p.theme.textLightSlate}; }
+  &:hover { transform: translateY(-3px); border-color: ${(p) => p.theme.highlight}; }
 `;
 
-const CardLabel = styled.div`
-  margin-top: 10px;
-  color: ${props => props.theme.textLightSlate};
-  font-size: 16px;
-`;
-
-// Back of card
-const FlipCardBack = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: ${props => props.theme.highlightAlt || props.theme.cardBackground};
-  color: ${props => props.theme.textLightSlate};
-  transform: rotateY(180deg);
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
-`;
-
-const ContactLink = styled.a`
-  color: ${props => props.theme.textLightSlate};
-  text-decoration: none;
-  font-size: 18px;
-  transition: color 0.3s ease;
-  word-break: break-word;
-  
-  &:hover {
-    color: ${props => props.theme.highlight};
-  }
-`;
-
-const ContactInfo = styled.span`
-  color: ${props => props.theme.textLightSlate};
-  font-size: 18px;
-`;
+const tiles = [
+  { icon: <FaEnvelope />, label: 'Email', val: 'arunbodd@outlook.com', href: `mailto:${CONTACT_EMAIL}` },
+  { icon: <FaLinkedin />, label: 'LinkedIn', val: 'in/arunbodd', href: 'https://linkedin.com/in/arunbodd', ext: true },
+  { icon: <FaGithub />, label: 'GitHub', val: 'github.com/arunbodd', href: 'https://github.com/arunbodd', ext: true },
+  { icon: <IoLocationOutline />, label: 'Location', val: 'Atlanta, GA', href: null },
+  { icon: <FaQrcode />, label: 'QR Code', val: 'Share portfolio', to: '/qrcode' },
+];
 
 const Contact = () => {
+  const formRef = useRef(null);
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+  const configured = isEmailConfigured();
+
+  // Load the Calendly popup widget assets once.
+  useEffect(() => {
+    if (document.getElementById('calendly-widget-js')) return;
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://assets.calendly.com/assets/external/widget.css';
+    document.head.appendChild(css);
+    const js = document.createElement('script');
+    js.id = 'calendly-widget-js';
+    js.src = 'https://assets.calendly.com/assets/external/widget.js';
+    js.async = true;
+    document.body.appendChild(js);
+  }, []);
+
+  const openCalendly = () => {
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url: CALENDLY_URL });
+    } else {
+      window.open(CALENDLY_URL, '_blank', 'noopener');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData(formRef.current);
+    const name = data.get('from_name');
+    const email = data.get('reply_to');
+    const message = data.get('message');
+
+    if (!configured) {
+      // No EmailJS keys yet → fall back to the visitor's mail client.
+      const subject = encodeURIComponent(`Portfolio contact from ${name || 'a visitor'}`);
+      const body = encodeURIComponent(`${message || ''}\n\n— ${name || ''} (${email || ''})`);
+      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+      return;
+    }
+
+    try {
+      setStatus('sending');
+      await emailjs.sendForm(EMAILJS.serviceId, EMAILJS.templateId, formRef.current, {
+        publicKey: EMAILJS.publicKey,
+      });
+      setStatus('sent');
+      formRef.current.reset();
+    } catch (err) {
+      setStatus('error');
+    }
+  };
+
   return (
-    <ContactContainer id="contact">
-      <ContactWrapper>
-        <SectionTitle>Get In Touch</SectionTitle>
-        
-        <ContactContent>
-          <ContactText>
-            I'm currently open to new opportunities and collaborations in bioinformatics, 
-            genomics, and machine learning. Feel free to reach out if you have a question, 
-            project idea, or just want to connect!
-          </ContactText>
-          
-          <ContactGrid>
-            {/* Email Card */}
-            <FlipCardContainer>
-              <FlipCardInner>
-                <FlipCardFront>
-                  <FaEnvelope />
-                  <CardLabel>Email</CardLabel>
-                </FlipCardFront>
-                <FlipCardBack>
-                  <ContactLink href="mailto:arunbodd@outlook.com">
-                    arunbodd@outlook.com
-                  </ContactLink>
-                </FlipCardBack>
-              </FlipCardInner>
-            </FlipCardContainer>
-            
-            {/* LinkedIn Card */}
-            <FlipCardContainer>
-              <FlipCardInner>
-                <FlipCardFront>
-                  <FaLinkedin />
-                  <CardLabel>LinkedIn</CardLabel>
-                </FlipCardFront>
-                <FlipCardBack>
-                  <ContactLink href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer">
-                    linkedin.com/in/arunbodd
-                  </ContactLink>
-                </FlipCardBack>
-              </FlipCardInner>
-            </FlipCardContainer>
-            
-            {/* GitHub Card */}
-            <FlipCardContainer>
-              <FlipCardInner>
-                <FlipCardFront>
-                  <FaGithub />
-                  <CardLabel>GitHub</CardLabel>
-                </FlipCardFront>
-                <FlipCardBack>
-                  <ContactLink href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer">
-                    github.com/arunbodd
-                  </ContactLink>
-                </FlipCardBack>
-              </FlipCardInner>
-            </FlipCardContainer>
-            
-            {/* Location Card */}
-            <FlipCardContainer>
-              <FlipCardInner>
-                <FlipCardFront>
-                  <IoLocationOutline />
-                  <CardLabel>Location</CardLabel>
-                </FlipCardFront>
-                <FlipCardBack>
-                  <ContactInfo>Atlanta, GA</ContactInfo>
-                </FlipCardBack>
-              </FlipCardInner>
-            </FlipCardContainer>
-            
-            {/* Resume Card */}
-            <FlipCardContainer>
-              <FlipCardInner>
-                <FlipCardFront>
-                  <FaFileAlt />
-                  <CardLabel>Resume</CardLabel>
-                </FlipCardFront>
-                <FlipCardBack>
-                  <ContactLink href={`${process.env.PUBLIC_URL}/resume.pdf`} target="_blank" rel="noopener noreferrer" download="Arun_Boddapati_Resume.pdf">
-                    View My Resume
-                  </ContactLink>
-                </FlipCardBack>
-              </FlipCardInner>
-            </FlipCardContainer>
-            
-            {/* QR Code Card */}
-            <FlipCardContainer>
-              <FlipCardInner>
-                <FlipCardFront>
-                  <FaQrcode />
-                  <CardLabel>QR Code</CardLabel>
-                </FlipCardFront>
-                <FlipCardBack>
-                  <ContactLink as={Link} to="/qrcode">
-                    Share My Portfolio
-                  </ContactLink>
-                </FlipCardBack>
-              </FlipCardInner>
-            </FlipCardContainer>
-          </ContactGrid>
-        </ContactContent>
-      </ContactWrapper>
-    </ContactContainer>
+    <Section id="contact">
+      <Container>
+        <Reveal>
+          <Head>
+            <Eyebrow style={{ justifyContent: 'center' }}>Get in touch</Eyebrow>
+            <Big>Let's talk.</Big>
+            <Lead>
+              Open to opportunities and collaborations in bioinformatics, genomics, and
+              machine learning. Send a message or grab a time on my calendar.
+            </Lead>
+          </Head>
+        </Reveal>
+
+        <Reveal delay={0.1}>
+          <Layout>
+            {/* Message form */}
+            <Panel>
+              <PanelTitle>Send a message</PanelTitle>
+              <PanelSub>I'll get back to you within a couple of days.</PanelSub>
+              <Form ref={formRef} onSubmit={handleSubmit}>
+                <Field>
+                  Name
+                  <input type="text" name="from_name" placeholder="Your name" required />
+                </Field>
+                <Field>
+                  Email
+                  <input type="email" name="reply_to" placeholder="you@example.com" required />
+                </Field>
+                <Field>
+                  Message
+                  <textarea name="message" rows="5" placeholder="Tell me about your project or question…" required />
+                </Field>
+
+                {status === 'sent' && (
+                  <Status><FaCheck /> Thanks — your message is on its way. I'll reply soon.</Status>
+                )}
+                {status === 'error' && (
+                  <Status $kind="error"><FaExclamationTriangle /> Something went wrong. Please email me directly.</Status>
+                )}
+
+                <Magnetic strength={0.25} style={{ alignSelf: 'flex-start' }}>
+                  <SubmitBtn type="submit" disabled={status === 'sending'}>
+                    {status === 'sending' ? 'Sending…' : 'Send message'} <FaArrowRight />
+                  </SubmitBtn>
+                </Magnetic>
+
+                {!configured && (
+                  <Note>
+                    Heads up: EmailJS keys aren't set yet, so this button opens your mail app
+                    instead. Add them in <code>.env</code> to enable in-page sending.
+                  </Note>
+                )}
+              </Form>
+            </Panel>
+
+            {/* Calendly + quick links */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+              <CalCard>
+                <div className="cal-ic"><FaCalendarAlt /></div>
+                <PanelTitle>Book a call</PanelTitle>
+                <PanelSub style={{ marginBottom: 0 }}>
+                  Prefer to talk? Grab a 1:1 slot that works for you.
+                </PanelSub>
+                <BookBtn type="button" onClick={openCalendly}>
+                  <FaCalendarAlt /> Schedule on Calendly
+                </BookBtn>
+              </CalCard>
+
+              <Tiles>
+                {tiles.map((t) => {
+                  const props = t.to
+                    ? { as: Link, to: t.to }
+                    : t.href
+                      ? { href: t.href, ...(t.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+                      : { as: 'div' };
+                  return (
+                    <Tile key={t.label} {...props}>
+                      <span className="ic">{t.icon}</span>
+                      <span>
+                        <span className="l" style={{ display: 'block' }}>{t.label}</span>
+                        <span className="v">{t.val}</span>
+                      </span>
+                    </Tile>
+                  );
+                })}
+              </Tiles>
+            </div>
+          </Layout>
+        </Reveal>
+      </Container>
+    </Section>
   );
 };
 
