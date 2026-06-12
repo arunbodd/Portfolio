@@ -272,7 +272,7 @@ const highlights = [
   'Engineered Lintelligence, an enterprise LLM-RAG framework that automated validation workflows and reduced onboarding cycles by 85%.',
   'Principal architect of Aquascope (v1.0–v3.1) — the national SARS-CoV-2 wastewater surveillance pipeline whose results informed federal pandemic-response policy.',
   'Co-first-authored a scRNA-seq / CITE-seq baricitinib study published in Cell, complementing the FDA Emergency Use Authorization of baricitinib for COVID-19.',
-  'Built a deterministic multi-agent orchestrator (CodAIs) for Nextflow pipelines, isolating the LLM layer from a pure-Python engine with strict Pydantic contracts.',
+  'Built a deterministic multi-agent orchestrator (CodArIs) for Nextflow pipelines, isolating the LLM layer from a pure-Python engine with strict Pydantic contracts.',
   'Developed a probabilistic classifier (81% accuracy) accelerating target identification and biomarker discovery in lung-remodeling pathways.',
   'Lead bioinformatician for IMPACC (5,000 patients, 15 centers); built an AWS transcriptomics QC pipeline cutting processing time by 60%.',
   'Deployed 6 production-grade Nextflow modules for national outbreak surveillance (Cyclone), cutting analysis turnaround by 40%.',
