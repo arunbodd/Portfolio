@@ -30,4 +30,7 @@ jobs:
           pip install pymdown-extensions
 
       - name: Deploy
-        run: mkdocs gh-deploy --force
+        run: |
+          git config user.name "arunbodd"
+          git config user.email "arunbodd@outlook.com"
+          mkdocs gh-deploy --force
