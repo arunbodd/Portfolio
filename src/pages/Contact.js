@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import Reveal from '../components/anim/Reveal';
 import Magnetic from '../components/anim/Magnetic';
 import { Section, Container, Eyebrow } from '../components/ui';
-import { EMAILJS, isEmailConfigured, CALENDLY_URL, CONTACT_EMAIL } from '../config';
+import { EMAILJS, isEmailConfigured, CALENDLY_URL, openEmail, buildMailto } from '../config';
 
 const Head = styled.div`
   max-width: 760px;
@@ -193,7 +193,7 @@ const Tile = styled.a`
 `;
 
 const tiles = [
-  { icon: <FaEnvelope />, label: 'Email', val: 'arunbodd@outlook.com', href: `mailto:${CONTACT_EMAIL}` },
+  { icon: <FaEnvelope />, label: 'Email', val: 'Open in mail app', action: 'email' },
   { icon: <FaLinkedin />, label: 'LinkedIn', val: 'in/arunbodd', href: 'https://linkedin.com/in/arunbodd', ext: true },
   { icon: <FaGithub />, label: 'GitHub', val: 'github.com/arunbodd', href: 'https://github.com/arunbodd', ext: true },
   { icon: <IoLocationOutline />, label: 'Location', val: 'Atlanta, GA', href: null },
@@ -238,7 +238,7 @@ const Contact = () => {
       // No EmailJS keys yet → fall back to the visitor's mail client.
       const subject = encodeURIComponent(`Portfolio contact from ${name || 'a visitor'}`);
       const body = encodeURIComponent(`${message || ''}\n\n— ${name || ''} (${email || ''})`);
-      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+      window.location.href = buildMailto(`?subject=${subject}&body=${body}`);
       return;
     }
 
@@ -325,11 +325,13 @@ const Contact = () => {
 
               <Tiles>
                 {tiles.map((t) => {
-                  const props = t.to
-                    ? { as: Link, to: t.to }
-                    : t.href
-                      ? { href: t.href, ...(t.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
-                      : { as: 'div' };
+                  const props = t.action === 'email'
+                    ? { as: 'button', type: 'button', onClick: () => openEmail() }
+                    : t.to
+                      ? { as: Link, to: t.to }
+                      : t.href
+                        ? { href: t.href, ...(t.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+                        : { as: 'div' };
                   return (
                     <Tile key={t.label} {...props}>
                       <span className="ic">{t.icon}</span>

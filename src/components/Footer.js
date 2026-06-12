@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { scrollToSection } from './SmoothScroll';
+import { openEmail } from '../config';
 
 const FooterContainer = styled.footer`
   border-top: 1px solid var(--border);
@@ -57,11 +58,13 @@ const Nav = styled.div`
 const Social = styled.div`
   display: flex;
   gap: 16px;
-  a {
+  a, button {
     width: 42px; height: 42px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 50%;
     border: 1px solid var(--border-strong);
+    background: none;
+    cursor: pointer;
     color: ${(p) => p.theme.textSlate};
     font-size: 1.1rem;
     transition: all 0.3s var(--ease);
@@ -113,7 +116,7 @@ const Footer = () => {
       <Social>
         <a href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><FaGithub /></a>
         <a href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FaLinkedin /></a>
-        <a href="mailto:arunbodd@outlook.com" aria-label="Email"><FaEnvelope /></a>
+        <button type="button" onClick={() => openEmail()} aria-label="Email"><FaEnvelope /></button>
       </Social>
       <Copy>© {new Date().getFullYear()} Arun Boddapati · Built with React, Three.js & GSAP</Copy>
     </Inner>
