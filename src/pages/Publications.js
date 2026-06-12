@@ -1,729 +1,328 @@
-import React, { useState, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
-import { ThemeContext } from '../context/ThemeContext';
-import { FaQuoteLeft } from 'react-icons/fa';
+import { FaExternalLinkAlt, FaStar } from 'react-icons/fa';
+import Reveal from '../components/anim/Reveal';
+import { scrollToSection } from '../components/SmoothScroll';
+import useScholar from '../hooks/useScholar';
+import { Section, Container, PageHeader } from '../components/ui';
 
-const PageContainer = styled.div`
-  background: ${props => props.theme.background};
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const PublicationsContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  color: ${props => props.theme.textSlate};
-  width: 100%;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  color: ${props => props.theme.textLightSlate};
-  position: relative;
-  
-  &:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 80px;
-    height: 4px;
-    background: ${props => props.theme.highlight};
-  }
-`;
-
-const FilterContainer = styled.div`
+const Filters = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin: 2rem 0;
+  gap: 9px;
+  margin-bottom: 44px;
 `;
 
-const FilterButton = styled.button`
-  background: ${props => props.active ? props.theme.highlight : 'transparent'};
-  color: ${props => props.active ? props.theme.navy : props.theme.textLightSlate};
-  border: 1px solid ${props => props.theme.highlight};
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: ${props => props.active ? props.theme.highlight : props.theme.highlightTint};
-    color: ${props => props.active ? props.theme.navy : props.theme.textLightSlate};
-  }
+const Chip = styled.button`
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: ${(p) => (p.$active ? '#05060b' : p.theme.textSlate)};
+  background: ${(p) => (p.$active ? p.theme.gradient : 'transparent')};
+  border: 1px solid ${(p) => (p.$active ? 'transparent' : 'var(--border-strong)')};
+  transition: all 0.3s var(--ease);
+  &:hover { border-color: ${(p) => p.theme.highlight}; color: ${(p) => (p.$active ? '#05060b' : p.theme.textLightSlate)}; }
 `;
 
-const TimelineList = styled.div`
-  margin-top: 3rem;
-  position: relative;
-  &:before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: ${props => props.theme.highlight};
-    transform: translateX(-50%);
-  }
-  
-  @media screen and (max-width: 768px) {
-    &:before {
-      left: 20px;
-      transform: none;
-    }
-  }
-`;
-
-const TimelineItem = styled.div`
-  position: relative;
-  width: 50%;
-  padding: 20px;
-  box-sizing: border-box;
-  margin-bottom: 30px;
-  &:nth-child(odd) {
-    left: 0;
-  }
-  &:nth-child(even) {
-    left: 50%;
-  }
-  &:before {
-    content: attr(data-year);
-    position: absolute;
-    top: 20px;
-    width: 40px;
-    height: 40px;
-    background: ${props => props.theme.highlight};
-    border-radius: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.8rem;
-  }
-  &:nth-child(odd):before {
-    right: -20px;
-  }
-  &:nth-child(even):before {
-    left: -20px;
-  }
-  
-  @media screen and (max-width: 768px) {
-    width: 100%;
-    left: 0 !important;
-    padding-left: 60px;
-    padding-right: 10px;
-    
-    &:before {
-      left: 0 !important;
-      right: auto !important;
-    }
-  }
-`;
-
-const Content = styled.div`
-  background: ${props => props.theme.cardBackground};
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const YearPublications = styled.div`
-  margin-top: 15px;
+/* ── Two-column scrollytelling layout ── */
+const Split = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  grid-gap: 2rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 250px 1fr;
+  gap: 64px;
+  align-items: start;
+  @media (max-width: 920px) { grid-template-columns: 1fr; gap: 0; }
 `;
 
-const YearHeader = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: ${props => props.theme.textLightSlate};
-  
-  &:hover {
-    color: ${props => props.theme.highlight};
-  }
+const Rail = styled.div`
+  position: sticky;
+  top: 110px;
+  @media (max-width: 920px) { display: none; }
 `;
 
-const FlipCardContainer = styled.div`
-  background-color: transparent;
-  perspective: 1000px;
-  height: 250px;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  width: 100%;
-  
-  @media screen and (max-width: 768px) {
-    height: auto;
-    min-height: 200px;
-  }
-`;
-
-const FlipCardInner = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  
-  ${FlipCardContainer}:hover & {
-    transform: rotateY(180deg);
-  }
-`;
-
-const FlipCardFront = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: ${props => props.theme.lightNavy};
-  border-radius: 8px;
+const Summary = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
-  
-  svg {
-    color: ${props => props.theme.highlight};
-    font-size: 40px;
-    margin-bottom: 1rem;
+  gap: 18px;
+  padding-bottom: 28px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid var(--border);
+  .stat .n {
+    font-family: ${(p) => p.theme.fontDisplay};
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    background: ${(p) => p.theme.gradient};
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  
-  &:hover {
-    box-shadow: 0 10px 20px rgba(100, 255, 218, 0.15);
-  }
-  
-  @media screen and (max-width: 768px) {
-    padding: 1rem;
-    
-    svg {
-      font-size: 30px;
-      margin-bottom: 0.5rem;
-    }
-  }
+  .stat .l { font-size: 0.8rem; color: ${(p) => p.theme.textSlate}; margin-top: 4px; }
 `;
 
-const FlipCardBack = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  background: ${props => props.theme.navy};
-  color: ${props => props.theme.textLightSlate};
-  transform: rotateY(180deg);
-  border-radius: 8px;
+const YearNav = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 1.5rem;
-  overflow-y: auto;
+  gap: 2px;
+`;
+
+const YearNavItem = styled.button`
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 0;
   text-align: left;
-  box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
-  
-  &::-webkit-scrollbar {
-    width: 5px;
+  opacity: 0.5;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+  .y { font-family: ${(p) => p.theme.fontDisplay}; font-weight: 700; font-size: 1.05rem; color: ${(p) => p.theme.textLightSlate}; }
+  .c { font-family: ${(p) => p.theme.fontMono}; font-size: 0.72rem; color: ${(p) => p.theme.textMuted}; }
+  &.active {
+    opacity: 1;
+    transform: translateX(4px);
+    .y { background: ${(p) => p.theme.gradient}; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .c { color: ${(p) => p.theme.highlight}; }
   }
-  
-  &::-webkit-scrollbar-track {
-    background: ${props => props.theme.lightNavy};
+  &:hover { opacity: 0.9; }
+`;
+
+const YearGroup = styled.div`
+  margin-bottom: 64px;
+  scroll-margin-top: 100px;
+  &:last-child { margin-bottom: 0; }
+`;
+
+const YearHead = styled.div`
+  position: relative;
+  margin-bottom: 8px;
+  .big {
+    font-family: ${(p) => p.theme.fontDisplay};
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.2px var(--border-strong);
+    letter-spacing: -0.02em;
   }
-  
-  &::-webkit-scrollbar-thumb {
-    background-color: ${props => props.theme.highlight};
-    border-radius: 10px;
+  .count { font-family: ${(p) => p.theme.fontMono}; font-size: 0.8rem; color: ${(p) => p.theme.highlight}; }
+`;
+
+/* ── Publication row — emphasises the citation count ── */
+const PubRow = styled.div`
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 96px;
+  gap: 24px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  transition: padding 0.4s var(--ease);
+
+  &:hover { padding-left: 8px; }
+  &:hover .title { color: ${(p) => p.theme.highlight}; }
+
+  @media (max-width: 560px) { grid-template-columns: 1fr; gap: 12px; }
+
+  .journal {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: ${(p) => p.theme.fontMono};
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: ${(p) => p.theme.accent2};
+    margin-bottom: 10px;
   }
-  
-  @media screen and (max-width: 768px) {
-    padding: 1rem;
+  .cofirst {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-family: ${(p) => p.theme.fontMono};
+    font-size: 0.64rem;
+    letter-spacing: 0.04em;
+    color: ${(p) => p.theme.highlight};
+    background: ${(p) => p.theme.highlightTint};
+    svg { font-size: 0.6rem; }
   }
+  .title { font-size: 1.08rem; line-height: 1.4; color: ${(p) => p.theme.textLightSlate}; font-weight: 600; margin-bottom: 10px; transition: color 0.3s var(--ease); }
+  .authors { font-size: 0.84rem; color: ${(p) => p.theme.textSlate}; line-height: 1.5; }
+  .authors b { color: ${(p) => p.theme.highlight}; }
 `;
 
-const PublicationTitle = styled.h3`
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: ${props => props.theme.textLightSlate};
+const Cite = styled.div`
+  text-align: right;
+  @media (max-width: 560px) { text-align: left; }
+  .n {
+    font-family: ${(p) => p.theme.fontDisplay};
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: ${(p) => (p.$hot ? 'transparent' : p.theme.textLightSlate)};
+    background: ${(p) => (p.$hot ? p.theme.gradient : 'none')};
+    -webkit-background-clip: ${(p) => (p.$hot ? 'text' : 'border-box')};
+    background-clip: ${(p) => (p.$hot ? 'text' : 'border-box')};
+    -webkit-text-fill-color: ${(p) => (p.$hot ? 'transparent' : 'inherit')};
+  }
+  .l { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: ${(p) => p.theme.textMuted}; margin-top: 2px; }
 `;
 
-const PublicationJournal = styled.p`
-  font-style: italic;
-  margin-top: auto;
-  color: ${props => props.theme.highlight};
-  font-size: 1rem;
-`;
-
-const PublicationAuthors = styled.p`
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  color: ${props => props.theme.textSlate};
-  line-height: 1.4;
-`;
-
-const PublicationCitations = styled.span`
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.2rem 0.5rem;
-  background-color: ${props => props.theme.highlight};
-  color: ${props => props.theme.navy};
-  border-radius: 4px;
-  font-size: 0.8rem;
-`;
-
-const PublicationLink = styled.a`
-  color: ${props => props.theme.highlight};
-  text-decoration: none;
-  margin-right: 1rem;
+const Tools = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  
-  &:hover {
-    text-decoration: underline;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  a, button {
+    font-size: 0.8rem;
+    color: ${(p) => p.theme.textSlate};
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s var(--ease);
   }
+  a:hover, button:hover { color: ${(p) => p.theme.highlight}; }
 `;
 
-const AbstractToggle = styled.button`
-  background: transparent;
-  color: ${props => props.theme.highlight};
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 0;
-  text-decoration: underline;
-  margin-top: 0.5rem;
-  
-  &:hover {
-    color: ${props => props.theme.highlightTint};
-  }
+const Abstract = styled.p`
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  padding: 16px;
+  background: ${(p) => p.theme.navy};
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: ${(p) => p.theme.textSlate};
 `;
 
-const Abstract = styled.div`
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: ${props => props.theme.navy};
-  border-radius: 4px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  width: 100%;
-`;
+const publications = [
+  { id: 1, title: 'Tau-typing: a Nextflow pipeline for finding the best phylogenetic markers in the genome for molecular typing of microbial species', authors: 'Matthew H. Seabolt, AK Boddapati, Joshua J. Forstedt, Konstantinos T. Konstantinidis', journal: 'Bioinformatics', year: 2023, citations: 1, link: 'https://academic.oup.com/bioinformatics/article/39/7/btad425/7221034', abstract: 'Tau-typing is an integrated analysis pipeline for identifying genes or genomic segments whose phylogenetic resolving power most closely resembles the genome-wide resolving power of an input collection of genomes using the Kendall Tau rank correlation statistic. Implemented in Nextflow, it enables on-demand, high-resolution molecular typing for pathogen genomics.', category: ['Bioinformatics', 'Metagenomics', 'Nextflow'] },
+  { id: 2, title: 'Experimental Babesia rossi infection induces hemolytic, metabolic, and viral response pathways in the canine host', authors: 'Rachel L. Smith, Amelia Goddard, AK Boddapati, Steven Brooks, Johan P. Schoeman, Justin Lack, Andrew Leisewitz, Hans Ackerman', journal: 'BMC Genomics', year: 2021, citations: 10, link: 'https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-021-07889-4', abstract: 'Babesia rossi is a leading cause of morbidity and mortality among the canine population of sub-Saharan Africa. This study examined the transcriptional response of the canine host to experimental B. rossi infection, identifying pathways involved in hemolysis, metabolic changes, and viral response.', category: ['Bioinformatics', 'Immunology'] },
+  { id: 3, title: 'Baricitinib treatment resolves lower-airway macrophage inflammation and neutrophil recruitment in SARS-CoV-2-infected rhesus macaques', authors: 'Hoang TN, Pino M, AK Boddapati, et al.', journal: 'Cell', year: 2021, category: ['Bioinformatics', 'Covid'], citations: 213, cofirst: true, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:2osOgNQ5qMEC', abstract: 'SARS-CoV-2-induced hypercytokinemia and inflammation are critically associated with COVID-19 severity. We investigated baricitinib, a JAK1/JAK2 inhibitor, in a rhesus macaque model. Treated animals showed reduced inflammation, decreased lung infiltration, reduced NETosis, and potent suppression of lung macrophage cytokine production responsible for neutrophil recruitment — supporting baricitinib as a frontline treatment for SARS-CoV-2-induced inflammation.' },
+  { id: 4, title: 'Shared transcriptional profiles of atypical B cells suggest common drivers of expansion and function in malaria, HIV, and autoimmunity', authors: 'Prasida Holla, Brian Dizon, Abhijit A. Ambegaonkar, Noga Rogel, Ella Goldschmidt, AK Boddapati, et al.', journal: 'Science Advances', year: 2021, category: ['Bioinformatics', 'Immunology'], citations: 123, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:zYLM7Y9cAGgC', abstract: 'Using unbiased single-cell RNA sequencing, we characterized heterogeneity in naïve, classical memory, and atypical B cells (ABCs). We showed remarkably similar transcriptional profiles for ABC clusters in malaria, HIV, and autoimmune diseases, suggesting ABCs represent a separate B cell lineage with a common inducer that diversifies into disease-specific functions.' },
+  { id: 5, title: 'A modified vaccinia Ankara vector-based vaccine protects macaques from SARS-CoV-2 infection, immune pathology, and dysfunction in the lungs', authors: 'Routhu NK, Cheedarla N, AK Boddapati, et al.', journal: 'Immunity', year: 2021, category: ['Bioinformatics', 'Covid', 'Vaccine Research', 'Immunology'], citations: 91, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:qjMakFHDy7sC', abstract: 'MVA vectors expressing membrane-anchored pre-fusion stabilized spike (MVA/S) induced strong neutralizing antibodies and CD8+ T cell responses in macaques and conferred protection from SARS-CoV-2 as early as day 2 post-challenge. scRNA-seq showed MVA/S also protected against infection-induced inflammation and B cell abnormalities.' },
+  { id: 6, title: 'Human plasma-like medium improves T lymphocyte activation', authors: 'Michael A Leney-Greene, AK Boddapati, et al.', journal: 'iScience', year: 2020, category: ['Bioinformatics', 'Immunology', 'Immunological methods'], citations: 53, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:u-x6o8ySG0sC', abstract: 'Relative to RPMI, a physiologic medium (human plasma-like medium; HPLM) induced markedly different transcriptional responses in human primary T cells and improved their activation upon antigen stimulation — an effect linked to the six-fold higher Ca2+ in HPLM. Medium composition can profoundly affect experimental results.' },
+  { id: 7, title: 'Features of acute COVID-19 associated with post-acute sequelae of SARS-CoV-2 phenotypes: results from the IMPACC study', authors: 'Al Ozonoff, Naresh Doni Jayavelu, S Liu, E Melamed, CE Milliren, J Qi, LN Geng, AK Boddapati, IMPACC Network, et al.', journal: 'Nature Communications', year: 2024, category: ['Bioinformatics', 'Covid'], citations: 41, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:ULOm3_A8WrAC', abstract: 'We describe patient-reported outcomes on 590 participants from hospital admission through one year after discharge. Modeling identified 4 PRO clusters (minimal, physical, mental/cognitive, multidomain) supporting heterogeneous PASC presentations, with acute-phase viral burden and antibody titers associated with the more severe clusters.' },
+  { id: 8, title: 'Multi-omic longitudinal study reveals immune correlates of clinical course among hospitalized COVID-19 patients', authors: 'Joann Diray-Arce, Slim Fourati, Naresh Doni Jayavelu, R Patel, C Maguire, AC Chang, AK Boddapati, IMPACC Network, et al.', journal: 'Cell Reports Medicine', year: 2023, category: ['Bioinformatics', 'Covid'], citations: 37, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:MXK_kJrjxJIC', abstract: 'Profiling >15,000 longitudinal blood and nasal samples from 540 IMPACC participants using 14 assays, we identified cellular and molecular signatures present within 72h of admission that distinguish moderate from severe and fatal COVID-19, and that further distinguish recovery from fatal outcomes.' },
+  { id: 9, title: 'TREM2+ and interstitial-like macrophages orchestrate airway inflammation in SARS-CoV-2 infection in rhesus macaques', authors: 'Amit A Upadhyay, Elise G Viox, Timothy N Hoang, AK Boddapati, et al.', journal: 'Nature Immunology', year: 2022, category: ['Bioinformatics', 'Covid'], citations: 26, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:8k81kl-MbHgC', abstract: 'Single-cell analysis of the SARS-CoV-2 infected rhesus macaque airway identified TREM2+ and interstitial-like macrophage populations that orchestrate airway inflammation, providing insight into the cellular drivers of severe respiratory disease.' },
+  { id: 10, title: 'Correlation Between TIGIT Expression on CD8+ T Cells and Higher Cytotoxic Capacity', authors: 'Jana Blazkova, Erin D Huiting, AK Boddapati, et al.', journal: 'Journal of Immunology', year: 2022, category: ['Bioinformatics', 'HIV Research', 'Immunology'], citations: 23, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:IjCSPb-OGe4C', abstract: 'Frequencies of TIGIT but not PD-1 were positively correlated with CD8+ T-lymphocyte cytotoxic activity in HIV-aviremic and healthy individuals. Transcriptome analyses showed up-regulation of antiviral genes in TIGIT+ CD8+ T cells, suggesting TIGIT+ cells maintain intrinsic cytotoxicity rather than representing exhaustion.' },
+  { id: 11, title: 'Modulation of type I interferon responses potently inhibits SARS-CoV-2 replication and inflammation in rhesus macaques', authors: 'Elise G Viox, Timothy N Hoang, Amit A Upadhyay, R Nchioua, M Hirschenberger, Z Strongin, GK Tharp, M Pino, AK Boddapati, et al.', journal: 'Science Immunology', year: 2023, category: ['Bioinformatics', 'Covid'], citations: 21, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:kNdYIx-mwKoC', abstract: 'Using a mutated IFN-α2 (IFNmod) to modulate type I IFN signaling, we found IFNmod potently reduced SARS-CoV-2 viral loads in vitro and in vivo and reduced inflammatory cytokines and macrophages — showing that while early IFN-I restrains replication, uncontrolled IFN-I signaling drives pathogenesis.' },
+  { id: 12, title: 'Early B cell factor 4 modulates FAS-mediated apoptosis and promotes cytotoxic function in human immune cells', authors: 'Satoshi Kubo, Rhea Kataria, Yikun Yao, Justin Q Gabrielski, Lixin Zheng, Tovah E Markowitz, Waipan Chan, Jian Song, AK Boddapati, et al.', journal: 'PNAS', year: 2022, category: ['Bioinformatics', 'Immunology'], citations: 12, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:Se3iqnhoufwC', abstract: 'We identified EBF4 in a whole-genome CRISPR screen for regulators of Fas-mediated T cell death. EBF4 regulates molecules important for NK and CD8+ T cell function, and ATAC-seq showed increased chromatin accessibility upstream of granzyme and perforin — revealing a previously unknown regulator of human cytotoxic immune function.' },
+  { id: 13, title: 'Differential expression of Triggering Receptor Expressed on Myeloid cells 2 (Trem2) in tissue eosinophils', authors: 'AC Sek, CM Percopo, AK Boddapati, M Ma, WE Geslewitz, JO Krumholz, et al.', journal: 'Journal of Leukocyte Biology', year: 2021, category: ['Bioinformatics', 'Immunology'], citations: 5, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:9yKSN-GCB0IC', abstract: 'TREM2 is a transmembrane glycoprotein with crucial roles in phagocytosis, survival, and activation of myeloid cells. We investigated TREM2 expression in tissue eosinophils and its potential functional significance in eosinophil biology.' },
+  { id: 14, title: 'Relationship of Heterologous Virus Responses and Outcomes in Hospitalized COVID-19 Patients', authors: 'Y Rosenberg-Hasson, TH Holmes, J Diray-Arce, J Chen, R Kellogg, AK Boddapati, et al.', journal: 'The Journal of Immunology', year: 2023, category: ['Bioinformatics', 'Covid'], citations: 2, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:Zph67rFs4hoC', abstract: 'We investigated the relationship between heterologous (cross-reactive) virus responses and clinical outcomes in hospitalized COVID-19 patients from the IMPACC study, exploring how prior immunity may influence disease course.' },
+  { id: 15, title: 'Host-Microbe Multiomic Profiling Reveals Age-Dependent COVID-19 Immunopathology', authors: 'H Van Phan, A Tsitsiklis, CP Maguire, EK Haddad, PM Becker, AK Boddapati, et al.', journal: 'medRxiv', year: 2024, category: ['Bioinformatics', 'Covid'], citations: 0, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:_kc_bZDykSQC', abstract: 'We performed comprehensive multiomic profiling — host transcriptomics, proteomics, metabolomics, and microbiome — on hospitalized COVID-19 patients across age groups to identify age-dependent immunopathological mechanisms underlying severe disease.' },
+  { id: 16, title: 'Detection and Tracking of SARS-CoV-2 Lineages through National Wastewater Surveillance System Pathogen Genomics', authors: 'DJ Feistel, R Welsh, J Mercante, M Mark-Carew, J Caravas, AK Boddapati, et al.', journal: 'Emerging Infectious Diseases', year: 2025, category: ['Bioinformatics', 'Covid', 'Surveillance', 'Nextflow', 'Metagenomics'], citations: 0, link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:aqlVkmm33-oC', abstract: 'We developed and implemented pathogen genomics approaches within the National Wastewater Surveillance System to detect and track SARS-CoV-2 lineages across the United States, providing insight into viral evolution and transmission patterns.' },
+  { id: 18, title: 'Targeted plasma proteomics uncover novel proteins associated with KIF5A-linked SPG10 and ALS spectrum disorders', authors: 'J Dulski, AK Boddapati, B Risi, P Iruzubieta, A Orlacchio, et al.', journal: 'HGG Advances', year: 2026, category: ['Bioinformatics', 'Proteomics', 'Neurology'], citations: 0, cofirst: true, link: 'https://www.cell.com/hgg-advances/fulltext/S2666-2477(25)00101-0', abstract: 'Mutations in KIF5A cause hereditary spastic paraplegia type 10 (SPG10) and are associated with ALS. We performed targeted plasma proteomics to identify novel protein biomarkers and pathways associated with KIF5A-linked neurological disorders, providing insight into disease mechanisms and potential therapeutic targets.' },
+];
 
-const NoResults = styled.p`
-  text-align: center;
-  font-size: 1.2rem;
-  margin-top: 2rem;
-  color: ${props => props.theme.textSlate};
-`;
+const filters = ['all', 'Covid', 'Immunology', 'HIV Research', 'Vaccine Research', 'Bioinformatics', 'Metagenomics', 'Nextflow', 'Surveillance', 'Proteomics', 'Neurology'];
+const labelMap = { all: 'All', Covid: 'COVID-19' };
 
 const Publications = () => {
   const [filter, setFilter] = useState('all');
-  const [expandedAbstracts, setExpandedAbstracts] = useState({});
-  const [expandedYears, setExpandedYears] = useState({});
-  const [publications] = useState([
-    {
-      id: 1,
-      title: "Tau-typing: a Nextflow pipeline for finding the best phylogenetic markers in the genome for molecular typing of microbial species",
-      authors: "Matthew H. Seabolt, AK Boddapati, Joshua J. Forstedt, Konstantinos T. Konstantinidis",
-      journal: "Bioinformatics",
-      year: 2023,
-      citations: 1,
-      link: "https://academic.oup.com/bioinformatics/article/39/7/btad425/7221034",
-      abstract: "Tau-typing is an integrated analysis pipeline for identifying genes or genomic segments whose phylogenetic resolving power most closely resembles the genome-wide resolving power of an input collection of genomes using the Kendall Tau rank correlation statistic. The pipeline is implemented in Nextflow and enables on-demand, high-resolution molecular typing for pathogen genomics.",
-      category: ["Bioinformatics", "Metagenomics", "Nextflow"],
-      doi: "10.1093/bioinformatics/btad425"
-    },
-    {
-      id: 2,
-      title: "Experimental Babesia rossi infection induces hemolytic, metabolic, and viral response pathways in the canine host",
-      authors: "Rachel L. Smith, Amelia Goddard, AK Boddapati, Steven Brooks, Johan P. Schoeman, Justin Lack, Andrew Leisewitz, Hans Ackerman",
-      journal: "BMC Genomics",
-      year: 2021,
-      citations: 10,
-      link: "https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-021-07889-4",
-      abstract: "Babesia rossi is a leading cause of morbidity and mortality among the canine population of sub-Saharan Africa. This study examined the transcriptional response of the canine host to experimental B. rossi infection, identifying genes and pathways involved in response to hemolysis, metabolic changes, and viral response pathways in the canine host.",
-      category: ["Bioinformatics", "Immunology"],
-      doi: "10.1186/s12864-021-07889-4"
-    },
-    {
-      id: 3,
-      title: 'Baricitinib treatment resolves lower-airway macrophage inflammation and neutrophil recruitment in SARS-CoV-2-infected rhesus macaques',
-      authors: 'Hoang TN, Pino M, AK Boddapati, et al.',
-      journal: 'Cell',
-      year: 2021,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 213,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:2osOgNQ5qMEC',
-      abstract: 'SARS-CoV-2-induced hypercytokinemia and inflammation are critically associated with COVID-19 severity. Baricitinib, a clinically approved JAK1/JAK2 inhibitor, is currently being investigated in COVID-19 clinical trials. Here, we investigated the immunologic and virologic efficacy of baricitinib in a rhesus macaque model of SARS-CoV-2 infection. Viral shedding measured from nasal and throat swabs, bronchoalveolar lavages, and tissues was not reduced with baricitinib. Type I interferon (IFN) antiviral responses and SARS-CoV-2-specific T cell responses remained similar between the two groups. Animals treated with baricitinib showed reduced inflammation, decreased lung infiltration of inflammatory cells, reduced NETosis activity, and more limited lung pathology. Importantly, baricitinib-treated animals had a rapid and remarkably potent suppression of lung macrophage production of cytokines and chemokines responsible for inflammation and neutrophil recruitment. These data support a beneficial role for, and elucidate the immunological mechanisms underlying, the use of baricitinib as a frontline treatment for inflammation induced by SARS-CoV-2 infection.',
-      doi: "10.1016/j.cell.2021.04.027"
-    },
-    {
-      id: 4,
-      title: 'Shared transcriptional profiles of atypical B cells suggest common drivers of expansion and function in malaria, HIV, and autoimmunity',
-      authors: 'Prasida Holla, Brian Dizon, Abhijit A. Ambegaonkar, Noga Rogel, Ella Goldschmidt, AK Boddapati, et al.',
-      journal: 'Science Advances',
-      year: 2021,
-      category: ['Bioinformatics', 'Immunology'],
-      citations: 123,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:zYLM7Y9cAGgC',
-      abstract: 'Chronic infectious diseases have a substantial impact on the human B cell compartment including a notable expansion of B cells here termed atypical B cells (ABCs). Using unbiased single-cell RNA sequencing (scRNA-seq), we uncovered and characterized heterogeneities in naïve B cell, classical memory B cells, and ABC subsets. We showed remarkably similar transcriptional profiles for ABC clusters in malaria, HIV, and autoimmune diseases and demonstrated that interferon-γ drove the expansion of ABCs in malaria. These observations suggest that ABCs represent a separate B cell lineage with a common inducer that further diversifies and acquires disease-specific characteristics and functions. In malaria, we identified ABC subsets based on isotype expression that differed in expansion in African children and in B cell receptor repertoire characteristics. Of particular interest, IgD+IgMlo and IgD−IgG+ ABCs acquired a high antigen affinity threshold for activation, suggesting that ABCs may limit autoimmune responses to low-affinity self-antigens in chronic malaria.',
-      doi: "10.1126/sciadv.abf6733"
-    },
-    {
-      id: 5,
-      title: 'A modified vaccinia Ankara vector-based vaccine protects macaques from SARS-CoV-2 infection, immune pathology, and dysfunction in the lungs',
-      authors: 'Routhu NK, Cheedarla N, AK Boddapati, et al.',
-      journal: 'Immunity',
-      year: 2021,
-      category: ['Bioinformatics', 'Covid', 'Vaccine Research', 'Immunology'],
-      citations: 91,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:qjMakFHDy7sC',
-      abstract: 'A combination of vaccination approaches will likely be necessary to fully control the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) pandemic. Here, we show that modified vaccinia Ankara (MVA) vectors expressing membrane-anchored pre-fusion stabilized spike (MVA/S) but not secreted S1 induced strong neutralizing antibody responses against SARS-CoV-2 in mice. In macaques, the MVA/S vaccination induced strong neutralizing antibodies and CD8+ T cell responses, and conferred protection from SARS-CoV-2 infection and virus replication in the lungs as early as day 2 following intranasal and intratracheal challenge. Single-cell RNA sequencing analysis of lung cells on day 4 after infection revealed that MVA/S vaccination also protected macaques from infection-induced inflammation and B cell abnormalities and lowered induction of interferon-stimulated genes. These results demonstrate that MVA/S vaccination induces neutralizing antibodies and CD8+ T cells in the blood and lungs and is a potential vaccine candidate for SARS-CoV-2.',
-      doi: "10.1016/j.immuni.2021.04.008"
-    },
-    {
-      id: 6,
-      title: 'Human plasma-like medium improves T lymphocyte activation',
-      authors: 'Michael A Leney-Greene, AK Boddapati, et al.',
-      journal: 'iScience',
-      year: 2020,
-      category: ['Bioinformatics', 'Immunology', 'Immunological methods'],
-      citations: 53,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:u-x6o8ySG0sC',
-      abstract: 'T lymphocytes are critical for effective immunity, and the ability to study their behavior in vitro can facilitate major insights into their development, function, and fate. However, the composition of human plasma differs from conventional media, and we hypothesized that such differences could impact immune cell physiology. Here, we showed that relative to the medium typically used to culture lymphocytes (RPMI), a physiologic medium (human plasma-like medium; HPLM) induced markedly different transcriptional responses in human primary T cells and in addition, improved their activation upon antigen stimulation. We found that this medium-dependent effect on T cell activation is linked to Ca2+, which is six-fold higher in HPLM than in RPMI. Thus, a medium that more closely resembles human plasma has striking effects on T cell biology, further demonstrates that medium composition can profoundly affect experimental results, and broadly suggests that physiologic media may offer a valuable way to study cultured immune cells.',
-      doi: "10.1016/j.isci.2020.101926"
-    },
-    {
-      id: 7,
-      title: 'Features of acute COVID-19 associated with post-acute sequelae of SARS-CoV-2 phenotypes: results from the IMPACC study',
-      authors: 'Al Ozonoff, Naresh Doni Jayavelu, S Liu, E Melamed, CE Milliren, J Qi, LN Geng, AK Boddapati, IMPACC Network, et al.',
-      journal: 'Nature Communications',
-      year: 2024,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 41,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:ULOm3_A8WrAC',
-      abstract: 'Post-acute sequelae of SARS-CoV-2 (PASC) is a significant public health concern. We describe Patient Reported Outcomes (PROs) on 590 participants prospectively assessed from hospital admission for COVID-19 through one year after discharge. Modeling identified 4 PRO clusters based on reported deficits (minimal, physical, mental/cognitive, and multidomain), supporting heterogenous clinical presentations in PASC, with sub-phenotypes associated with female sex and distinctive comorbidities. During the acute phase of disease, a higher respiratory SARS-CoV-2 viral burden and lower Receptor Binding Domain and Spike antibody titers were associated with both the physical predominant and the multidomain deficit clusters. A lower frequency of circulating B lymphocytes by mass cytometry (CyTOF) was observed in the multidomain deficit cluster. Circulating fibroblast growth factor 21 (FGF21) was significantly elevated in the mental/cognitive predominant and the multidomain clusters. Future efforts to link PASC to acute anti-viral host responses may help to better target treatment and prevention of PASC.',
-      doi: "10.1038/s41591-023-02231-8"
-    },
-    {
-      id: 8,
-      title: 'Multi-omic longitudinal study reveals immune correlates of clinical course among hospitalized COVID-19 patients',
-      authors: 'Joann Diray-Arce, Slim Fourati, Naresh Doni Jayavelu, R Patel, C Maguire, AC Chang, AK Boddapati, IMPACC Network, et al.',
-      journal: 'Cell Reports Medicine',
-      year: 2023,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 37,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:MXK_kJrjxJIC',
-      abstract: 'The IMPACC cohort, composed of >1,000 hospitalized COVID-19 participants, contains five illness trajectory groups (TGs) during acute infection (first 28 days), ranging from milder (TG1–3) to more severe disease course (TG4) and death (TG5). Here, we report deep immunophenotyping, profiling of >15,000 longitudinal blood and nasal samples from 540 participants of the IMPACC cohort, using 14 distinct assays. These unbiased analyses identify cellular and molecular signatures present within 72 h of hospital admission that distinguish moderate from severe and fatal COVID-19 disease. Importantly, cellular and molecular states also distinguish participants with more severe disease that recover or stabilize within 28 days from those that progress to fatal outcomes (TG4 vs. TG5). Furthermore, our longitudinal design reveals that these biologic states display distinct temporal patterns associated with clinical outcomes. Characterizing host immune responses in relation to heterogeneity in disease course may inform clinical prognosis and opportunities for intervention.',
-      doi: "10.1016/j.cell.2022.07.027"
-    },
-    {
-      id: 9,
-      title: 'TREM2+ and interstitial-like macrophages orchestrate airway inflammation in SARS-CoV-2 infection in rhesus macaques',
-      authors: 'Amit A Upadhyay, Elise G Viox, Timothy N Hoang, AK Boddapati, et al.',
-      journal: 'Nature Immunology',
-      year: 2022,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 26,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:8k81kl-MbHgC',
-      abstract: 'The IMPACC cohort, composed of >1,000 hospitalized COVID-19 participants, contains five illness trajectory groups (TGs) during acute infection (first 28 days), ranging from milder (TG1–3) to more severe disease course (TG4) and death (TG5). Here, we report deep immunophenotyping, profiling of >15,000 longitudinal blood and nasal samples from 540 participants of the IMPACC cohort, using 14 distinct assays. These unbiased analyses identify cellular and molecular signatures present within 72 h of hospital admission that distinguish moderate from severe and fatal COVID-19 disease. Importantly, cellular and molecular states also distinguish participants with more severe disease that recover or stabilize within 28 days from those that progress to fatal outcomes (TG4 vs. TG5). Furthermore, our longitudinal design reveals that these biologic states display distinct temporal patterns associated with clinical outcomes. Characterizing host immune responses in relation to heterogeneity in disease course may inform clinical prognosis and opportunities for intervention.',
-      doi: "10.1038/s41590-022-01314-8"
-    },
-    {
-      id: 10,
-      title: 'Correlation Between TIGIT Expression on CD8+ T Cells and Higher Cytotoxic Capacity',
-      authors: 'Jana Blazkova, Erin D Huiting, AK Boddapati, et al.',
-      journal: 'Journal of Immunology',
-      year: 2022,
-      category: ['Bioinformatics', 'HIV Research', 'Immunology'],
-      citations: 23,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:IjCSPb-OGe4C',
-      abstract: 'Persistent exposure to antigen leads to T-cell exhaustion and immunologic dysfunction. We examined the immune exhaustion markers T cell immunoglobulin and ITIM domain (TIGIT) and programmed cell death protein 1 (PD-1) in human immunodeficiency virus (HIV)–infected and healthy individuals and the relationship with cytotoxic CD8+ T-lymphocyte activity. Frequencies of TIGIT but not PD-1 were positively correlated with CD8+ T-lymphocyte activity in HIV-aviremic and healthy individuals; however, there was no correlation in HIV-viremic individuals. Transcriptome analyses revealed up-regulation of genes associated with antiviral immunity in TIGIT+CD8+ versus TIGIT−CD8+ T cells. Our data suggest that TIGIT+CD8+ T cells do not necessarily represent a state of immune exhaustion and maintain an intrinsic cytotoxicity in HIV-infected individuals.',
-      doi: "10.4049/jimmunol.2200519"
-    },
-    {
-      id: 11,
-      title: 'Modulation of type I interferon responses potently inhibits SARS-CoV-2 replication and inflammation in rhesus macaques',
-      authors: 'Elise G Viox, Timothy N Hoang, Amit A Upadhyay, Rayhane Nchioua, Maximilian Hirschenberger, Zachary Strongin, Gregory K Tharp, Maria Pino, Kevin Nguyen, Justin L Harper, Matthew Gagne, Shir Marciano, AK Boddapati, et al.',
-      journal: 'Science Immunology',
-      year: 2023,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 21,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:kNdYIx-mwKoC',
-      abstract: 'Type I interferons (IFN-I) are critical mediators of innate control of viral infections but also drive the recruitment of inflammatory cells to sites of infection, a key feature of severe coronavirus disease 2019. Here, IFN-I signaling was modulated in rhesus macaques (RMs) before and during acute SARS-CoV-2 (severe acute respiratory syndrome coronavirus 2) infection using a mutated IFN-α2 (IFN-modulator; IFNmod), which has previously been shown to reduce the binding and signaling of endogenous IFN-I. IFNmod treatment in uninfected RMs was observed to induce a modest up-regulation of only antiviral IFN-stimulated genes (ISGs); however, in SARS-CoV-2–infected RMs, IFNmod reduced both antiviral and inflammatory ISGs. IFNmod treatment resulted in a potent reduction in SARS-CoV-2 viral loads both in vitro in Calu-3 cells and in vivo in bronchoalveolar lavage (BAL), upper airways, lung, and hilar lymph nodes of RMs. Furthermore, in SARS-CoV-2–infected RMs, IFNmod treatment potently reduced inflammatory cytokines, chemokines, and CD163+ MRC1− inflammatory macrophages in BAL and expression of Siglec-1 on circulating monocytes. In the lung, IFNmod also reduced pathogenesis and attenuated pathways of inflammasome activation and stress response during acute SARS-CoV-2 infection. Using an intervention targeting both IFN-α and IFN-β pathways, this study shows that, whereas early IFN-I restrains SARS-CoV-2 replication, uncontrolled IFN-I signaling critically contributes to SARS-CoV-2 inflammation and pathogenesis in the moderate disease model of RMs.',
-      doi: "10.1038/s41467-022-32445-1"
-    },
-    {
-      id: 12,
-      title: 'Early B cell factor 4 modulates FAS-mediated apoptosis and promotes cytotoxic function in human immune cells',
-      authors: 'Satoshi Kubo, Rhea Kataria, Yikun Yao, Justin Q Gabrielski, Lixin Zheng, Tovah E Markowitz, Waipan Chan, Jian Song, AK Boddapati, et al.',
-      journal: 'Proceedings of the National Academy of Sciences',
-      year: 2022,
-      category: ['Bioinformatics', 'Immunology'],
-      citations: 12,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:Se3iqnhoufwC',
-      abstract: 'Apoptosis is a genetically regulated program of cell death that plays a key role in immune disease processes. We identified EBF4, a little-studied member of the early B cell factor (EBF) family of transcription factors, in a whole-genome CRISPR screen for regulators of Fas/APO-1/CD95-mediated T cell death. Loss of EBF4 increases the half-life of the c-FLIP protein, and its presence in the Fas signaling complex impairs caspase-8 cleavage and apoptosis. Transcriptome analysis revealed that EBF4 regulates molecules such as TBX21, EOMES, granzyme, and perforin that are important for human natural killer (NK) and CD8+ T cell functions. Proximity-dependent biotin identification (Bio-ID) mass spectrometry analyses showed EBF4 binding to STAT3, STAT5, and MAP kinase 3 and a strong pathway relationship to interleukin-2 regulated genes, which are known to govern cytotoxicity pathways. Chromatin immunoprecipitation and DNA sequencing analysis defined a canonical EBF4 binding motif, 5′-CCCNNGG/AG-3′, closely related to the EBF1 binding site; using a luciferase-based reporter, we found a dose-dependent transcriptional response of this motif to EBF4. We also conducted assay for transposase-accessible chromatin sequencing in EBF4-overexpressing cells and found increased chromatin accessibility upstream of granzyme and perforin and in topologically associated domains in human lymphocytes. Finally, we discovered that the EBF4 has basal expression in human but not mouse NK cells and CD8+ T cells and vanishes following activating stimulation. Together, our data reveal key features of a previously unknown transcriptional regulator of human cytotoxic immune function.',
-      doi: "10.4049/jimmunol.2300104"
-    },
-    {
-      id: 13,
-      title: 'Differential expression of Triggering Receptor Expressed on Myeloid cells 2 (Trem2) in tissue eosinophils',
-      authors: 'AC Sek, CM Percopo, AK Boddapati, M Ma, WE Geslewitz, JO Krumholz, et al.',
-      journal: 'Journal of Leukocyte Biology',
-      year: 2021,
-      category: ['Bioinformatics', 'Immunology'],
-      citations: 5,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:9yKSN-GCB0IC',
-      abstract: 'Triggering receptor expressed on myeloid cells 2 (TREM2) is a transmembrane glycoprotein primarily expressed on microglia, macrophages, and dendritic cells. TREM2 plays crucial roles in phagocytosis, survival, and activation of myeloid cells. In this study, we investigated TREM2 expression in tissue eosinophils and its potential functional significance in eosinophil biology.',
-      doi: "10.1002/JLB.3HI0820-518RR"
-    },
-    {
-      id: 14,
-      title: 'Relationship of Heterologous Virus Responses and Outcomes in Hospitalized COVID-19 Patients',
-      authors: 'Y Rosenberg-Hasson, TH Holmes, J Diray-Arce, J Chen, R Kellogg, AK Boddapati, et al.',
-      journal: 'The Journal of Immunology',
-      year: 2023,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 2,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:Zph67rFs4hoC',
-      abstract: 'Heterologous immunity, the cross-reactive immune responses between different pathogens, may influence COVID-19 disease outcomes. We investigated the relationship between heterologous virus responses and clinical outcomes in hospitalized COVID-19 patients from the IMPACC study.',
-      doi: "10.4049/jimmunol.2300335"
-    },
-    {
-      id: 15,
-      title: 'Host-Microbe Multiomic Profiling Reveals Age-Dependent COVID-19 Immunopathology',
-      authors: 'H Van Phan, A Tsitsiklis, CP Maguire, EK Haddad, PM Becker, AK Boddapati, et al.',
-      journal: 'medRxiv',
-      year: 2024,
-      category: ['Bioinformatics', 'Covid'],
-      citations: 0,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:_kc_bZDykSQC',
-      abstract: 'Age is a major risk factor for severe COVID-19, but the mechanisms underlying age-related disease severity remain incompletely understood. We performed comprehensive multiomic profiling including host transcriptomics, proteomics, metabolomics, and microbiome analysis on hospitalized COVID-19 patients across different age groups to identify age-dependent immunopathological mechanisms.',
-      doi: "10.1101/2024.03.15.24304123"
-    },
-    {
-      id: 16,
-      title: 'Detection and Tracking of SARS-CoV-2 Lineages through National Wastewater Surveillance System Pathogen Genomics',
-      authors: 'DJ Feistel, R Welsh, J Mercante, M Mark-Carew, J Caravas, AK Boddapati, et al.',
-      journal: 'Emerging Infectious Diseases',
-      year: 2025,
-      category: ['Bioinformatics', 'Covid', 'Surveillance', 'Nextflow', 'Metagenomics'],
-      citations: 0,
-      link: 'https://scholar.google.com/citations?view_op=view_citation&hl=en&oe=ASCII&user=ni4A6KgAAAAJ&citation_for_view=ni4A6KgAAAAJ:aqlVkmm33-oC',
-      abstract: 'Wastewater surveillance has emerged as a critical public health tool for monitoring SARS-CoV-2 circulation in communities. We developed and implemented pathogen genomics approaches within the National Wastewater Surveillance System to detect and track SARS-CoV-2 lineages across the United States, providing valuable insights into viral evolution and transmission patterns.',
-      doi: "10.3201/eid3101.241234"
-    },
-    {
-      id: 18,
-      title: 'Targeted plasma proteomics uncover novel proteins associated with KIF5A-linked SPG10 and ALS spectrum disorders',
-      authors: 'J Dulski, AK Boddapati, B Risi, P Iruzubieta, A Orlacchio, et al.',
-      journal: 'HGG Advances',
-      year: 2026,
-      category: ['Bioinformatics', 'Proteomics', 'Neurology'],
-      citations: 0,
-      link: 'https://www.cell.com/hgg-advances/fulltext/S2666-2477(25)00101-0',
-      abstract: 'Mutations in KIF5A cause hereditary spastic paraplegia type 10 (SPG10) and are associated with amyotrophic lateral sclerosis (ALS). We performed targeted plasma proteomics to identify novel protein biomarkers and pathways associated with KIF5A-linked neurological disorders, providing insights into disease mechanisms and potential therapeutic targets.',
-      doi: "10.1016/j.xhgg.2025.100101"
-    }
-  ]);
-  const theme = useContext(ThemeContext).theme;
-  
-  const toggleAbstract = (id) => {
-    setExpandedAbstracts({
-      ...expandedAbstracts,
-      [id]: !expandedAbstracts[id]
-    });
-  };
+  const [open, setOpen] = useState({});
+  const [activeYear, setActiveYear] = useState(null);
+  const groupRefs = useRef({});
+  const scholar = useScholar();
 
-  const toggleYear = (year) => {
-    setExpandedYears({
-      ...expandedYears,
-      [year]: !expandedYears[year]
-    });
-  };
-  
-  const filteredPublications = filter === 'all' 
-    ? publications 
-    : publications.filter(pub => pub.category === filter || (Array.isArray(pub.category) && pub.category.includes(filter)));
-  
-  // Group publications by year
-  const publicationsByYear = useMemo(() => {
-    const grouped = {};
-    
-    filteredPublications.forEach(pub => {
-      if (!grouped[pub.year]) {
-        grouped[pub.year] = [];
-      }
-      grouped[pub.year].push(pub);
-    });
-    
-    // Sort years in descending order
-    return Object.keys(grouped)
+  const filtered = filter === 'all' ? publications : publications.filter((p) => p.category?.includes(filter));
+
+  const byYear = useMemo(() => {
+    const g = {};
+    filtered.forEach((p) => { (g[p.year] = g[p.year] || []).push(p); });
+    return Object.keys(g)
       .sort((a, b) => b - a)
-      .map(year => ({
-        year,
-        publications: grouped[year]
-      }));
-  }, [filteredPublications]);
-  
+      .map((y) => ({ year: y, pubs: g[y].sort((a, b) => b.citations - a.citations) }));
+  }, [filtered]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) setActiveYear(e.target.dataset.year); });
+      },
+      { rootMargin: '-20% 0px -70% 0px', threshold: 0 },
+    );
+    Object.values(groupRefs.current).forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [byYear]);
+
+  const renderAuthors = (a) => ({ __html: a.replace('AK Boddapati', '<b>AK Boddapati</b>') });
+
   return (
-    <PageContainer>
-      <PublicationsContainer>
-        <Title>Publications</Title>
-        
-        <FilterContainer>
-          <FilterButton 
-            active={filter === 'all'} 
-            onClick={() => setFilter('all')}
-          >
-            All
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Covid'} 
-            onClick={() => setFilter('Covid')}
-          >
-            COVID-19
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Immunology'} 
-            onClick={() => setFilter('Immunology')}
-          >
-            Immunology
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'HIV Research'} 
-            onClick={() => setFilter('HIV Research')}
-          >
-            HIV Research
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Vaccine Research'} 
-            onClick={() => setFilter('Vaccine Research')}
-          >
-            Vaccine Research
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Bioinformatics'} 
-            onClick={() => setFilter('Bioinformatics')}
-          >
-            Bioinformatics
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Metagenomics'} 
-            onClick={() => setFilter('Metagenomics')}
-          >
-            Metagenomics
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Nextflow'} 
-            onClick={() => setFilter('Nextflow')}
-          >
-            Nextflow
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Immunological methods'} 
-            onClick={() => setFilter('Immunological methods')}
-          >
-            Immunological Methods
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Surveillance'} 
-            onClick={() => setFilter('Surveillance')}
-          >
-            Surveillance
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Proteomics'} 
-            onClick={() => setFilter('Proteomics')}
-          >
-            Proteomics
-          </FilterButton>
-          <FilterButton 
-            active={filter === 'Neurology'} 
-            onClick={() => setFilter('Neurology')}
-          >
-            Neurology
-          </FilterButton>
-        </FilterContainer>
-        
-        {filteredPublications.length > 0 ? (
-          <TimelineList>
-            {publicationsByYear.map(({ year, publications }) => (
-              <TimelineItem key={year} data-year={year}>
-                <Content>
-                  <YearHeader onClick={() => toggleYear(year)}>
-                    {year} ({publications.length})
-                  </YearHeader>
-                  
-                  {expandedYears[year] !== false && (
-                    <YearPublications>
-                      {publications.map(pub => (
-                        <FlipCardContainer key={pub.id}>
-                          <FlipCardInner>
-                            <FlipCardFront>
-                              <FaQuoteLeft />
-                              <PublicationTitle>{pub.title.length > 70 ? `${pub.title.substring(0, 70)}...` : pub.title}</PublicationTitle>
-                              <PublicationJournal>{pub.journal}</PublicationJournal>
-                            </FlipCardFront>
-                            <FlipCardBack>
-                              <PublicationTitle>{pub.title}</PublicationTitle>
-                              <PublicationAuthors dangerouslySetInnerHTML={{ __html: pub.authors.replace('AK Boddapati', `<span style="font-weight: bold; color: ${theme.highlight}">AK Boddapati</span>`) }} />
-                              <PublicationCitations>{pub.citations} citations</PublicationCitations>
-                              <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', width: '100%' }}>
-                                <PublicationLink href={pub.link} target="_blank" rel="noopener noreferrer">
-                                  View on Google Scholar
-                                </PublicationLink>
-                                <AbstractToggle onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleAbstract(pub.id);
-                                }}>
-                                  {expandedAbstracts[pub.id] ? 'Hide Abstract' : 'Show Abstract'}
-                                </AbstractToggle>
-                                {expandedAbstracts[pub.id] && (
-                                  <Abstract>{pub.abstract}</Abstract>
-                                )}
-                              </div>
-                            </FlipCardBack>
-                          </FlipCardInner>
-                        </FlipCardContainer>
-                      ))}
-                    </YearPublications>
-                  )}
-                </Content>
-              </TimelineItem>
+    <Section id="publications">
+      <Container>
+        <PageHeader index="03" eyebrow="Research" title="Publications" lead="18+ peer-reviewed papers across Cell, Immunity, Nature Immunology, Science Advances, and more — totaling 800+ citations (h-index 11)." />
+
+        <Reveal>
+          <Filters>
+            {filters.map((f) => (
+              <Chip key={f} $active={filter === f} onClick={() => setFilter(f)}>{labelMap[f] || f}</Chip>
             ))}
-          </TimelineList>
-        ) : (
-          <NoResults>No publications found for the selected filter.</NoResults>
-        )}
-      </PublicationsContainer>
-    </PageContainer>
+          </Filters>
+        </Reveal>
+
+        <Split>
+          <Rail>
+            <Summary>
+              <div className="stat"><div className="n">{scholar.documents}+</div><div className="l">Peer-reviewed papers</div></div>
+              <div className="stat"><div className="n">{scholar.citations.toLocaleString()}</div><div className="l">Total citations</div></div>
+              <div className="stat"><div className="n">{scholar.hIndex}</div><div className="l">h-index</div></div>
+            </Summary>
+            <YearNav>
+              {byYear.map(({ year, pubs }) => (
+                <YearNavItem
+                  key={year}
+                  className={activeYear === year ? 'active' : ''}
+                  onClick={() => scrollToSection(`pubyear-${year}`)}
+                >
+                  <span className="y">{year}</span>
+                  <span className="c">{pubs.length}</span>
+                </YearNavItem>
+              ))}
+            </YearNav>
+          </Rail>
+
+          <div>
+            {byYear.map(({ year, pubs }) => (
+              <YearGroup
+                key={year}
+                id={`pubyear-${year}`}
+                data-year={year}
+                ref={(el) => { groupRefs.current[year] = el; }}
+              >
+                <Reveal>
+                  <YearHead>
+                    <div className="big">{year}</div>
+                    <span className="count">{pubs.length} paper{pubs.length > 1 ? 's' : ''}</span>
+                  </YearHead>
+                </Reveal>
+                {pubs.map((p) => (
+                  <Reveal key={p.id}>
+                    <PubRow>
+                      <div>
+                        <span className="journal">{p.journal}{p.cofirst && <span className="cofirst"><FaStar /> Co-first author</span>}</span>
+                        <div className="title">{p.title}</div>
+                        <p className="authors" dangerouslySetInnerHTML={renderAuthors(p.authors)} />
+                        <Tools>
+                          <button onClick={() => setOpen((o) => ({ ...o, [p.id]: !o[p.id] }))}>
+                            {open[p.id] ? 'Hide abstract' : 'Abstract'}
+                          </button>
+                          <a href={p.link} target="_blank" rel="noopener noreferrer">Source <FaExternalLinkAlt style={{ fontSize: '0.7rem' }} /></a>
+                        </Tools>
+                      </div>
+                      <Cite $hot={p.citations >= 50}>
+                        <div className="n">{p.citations}</div>
+                        <div className="l">citation{p.citations === 1 ? '' : 's'}</div>
+                      </Cite>
+                      {open[p.id] && <Abstract>{p.abstract}</Abstract>}
+                    </PubRow>
+                  </Reveal>
+                ))}
+              </YearGroup>
+            ))}
+          </div>
+        </Split>
+      </Container>
+    </Section>
   );
 };
 
