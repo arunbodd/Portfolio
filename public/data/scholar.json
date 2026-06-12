@@ -3,5 +3,82 @@
   "hIndex": 11,
   "documents": 18,
   "updated": "2026-06-12",
-  "source": "google-scholar"
+  "source": "google-scholar",
+  "papers": [
+    {
+      "title": "Baricitinib treatment resolves lower-airway macrophage inflammation and neutrophil recruitment in SARS-CoV-2-infected rhesus macaques",
+      "citations": 235,
+      "year": 2021
+    },
+    {
+      "title": "Shared transcriptional profiles of atypical B cells suggest common drivers of expansion and function in malaria, HIV, and autoimmunity",
+      "citations": 174,
+      "year": 2021
+    },
+    {
+      "title": "A modified vaccinia Ankara vector-based vaccine protects macaques from SARS-CoV-2 infection, immune pathology, and dysfunction in the lungs",
+      "citations": 100,
+      "year": 2021
+    },
+    {
+      "title": "Human plasma-like medium improves T lymphocyte activation",
+      "citations": 74,
+      "year": 2020
+    },
+    {
+      "title": "Features of acute COVID-19 associated with post-acute sequelae of SARS-CoV-2 phenotypes: results from the IMPACC study",
+      "citations": 61,
+      "year": 2024
+    },
+    {
+      "title": "Multi-omic longitudinal study reveals immune correlates of clinical course among hospitalized COVID-19 patients",
+      "citations": 60,
+      "year": 2023
+    },
+    {
+      "title": "Modulation of type I interferon responses potently inhibits SARS-CoV-2 replication and inflammation in rhesus macaques",
+      "citations": 33,
+      "year": 2023
+    },
+    {
+      "title": "Early B cell factor 4 modulates FAS-mediated apoptosis and promotes cytotoxic function in human immune cells",
+      "citations": 25,
+      "year": 2022
+    },
+    {
+      "title": "Differential expression of Triggering Receptor Expressed on Myeloid cells 2 (Trem2) in tissue eosinophils",
+      "citations": 5,
+      "year": 2021
+    },
+    {
+      "title": "Relationship of heterologous virus responses and outcomes in hospitalized COVID-19 patients",
+      "citations": 4,
+      "year": 2023
+    },
+    {
+      "title": "Detection and tracking of SARS-CoV-2 lineages through National wastewater surveillance system pathogen genomics",
+      "citations": 3,
+      "year": 2025
+    },
+    {
+      "title": "Targeted plasma proteomics uncover proteins associated with KIF5A-linked SPG10 and ALS spectrum disorders",
+      "citations": 1,
+      "year": 2026
+    },
+    {
+      "title": "Type 2 immune responses are associated with less severe COVID-19 in a hospitalized cohort",
+      "citations": 1,
+      "year": 2025
+    },
+    {
+      "title": "Tau-typing: a Nextflow pipeline for finding the best phylogenetic markers in the genome for molecular typing of microbial species",
+      "citations": 1,
+      "year": 2023
+    },
+    {
+      "title": "Host-Microbe Multiomic Profiling Reveals Age-Dependent COVID-19 Immunopathology",
+      "citations": 0,
+      "year": 2024
+    }
+  ]
 }
