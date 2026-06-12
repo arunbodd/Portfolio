@@ -1,17 +1,16 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import QRCode from 'react-qr-code';
-import { ThemeContext } from '../context/ThemeContext';
-import { FaDownload, FaShareAlt } from 'react-icons/fa';
+import { FaShareAlt } from 'react-icons/fa';
 
 const QRCodeContainer = styled.div`
   background: ${props => props.theme.background};
   color: ${props => props.theme.textSlate};
-  padding: 60px calc((100vw - 1000px) / 2);
+  padding: 160px calc((100vw - 1000px) / 2) 100px;
   min-height: 100vh;
-  
+
   @media screen and (max-width: 1000px) {
-    padding: 60px 24px;
+    padding: 130px 24px 80px;
   }
 `;
 
@@ -19,9 +18,10 @@ const QRCodeWrapper = styled.div`
   max-width: 600px;
   margin: 0 auto;
   background-color: ${props => props.theme.lightNavy};
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+  box-shadow: 0 30px 60px -25px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,7 +106,6 @@ const PortfolioURL = styled.div`
 `;
 
 const QRCodePage = () => {
-  const { theme } = useContext(ThemeContext);
   const qrCodeRef = useRef(null);
   
   // Your portfolio URL - update this with your actual deployed URL
@@ -144,7 +143,7 @@ const QRCodePage = () => {
             value={portfolioUrl} 
             size={200}
             style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            fgColor={theme === 'dark' ? '#0f3460' : '#007acc'}
+            fgColor="#0a1430"
             bgColor="white"
           />
         </QRCodeBox>
