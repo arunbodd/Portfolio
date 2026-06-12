@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Bundled fallback so the UI always has sane numbers even if the fetch fails.
-const FALLBACK = { citations: 800, hIndex: 11, documents: 18 };
+const FALLBACK = { citations: 800, hIndex: 11, documents: 18, papers: [] };
 
 // Reads the cached Google Scholar metrics from /data/scholar.json, which a
 // monthly GitHub Action refreshes. Falls back to bundled defaults on any error.
@@ -18,6 +18,7 @@ export default function useScholar() {
             citations: j.citations,
             hIndex: typeof j.hIndex === 'number' ? j.hIndex : FALLBACK.hIndex,
             documents: typeof j.documents === 'number' ? j.documents : FALLBACK.documents,
+            papers: Array.isArray(j.papers) ? j.papers : [],
           });
         }
       })

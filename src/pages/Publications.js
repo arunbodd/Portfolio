@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import { FaExternalLinkAlt, FaStar } from 'react-icons/fa';
 import Reveal from '../components/anim/Reveal';
@@ -217,12 +217,45 @@ const publications = [
 const filters = ['all', 'Covid', 'Immunology', 'HIV Research', 'Vaccine Research', 'Bioinformatics', 'Metagenomics', 'Nextflow', 'Surveillance', 'Proteomics', 'Neurology'];
 const labelMap = { all: 'All', Covid: 'COVID-19' };
 
+// Normalised title key, used to match curated papers to live Scholar data.
+const norm = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '');
+
 const Publications = () => {
   const [filter, setFilter] = useState('all');
   const [open, setOpen] = useState({});
   const [activeYear, setActiveYear] = useState(null);
   const groupRefs = useRef({});
   const scholar = useScholar();
+
+  // Live per-paper citation counts from Google Scholar, keyed by title. Falls
+  // back to the curated baseline for any paper not found on the profile.
+  const citeMap = useMemo(() => {
+    const m = new Map();
+    (scholar.papers || []).forEach((p) => {
+      if (p && p.title && typeof p.citations === 'number') m.set(norm(p.title), p.citations);
+    });
+    return m;
+  }, [scholar.papers]);
+
+  const citesOf = useCallback(
+    (p) => {
+      const key = norm(p.title);
+      if (citeMap.has(key)) return citeMap.get(key);
+      // Tolerate small title differences (e.g. Scholar dropping a word) by
+      // matching on the longest shared title prefix; ignore weak (<24 char)
+      // matches so papers absent from the profile keep their curated count.
+      let best = null;
+      let bestLen = 0;
+      citeMap.forEach((cites, k) => {
+        let i = 0;
+        const max = Math.min(k.length, key.length);
+        while (i < max && k[i] === key[i]) i += 1;
+        if (i > bestLen) { bestLen = i; best = cites; }
+      });
+      return bestLen >= 24 ? best : p.citations;
+    },
+    [citeMap],
+  );
 
   const filtered = filter === 'all' ? publications : publications.filter((p) => p.category?.includes(filter));
 
@@ -231,8 +264,8 @@ const Publications = () => {
     filtered.forEach((p) => { (g[p.year] = g[p.year] || []).push(p); });
     return Object.keys(g)
       .sort((a, b) => b - a)
-      .map((y) => ({ year: y, pubs: g[y].sort((a, b) => b.citations - a.citations) }));
-  }, [filtered]);
+      .map((y) => ({ year: y, pubs: g[y].sort((a, b) => citesOf(b) - citesOf(a)) }));
+  }, [filtered, citesOf]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -309,9 +342,9 @@ const Publications = () => {
                           <a href={p.link} target="_blank" rel="noopener noreferrer">Source <FaExternalLinkAlt style={{ fontSize: '0.7rem' }} /></a>
                         </Tools>
                       </div>
-                      <Cite $hot={p.citations >= 50}>
-                        <div className="n">{p.citations}</div>
-                        <div className="l">citation{p.citations === 1 ? '' : 's'}</div>
+                      <Cite $hot={citesOf(p) >= 50}>
+                        <div className="n">{citesOf(p)}</div>
+                        <div className="l">citation{citesOf(p) === 1 ? '' : 's'}</div>
                       </Cite>
                       {open[p.id] && <Abstract>{p.abstract}</Abstract>}
                     </PubRow>
