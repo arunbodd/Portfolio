@@ -215,7 +215,9 @@ const Bullets = styled.ul`
   flex-direction: column;
   gap: 12px;
   margin-top: 24px;
+  list-style: none;
   li {
+    list-style: none;
     position: relative;
     padding-left: 22px;
     line-height: 1.65;
