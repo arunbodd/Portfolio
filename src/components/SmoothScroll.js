@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
@@ -29,8 +29,32 @@ export const scrollToSection = (id) => {
   }
 };
 
+const STORE_KEY = (path) => `scroll:${path}`;
+
 const SmoothScroll = ({ children }) => {
   const location = useLocation();
+  const isFirstLoad = useRef(true);
+
+  // Persist the scroll position per route so a refresh can restore it. We own
+  // restoration (manual) so the browser doesn't fight us.
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+    const save = () => {
+      try {
+        sessionStorage.setItem(STORE_KEY(location.pathname), String(Math.round(window.scrollY)));
+      } catch {
+        /* ignore */
+      }
+    };
+    window.addEventListener('pagehide', save);
+    window.addEventListener('beforeunload', save);
+    document.addEventListener('visibilitychange', save);
+    return () => {
+      window.removeEventListener('pagehide', save);
+      window.removeEventListener('beforeunload', save);
+      document.removeEventListener('visibilitychange', save);
+    };
+  }, [location.pathname]);
 
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -59,15 +83,36 @@ const SmoothScroll = ({ children }) => {
     };
   }, []);
 
-  // Reset scroll on route change.
+  // On a real route change, start the new page at the top. On the very first
+  // load (i.e. a refresh), restore the previous scroll position instead of
+  // yanking the user back to the top.
   useEffect(() => {
-    if (lenisInstance) {
-      lenisInstance.scrollTo(0, { immediate: true });
-    } else {
-      window.scrollTo(0, 0);
+    const goTo = (y, immediate = true) => {
+      if (lenisInstance) lenisInstance.scrollTo(y, { immediate });
+      else window.scrollTo(0, y);
+    };
+
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      let saved = 0;
+      try {
+        saved = Number(sessionStorage.getItem(STORE_KEY(location.pathname)) || 0);
+      } catch {
+        saved = 0;
+      }
+      if (saved > 0) {
+        // Restore once the layout (and Lenis) is ready; retry as fonts/images settle.
+        requestAnimationFrame(() => goTo(saved));
+        const t1 = setTimeout(() => goTo(saved), 90);
+        const t2 = setTimeout(() => { goTo(saved); ScrollTrigger.refresh(); }, 320);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+      }
+      const id = setTimeout(() => ScrollTrigger.refresh(), 140);
+      return () => clearTimeout(id);
     }
-    // Let new page mount, then refresh triggers.
-    const id = setTimeout(() => ScrollTrigger.refresh(), 120);
+
+    goTo(0);
+    const id = setTimeout(() => ScrollTrigger.refresh(), 140);
     return () => clearTimeout(id);
   }, [location.pathname]);
 
