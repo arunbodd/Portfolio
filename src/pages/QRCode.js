@@ -108,8 +108,7 @@ const PortfolioURL = styled.div`
 const QRCodePage = () => {
   const qrCodeRef = useRef(null);
   
-  // Your portfolio URL - update this with your actual deployed URL
-  const portfolioUrl = "https://arunbodd.github.io/Portfolio/";
+  const portfolioUrl = "https://arunbodd.bio/";
   
   const sharePortfolio = async () => {
     if (navigator.share) {

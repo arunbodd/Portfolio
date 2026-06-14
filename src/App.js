@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { ThemeContext } from './context/ThemeContext';
 import { useContext } from 'react';
@@ -10,6 +10,7 @@ import SmoothScroll from './components/SmoothScroll';
 import Cursor from './components/Cursor';
 import Ambient from './components/Ambient';
 import ScrollProgress from './components/ScrollProgress';
+import Analytics from './components/Analytics';
 import OnePage from './pages/OnePage';
 import QRCode from './pages/QRCode';
 
@@ -34,6 +35,7 @@ function RoutedApp() {
   return (
     <SmoothScroll>
       <div className="App">
+        <Analytics />
         <Ambient />
         <ScrollProgress />
         <Navbar />

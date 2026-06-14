@@ -11,14 +11,9 @@
     // string into just a query string, and then redirects the browser
     // to the new URL with only a query string and hash fragment.
     
-    // If you're creating a Project Pages site and NOT using a custom domain,
-    // then set pathSegmentsToKeep to 1 (enterprise users may need to set it to > 1).
-    // This way the code will only replace the route part of the path, and not
-    // the real directory in which the app resides, for example:
-    // https://username.github.io/repo-name/one/two?a=b&c=d#qwe becomes
-    // https://username.github.io/repo-name/?/one/two&a=b~and~c=d#qwe
-    // Otherwise, leave pathSegmentsToKeep as 0.
-    var pathSegmentsToKeep = 1;
+    // Custom domain (arunbodd.bio) serves the app at the root, so keep 0
+    // path segments — the whole path is the SPA route.
+    var pathSegmentsToKeep = 0;
 
     var l = window.location;
     l.replace(
