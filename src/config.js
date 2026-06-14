@@ -22,6 +22,10 @@ export const isEmailConfigured = () => {
 export const CALENDLY_URL =
   process.env.REACT_APP_CALENDLY_URL || 'https://calendly.com/arunbodd/1-on-1-with-arun';
 
+// Google Analytics 4 Measurement ID, e.g. 'G-XXXXXXXXXX'. Analytics stays OFF
+// until this is set — either paste your ID here or set REACT_APP_GA_ID at build.
+export const GA_ID = process.env.REACT_APP_GA_ID || '';
+
 // The contact email is base64-encoded and only decoded at runtime, so the
 // literal address never appears as plain text or a mailto: in the static HTML
 // or JS bundle — defeating the common email-harvesting scrapers that fuel spam.
