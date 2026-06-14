@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, lazy, Suspense } from 'react';
 import styled from 'styled-components';
 import Typed from 'typed.js';
 import { FaQuoteLeft, FaLinkedin, FaArrowRight, FaArrowDown } from 'react-icons/fa';
 import { gsap } from 'gsap';
-import NeuralHero from '../components/NeuralHero';
 import Reveal from '../components/anim/Reveal';
 import Magnetic from '../components/anim/Magnetic';
 import CountUp from '../components/anim/CountUp';
@@ -11,6 +10,10 @@ import { scrollToSection } from '../components/SmoothScroll';
 import useScholar from '../hooks/useScholar';
 import { ThemeContext } from '../context/ThemeContext';
 import { Container, Eyebrow, Card } from '../components/ui';
+
+// Lazy-loaded so the ~150 KB Three.js bundle doesn't block the hero text /
+// first paint — the brain streams in a moment after the headline renders.
+const NeuralHero = lazy(() => import('../components/NeuralHero'));
 
 /* ───────────────────────── HERO ───────────────────────── */
 const Hero = styled.section`
@@ -337,7 +340,9 @@ const Home = () => {
     <>
       <Hero ref={heroRef} id="top">
         <HeroCanvasWrap>
-          <NeuralHero key={isDark ? 'dark' : 'light'} dark={isDark} />
+          <Suspense fallback={null}>
+            <NeuralHero key={isDark ? 'dark' : 'light'} dark={isDark} />
+          </Suspense>
         </HeroCanvasWrap>
         <HeroInner>
           <HeroContent>

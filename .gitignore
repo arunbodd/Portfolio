@@ -27,3 +27,6 @@ yarn-error.log*
 # local env (keys/config) and Claude Code session data
 .env
 .claude/
+
+# MkDocs build output (regenerate with mkdocs build)
+/site
