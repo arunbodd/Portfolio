@@ -15,7 +15,7 @@ const Head = styled.div`
   text-align: center;
 `;
 
-const Big = styled.h1`
+const Big = styled.h2`
   font-size: clamp(2.8rem, 8vw, 5.5rem);
   font-weight: 700;
   color: ${(p) => p.theme.textWhite};

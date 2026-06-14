@@ -1,14 +1,11 @@
 {
-  "name": "@arunbodd/portfolio",
+  "name": "arunbodd-portfolio",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "homepage": "https://arunbodd.bio",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arunbodd/Portfolio.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -23,7 +20,6 @@
     "pdfjs-dist": "^3.4.120",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-helmet": "^6.1.0",
     "react-icons": "^5.5.0",
     "react-pdf": "^9.2.1",
     "react-qr-code": "^2.0.15",
@@ -40,9 +36,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "prepublishOnly": "npm run build",
-    "publish-package": "npm publish"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
