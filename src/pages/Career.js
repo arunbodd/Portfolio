@@ -65,6 +65,15 @@ const RailItem = styled.button`
   padding: 9px 0;
   text-align: left;
   opacity: 0.5;
+  background: transparent;
+  border: none;
+  /* Belt-and-suspenders alongside the global button reset: some browser/OS
+     dark-mode form-control auto-theming can otherwise paint native button
+     chrome (light gray bg, black text) over this, which is illegible
+     combined with the opacity dimming below. */
+  appearance: none;
+  -webkit-appearance: none;
+  color: inherit;
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 
   .dot {

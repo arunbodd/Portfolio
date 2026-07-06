@@ -73,6 +73,15 @@ const YearNavItem = styled.button`
   padding: 7px 0;
   text-align: left;
   opacity: 0.5;
+  background: transparent;
+  border: none;
+  /* Belt-and-suspenders alongside the global button reset: some browser/OS
+     dark-mode form-control auto-theming can otherwise paint native button
+     chrome (light gray bg, black text) over this, which is illegible
+     combined with the opacity dimming below. */
+  appearance: none;
+  -webkit-appearance: none;
+  color: inherit;
   transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
   .y { font-family: ${(p) => p.theme.fontDisplay}; font-weight: 700; font-size: 1.05rem; color: ${(p) => p.theme.textLightSlate}; }
   .c { font-family: ${(p) => p.theme.fontMono}; font-size: 0.72rem; color: ${(p) => p.theme.textMuted}; }
