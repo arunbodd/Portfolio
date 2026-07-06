@@ -91,8 +91,18 @@ const HeroText = styled.p`
   color: ${(p) => p.theme.textSlate};
   max-width: 560px;
   line-height: 1.75;
+  margin-bottom: 20px;
+  opacity: 0;
+`;
+
+const Signature = styled.p`
+  font-size: 0.95rem;
+  color: ${(p) => p.theme.textMuted};
+  max-width: 480px;
+  line-height: 1.6;
   margin-bottom: 38px;
   opacity: 0;
+  .grad-text { font-weight: 600; }
 `;
 
 const Buttons = styled.div`
@@ -262,9 +272,9 @@ const CTA = styled(Container)`
 `;
 
 const highlights = [
-  'Led the 4-month commercial launch of AIVA, a multi-agentic clinical variant-interpretation platform — validating a 94% case-solve rate and 80.5% F1 on phenotype-driven prioritization.',
+  'Led the 4-month commercial launch of AIVA, a multi-agentic clinical variant-interpretation platform, validating a 94% case-solve rate and 80.5% F1 on phenotype-driven prioritization.',
   'Engineered Lintelligence, an enterprise LLM-RAG framework that automated validation workflows and reduced onboarding cycles by 85%.',
-  'Principal architect of Aquascope (v1.0–v3.1) — the national SARS-CoV-2 wastewater surveillance pipeline whose results informed federal pandemic-response policy.',
+  'Principal architect of Aquascope (v1.0–v3.1), the national SARS-CoV-2 wastewater surveillance pipeline whose results informed federal pandemic-response policy.',
   'Co-first-authored a scRNA-seq / CITE-seq baricitinib study published in Cell, complementing the FDA Emergency Use Authorization of baricitinib for COVID-19.',
   'Built a deterministic multi-agent orchestrator (CodArIs) for Nextflow pipelines, isolating the LLM layer from a pure-Python engine with strict Pydantic contracts.',
   'Developed a probabilistic classifier (81% accuracy) accelerating target identification and biomarker discovery in lung-remodeling pathways.',
@@ -318,7 +328,7 @@ const Home = () => {
     const ctx = gsap.context(() => {
       const nameSpans = heroRef.current.querySelectorAll('.name-line > span');
       if (reduce) {
-        gsap.set(['.greeting', '.role', '.herotext', '.herobtns', nameSpans], { opacity: 1, y: 0 });
+        gsap.set(['.greeting', '.role', '.herotext', '.signature', '.herobtns', nameSpans], { opacity: 1, y: 0 });
         return;
       }
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
@@ -329,6 +339,8 @@ const Home = () => {
         .from('.role', { y: 20, duration: 0.6 }, '<')
         .to('.herotext', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
         .from('.herotext', { y: 20, duration: 0.6 }, '<')
+        .to('.signature', { opacity: 1, y: 0, duration: 0.6 }, '-=0.35')
+        .from('.signature', { y: 20, duration: 0.6 }, '<')
         .to('.herobtns', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4')
         .from('.herobtns', { y: 20, duration: 0.6 }, '<');
       gsap.to('.greeting', { opacity: 1, duration: 0 });
@@ -346,7 +358,7 @@ const Home = () => {
         </HeroCanvasWrap>
         <HeroInner>
           <HeroContent>
-            <Greeting className="greeting">{'// hello, world — my name is'}</Greeting>
+            <Greeting className="greeting">{'// hello, world: my name is'}</Greeting>
             <Name>
               <span className="name-line"><span>Arun</span></span>
               <span className="name-line"><span className="grad-text">Boddapati.</span></span>
@@ -354,9 +366,12 @@ const Home = () => {
             <Role className="role">I'm a <span className="typed" ref={typedEl} /></Role>
             <HeroText className="herotext">
               I translate unstructured multi-omics, proteomics, and spatial data into rigorous,
-              production-grade AI — accelerating target identification and biomarker discovery
+              production-grade AI, accelerating target identification and biomarker discovery
               through LLM-RAG frameworks and agentic systems.
             </HeroText>
+            <Signature className="signature">
+              Building AI that's both <span className="grad-text">intelligent and accountable</span>.
+            </Signature>
             <Buttons className="herobtns">
               <Magnetic strength={0.3}><HeroPrimaryBtn href="#projects" onClick={(e) => go(e, 'projects')}>View My Work <FaArrowRight /></HeroPrimaryBtn></Magnetic>
               <Magnetic strength={0.3}><GhostBtn href="#contact" onClick={(e) => go(e, 'contact')}>Get In Touch</GhostBtn></Magnetic>
@@ -403,11 +418,11 @@ const Home = () => {
               <p>
                 I design <span className="hl">LLM-RAG frameworks, prompt-engineering strategies, and
                 deterministic multi-agent orchestrators</span> that improve operational efficiency
-                while holding strict scientific reproducibility and validation standards — from
+                while holding strict scientific reproducibility and validation standards, from
                 national pathogen surveillance pipelines to clinical variant-interpretation platforms.
               </p>
               <p>
-                What energizes me most is the bridge between disciplines — translating AI capability
+                What energizes me most is the bridge between disciplines: translating AI capability
                 into translational, clinical, and cell-therapy workflows alongside clinicians and
                 researchers. I believe{' '}
                 <span className="hl">the best systems are both intelligent and accountable</span>.

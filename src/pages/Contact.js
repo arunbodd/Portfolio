@@ -237,7 +237,7 @@ const Contact = () => {
     if (!configured) {
       // No EmailJS keys yet → fall back to the visitor's mail client.
       const subject = encodeURIComponent(`Portfolio contact from ${name || 'a visitor'}`);
-      const body = encodeURIComponent(`${message || ''}\n\n— ${name || ''} (${email || ''})`);
+      const body = encodeURIComponent(`${message || ''}\n\nFrom: ${name || ''} (${email || ''})`);
       window.location.href = buildMailto(`?subject=${subject}&body=${body}`);
       return;
     }
@@ -289,7 +289,7 @@ const Contact = () => {
                 </Field>
 
                 {status === 'sent' && (
-                  <Status><FaCheck /> Thanks — your message is on its way. I'll reply soon.</Status>
+                  <Status><FaCheck /> Thanks. Your message is on its way, and I'll reply soon.</Status>
                 )}
                 {status === 'error' && (
                   <Status $kind="error"><FaExclamationTriangle /> Something went wrong. Please email me directly.</Status>
