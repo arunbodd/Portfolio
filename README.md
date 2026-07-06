@@ -1,4 +1,4 @@
-# Arun Boddapati — Portfolio
+# Arun Boddapati's Portfolio
 
 Personal portfolio of **Arun Boddapati**, AI / ML Data Science Lead in translational bioinformatics. An immersive single-page experience built with React, Three.js, and GSAP.
 
@@ -32,4 +32,4 @@ Contact-form (EmailJS) and Calendly settings are read from a local `.env` (see `
 
 © Arun Boddapati. All rights reserved.
 
-This is a personal portfolio — its content, copy, and design are **not** offered as a template or licensed for reuse. Third-party libraries remain under their own licenses.
+This is a personal portfolio: its content, copy, and design are **not** offered as a template or licensed for reuse. Third-party libraries remain under their own licenses.

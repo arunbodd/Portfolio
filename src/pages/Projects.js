@@ -83,8 +83,8 @@ const Foot = styled.div`
 
 const projects = [
   { id: 13, title: 'DealRadar', description: 'A multi-agent car-deal intelligence app: describe a car in plain English and a Claude-powered pipeline (Sonnet + Haiku, tool-use, SQLite caching) returns ranked listings, per-car deal scores, market pulse, and negotiation tactics.', tech: ['Claude', 'Multi-Agent', 'Python', 'SQLite'], github: 'https://github.com/arunbodd/dealradar', category: 'AI' },
-  { id: 14, title: 'NeuralNets101', description: 'An interactive React dashboard covering loss/activation functions, optimizers, metrics, and architectures across 7 ML paradigms — with draggable SVG neural-net diagrams and biological analogies.', tech: ['React', 'ML', 'Dataviz'], github: 'https://github.com/arunbodd/NeuralNets101', demo: 'https://arunbodd.github.io/NeuralNets101/', category: 'AI' },
-  { id: 15, title: 'Lintelligence', description: 'An AI-powered Nextflow pipeline validator combining multi-LLM analysis (OpenAI + Anthropic) with rule-based static checks — featuring AI-proposed fixes, confidence scoring, and per-rule token/cost tracking.', tech: ['LLM', 'Python', 'Nextflow', 'Static Analysis'], github: 'https://github.com/arunbodd/lintelligence', category: 'AI' },
+  { id: 14, title: 'NeuralNets101', description: 'An interactive React dashboard covering loss/activation functions, optimizers, metrics, and architectures across 7 ML paradigms, with draggable SVG neural-net diagrams and biological analogies.', tech: ['React', 'ML', 'Dataviz'], github: 'https://github.com/arunbodd/NeuralNets101', demo: 'https://arunbodd.github.io/NeuralNets101/', category: 'AI' },
+  { id: 15, title: 'Lintelligence', description: 'An AI-powered Nextflow pipeline validator combining multi-LLM analysis (OpenAI + Anthropic) with rule-based static checks, featuring AI-proposed fixes, confidence scoring, and per-rule token/cost tracking.', tech: ['LLM', 'Python', 'Nextflow', 'Static Analysis'], github: 'https://github.com/arunbodd/lintelligence', category: 'AI' },
   { id: 1, title: 'NexAI', description: 'A RAG-based AI agent that analyzes Nextflow pipelines for compliance with nf-core guidelines, producing detailed compliance reports and recommendations.', tech: ['Nextflow', 'AI', 'RAG'], github: 'https://github.com/arunbodd/nf-core_guidelines_validator/tree/dev', category: 'AI' },
   { id: 2, title: 'VCP NULISA-Seq RShiny App', description: 'An RShiny web application for analyzing NULISA-Seq data related to Valosin-containing protein (VCP).', tech: ['R', 'RShiny', 'Bioinformatics'], github: 'https://github.com/arunbodd/VCP_NULISA-Seq_Rshiny', category: 'Web App', isPrivate: true },
   { id: 3, title: 'NexAws-AI', description: 'A framework for integrating AI pipelines with Nextflow and AWS infrastructure for scalable, efficient data processing.', tech: ['Nextflow', 'AWS', 'AI', 'ML'], github: 'https://github.com/arunbodd/NexAws-AI', category: 'Nextflow', isPrivate: true },
@@ -107,7 +107,7 @@ const Projects = () => {
   return (
     <Section id="projects">
       <Container>
-        <PageHeader index="02" eyebrow="Selected Work" title="Projects" lead="Pipelines, AI agents, and research code — most open-source, spanning genomics, surveillance, and machine learning." />
+        <PageHeader index="02" eyebrow="Selected Work" title="Projects" lead="Pipelines, AI agents, and research code, most open-source, spanning genomics, surveillance, and machine learning." />
 
         <Reveal>
           <Filters>

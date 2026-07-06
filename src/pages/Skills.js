@@ -90,7 +90,7 @@ const Trait = styled.div`
 const featured = {
   title: 'Machine Learning & AI',
   icon: <FaBrain />,
-  description: 'LLMs, RAG architecture, and agentic systems applied to life-sciences research — building decoupled, deterministic AI that holds strict reproducibility and validation standards.',
+  description: 'LLMs, RAG architecture, and agentic systems applied to life-sciences research, building decoupled, deterministic AI that holds strict reproducibility and validation standards.',
   tools: ['LLMs', 'RAG', 'Agentic tooling', 'MCP servers', 'Prompt Engineering', 'LangGraph', 'PyTorch', 'TensorFlow', 'scikit-learn', 'NLP', 'Knowledge Graphs'],
 };
 
@@ -104,7 +104,7 @@ const domains = [
 const leadership = {
   title: 'Leadership & Mentorship',
   icon: <FaUsers />,
-  description: 'Building and growing high-performing teams — from mentoring junior scientists and CDC trainees to product strategy and cross-functional delivery.',
+  description: 'Building and growing high-performing teams, from mentoring junior scientists and CDC trainees to product strategy and cross-functional delivery.',
   tools: ['Team Building', '1:1 Coaching', 'Project Management', 'Scrum', 'Jira', 'Talent Development', 'Stakeholder Mgmt'],
 };
 
@@ -123,7 +123,7 @@ const traits = [
 const Skills = () => (
   <Section id="skills">
     <Container>
-      <PageHeader index="04" eyebrow="Toolbox" title="Skills" lead="A capability map spanning AI/ML, bioinformatics, pipelines, and leadership — built to ship solutions for complex biological and computational challenges." />
+      <PageHeader index="04" eyebrow="Toolbox" title="Skills" lead="A capability map spanning AI/ML, bioinformatics, pipelines, and leadership, built to ship solutions for complex biological and computational challenges." />
 
       <Bento>
         <Reveal style={{ gridColumn: '1 / -1' }}>

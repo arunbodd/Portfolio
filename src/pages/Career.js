@@ -309,19 +309,19 @@ const entries = [
     railLabel: 'Independent Consulting & Advisory',
     org: 'Independent Consulting',
     year: '2026',
-    range: '2026 — Present',
+    range: '2026 – Present',
     heading: 'Independent Consulting & Advisory',
-    blurb: 'Concurrent founding, advisory, and academic roles — building agentic AI tooling, advising a clinical-AI startup, and leading proteomics research.',
+    blurb: 'Concurrent founding, advisory, and academic roles, building agentic AI tooling, advising a clinical-AI startup, and leading proteomics research.',
     roles: [
       {
         title: 'Independent AI Strategy Consultant & Systems Architect',
         company: 'Independent',
-        period: '2026 — Present',
+        period: '2026 – Present',
         location: 'Atlanta, GA · Remote',
         tagline: 'Product development and executive AI advisory across clinical-AI and translational research.',
         metrics: ['Multi-agent orchestrator', 'Decoupled LLM core', 'Live Nextflow trace parser'],
         description: [
-          '<b>CodArIs — Agentic Pipeline Compliance & Orchestration:</b> Built a deterministic, multi-agent orchestrator for Nextflow bioinformatics pipelines with interactive CLI and web interfaces.',
+          '<b>CodArIs, Agentic Pipeline Compliance & Orchestration:</b> Built a deterministic, multi-agent orchestrator for Nextflow bioinformatics pipelines with interactive CLI and web interfaces.',
           'Architected a decoupled LLM system isolating the intelligence layer from a pure-Python execution engine, using strict Pydantic models to eliminate token bloat and prevent silent failures.',
           'Engineered a FastAPI weblog receiver that parses live Nextflow traces, delivering real-time job status and deterministic failure classification independent of the Seqera Platform.',
         ],
@@ -344,7 +344,7 @@ const entries = [
       },
       {
         title: 'Academic Consultant',
-        company: 'Dr. Pant Lab — Emory University',
+        company: 'Dr. Pant Lab, Emory University',
         period: 'Advisory',
         location: 'Atlanta, GA',
         tagline: 'Volunteer bioinformatics consultant for grant-funded neurodegeneration research.',
@@ -364,10 +364,10 @@ const entries = [
     year: '2022 – 2026',
     range: 'Jun 2022 – Jan 2026',
     heading: 'Centers for Disease Control & Prevention',
-    blurb: 'Nearly four continuous years of bioinformatics leadership for CDC’s Advanced Molecular Detection programs — national pathogen surveillance and outbreak response — sustained across two contractors as I grew from analyst to lead scientist.',
+    blurb: 'Nearly four continuous years of bioinformatics leadership for CDC’s Advanced Molecular Detection programs (national pathogen surveillance and outbreak response), sustained across two contractors as I grew from analyst to lead scientist.',
     roles: [
       {
-        title: 'Lead Health Scientist — NCEZID (OAMD & DMAC)',
+        title: 'Lead Health Scientist at NCEZID (OAMD & DMAC)',
         company: 'via Booz Allen Hamilton',
         period: 'Mar 2025 – Jan 2026',
         location: 'Atlanta, GA',
@@ -381,7 +381,7 @@ const entries = [
         links: [{ name: 'CDC AMD Platform', url: 'https://www.cdc.gov/amd/index.html' }],
       },
       {
-        title: 'Bioinformatics Scientist — OAMD, NIOSH & NWSS',
+        title: 'Bioinformatics Scientist at OAMD, NIOSH & NWSS',
         company: 'via Leidos',
         period: 'Jun 2022 – Jan 2025',
         location: 'Atlanta, GA',
@@ -407,7 +407,7 @@ const entries = [
     roles: [{
       title: 'Senior Bioinformatics Analyst',
       company: 'Emory National Primate Research Center (NIH-Funded)',
-      period: 'Jul 2020 — Jun 2022',
+      period: 'Jul 2020 – Jun 2022',
       location: 'Atlanta, GA',
       tagline: '',
       metrics: ['Published in Cell', '5,000 patients · 15 centers', '60% ↓ processing'],
@@ -424,9 +424,9 @@ const entries = [
     org: 'NIH · Leidos',
     year: '2018',
     roles: [{
-      title: 'Bioinformatics Analyst II — NIH / NIAID',
+      title: 'Bioinformatics Analyst II at NIH / NIAID',
       company: 'via Leidos Biomedical Research',
-      period: 'Apr 2018 — Jul 2020',
+      period: 'Apr 2018 – Jul 2020',
       location: 'Bethesda, MD',
       tagline: '',
       metrics: ['28+ projects', '1,200-patient WES', '100+ hrs/mo saved'],
@@ -444,13 +444,13 @@ const entries = [
 const certifications = [
   { name: 'Hands-on Generative AI', issuer: 'Educosys', date: 'Nov 2025' },
   { name: 'AI Aware', issuer: 'Udemy', date: 'Oct 2025' },
-  { name: 'Lean Six Sigma — White Belt', issuer: 'AIGPE', date: 'Sep 2025' },
+  { name: 'Lean Six Sigma White Belt', issuer: 'AIGPE', date: 'Sep 2025' },
 ];
 
 const education = [
-  { degree: 'M.S. — Bioinformatics', institution: 'Indiana University', period: '2016 — 2017', location: 'Indianapolis, USA', description: 'Focus on RNA biology, RNA-binding proteins, and epitranscriptomics.' },
-  { degree: 'M.S. — Biomedical Sciences', institution: 'Symbiosis International University', period: '2012 — 2014', location: 'Pune, India', description: 'Focus on cell biology and molecular biology.' },
-  { degree: 'B.Tech — Biotechnology', institution: 'Jawaharlal Nehru Technological University', period: '2007 — 2011', location: 'Hyderabad, India', description: 'Major in biotechnology with a minor in bioinformatics.' },
+  { degree: 'M.S. in Bioinformatics', institution: 'Indiana University', period: '2016–2017', location: 'Indianapolis, USA', description: 'Focus on RNA biology, RNA-binding proteins, and epitranscriptomics.' },
+  { degree: 'M.S. in Biomedical Sciences', institution: 'Symbiosis International University', period: '2012–2014', location: 'Pune, India', description: 'Focus on cell biology and molecular biology.' },
+  { degree: 'B.Tech in Biotechnology', institution: 'Jawaharlal Nehru Technological University', period: '2007–2011', location: 'Hyderabad, India', description: 'Major in biotechnology with a minor in bioinformatics.' },
 ];
 
 const RoleBody = ({ role }) => (
@@ -492,7 +492,7 @@ const Career = () => {
   return (
     <Section id="career">
       <Container>
-        <PageHeader index="01" eyebrow="Journey" title="Career" lead="A decade turning biological questions into production-grade AI — across national public-health programs, academic cores, and clinical-AI startups." />
+        <PageHeader index="01" eyebrow="Journey" title="Career" lead="A decade turning biological questions into production-grade AI, across national public-health programs, academic cores, and clinical-AI startups." />
 
         <Journey>
           <Rail>
