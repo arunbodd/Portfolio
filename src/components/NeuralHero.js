@@ -12,17 +12,91 @@ const Canvas = styled.canvas`
 
 // Shown when WebGL is unavailable (hardware acceleration off / GPU blocklisted /
 // context lost) so the hero never looks empty in Chrome or anywhere else.
+// Pure CSS/SVG — no WebGL — but still reads as "the same brain": a two-lobe
+// cluster with a tapering stem, glowing nodes, and traveling signal pulses.
 const Fallback = styled.div`
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(38% 48% at 78% 44%, rgba(52, 227, 200, 0.26), transparent 70%),
-    radial-gradient(32% 42% at 86% 62%, rgba(124, 131, 255, 0.22), transparent 72%),
-    radial-gradient(rgba(231, 236, 246, 0.14) 1px, transparent 1.4px);
-  background-size: auto, auto, 26px 26px;
-  -webkit-mask-image: radial-gradient(60% 60% at 80% 50%, #000 30%, transparent 75%);
-  mask-image: radial-gradient(60% 60% at 80% 50%, #000 30%, transparent 75%);
+    radial-gradient(38% 48% at 78% 44%, rgba(52, 227, 200, 0.16), transparent 70%),
+    radial-gradient(32% 42% at 86% 62%, rgba(124, 131, 255, 0.14), transparent 72%);
 `;
+
+const FallbackSvg = styled.svg`
+  position: absolute;
+  top: 50%;
+  left: 82%;
+  transform: translate(-50%, -48%);
+  width: min(56vw, 620px);
+  height: auto;
+  overflow: visible;
+
+  @media (max-width: 768px) {
+    left: 50%;
+    top: 58%;
+    width: min(78vw, 420px);
+  }
+
+  .fb-edge {
+    stroke: ${(p) => (p.$dark ? '#7c83ff' : '#5159e0')};
+    stroke-width: 1;
+    opacity: 0.28;
+  }
+  .fb-node {
+    fill: ${(p) => (p.$dark ? '#34e3c8' : '#0c9f88')};
+    animation: fb-pulse 3.6s ease-in-out infinite;
+  }
+  .fb-node.fb-indigo { fill: ${(p) => (p.$dark ? '#7c83ff' : '#5159e0')}; }
+  .fb-signal {
+    fill: ${(p) => (p.$dark ? '#ffffff' : '#0b8f7a')};
+    opacity: 0.9;
+  }
+  .fb-signal-a { animation: fb-travel-a 5.5s ease-in-out infinite; }
+  .fb-signal-b { animation: fb-travel-b 6.5s ease-in-out infinite 1.2s; }
+
+  @keyframes fb-pulse {
+    0%, 100% { opacity: 0.55; r: 3; }
+    50% { opacity: 1; r: 4.2; }
+  }
+  /* Traces the real edge chain 0 → 6 → 7 → 15 → 8 (left lobe out to right lobe). */
+  @keyframes fb-travel-a {
+    0%   { transform: translate(58px, 150px); opacity: 0; }
+    6%   { opacity: 1; }
+    24%  { transform: translate(96px, 168px); }
+    48%  { transform: translate(112px, 128px); }
+    72%  { transform: translate(150px, 108px); }
+    94%  { transform: translate(214px, 66px); opacity: 1; }
+    100% { transform: translate(214px, 66px); opacity: 0; }
+  }
+  /* Traces the real edge chain 14 → 16 → 17 → 18 → 19 (down the brain stem). */
+  @keyframes fb-travel-b {
+    0%   { transform: translate(150px, 150px); opacity: 0; }
+    6%   { opacity: 1; }
+    30%  { transform: translate(165px, 208px); }
+    53%  { transform: translate(170px, 238px); }
+    76%  { transform: translate(176px, 268px); }
+    94%  { transform: translate(180px, 298px); opacity: 1; }
+    100% { transform: translate(180px, 298px); opacity: 0; }
+  }
+`;
+
+// Hand-placed nodes tracing the same silhouette as the WebGL version: a
+// two-lobe cerebrum (split by a faint central fissure) sitting atop a
+// tapering brain-stem.
+const FB_NODES = [
+  // left lobe
+  [58, 150], [66, 108], [92, 76], [124, 62], [78, 190], [70, 128], [96, 168], [112, 128],
+  // right lobe
+  [214, 66], [252, 82], [276, 122], [268, 164], [228, 190], [188, 172], [150, 150], [150, 108],
+  // stem
+  [165, 208], [170, 238], [176, 268], [180, 298],
+];
+const FB_EDGES = [
+  [0, 1], [1, 2], [2, 3], [0, 4], [0, 6], [1, 7], [4, 6], [6, 7], [7, 15], [7, 14],
+  [3, 15], [15, 14], [15, 8], [8, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14],
+  [14, 16], [16, 17], [17, 18], [18, 19], [6, 5], [5, 7],
+];
+const FB_INDIGO = new Set([8, 9, 10, 11, 12, 13, 16, 17, 18, 19]);
 
 // Soft circular glow sprite generated on the fly.
 function makeGlowTexture() {
@@ -386,7 +460,29 @@ const NeuralHero = ({ dark = true }) => {
   return (
     <>
       <Canvas ref={canvasRef} aria-hidden="true" style={{ opacity: webglOk ? 1 : 0 }} />
-      {!webglOk && <Fallback aria-hidden="true" />}
+      {!webglOk && (
+        <Fallback aria-hidden="true">
+          <FallbackSvg viewBox="0 0 340 320" $dark={dark}>
+            {FB_EDGES.map(([a, b], i) => {
+              const [x1, y1] = FB_NODES[a];
+              const [x2, y2] = FB_NODES[b];
+              return <line key={i} className="fb-edge" x1={x1} y1={y1} x2={x2} y2={y2} />;
+            })}
+            {FB_NODES.map(([x, y], i) => (
+              <circle
+                key={i}
+                className={`fb-node${FB_INDIGO.has(i) ? ' fb-indigo' : ''}`}
+                cx={x}
+                cy={y}
+                r={3}
+                style={{ animationDelay: `${(i % 7) * 0.35}s` }}
+              />
+            ))}
+            <circle className="fb-signal fb-signal-a" cx={0} cy={0} r={3.2} />
+            <circle className="fb-signal fb-signal-b" cx={0} cy={0} r={3.2} />
+          </FallbackSvg>
+        </Fallback>
+      )}
     </>
   );
 };

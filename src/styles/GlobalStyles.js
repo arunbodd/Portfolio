@@ -92,7 +92,19 @@ const GlobalStyles = createGlobalStyle`
     transition: color 0.3s var(--ease);
   }
 
-  button { cursor: pointer; border: 0; background: none; font-family: inherit; }
+  button {
+    cursor: pointer;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    color: inherit;
+    /* Without this, some browsers/OS dark-mode form-control theming paint a
+       native (light gray bg, black text) button chrome over our own colors,
+       which is illegible combined with any opacity dimming on inactive nav
+       items. Force fully custom rendering everywhere. */
+    appearance: none;
+    -webkit-appearance: none;
+  }
 
   ul, ol { padding: 0; margin: 0; list-style: none; }
   img { max-width: 100%; vertical-align: middle; }
