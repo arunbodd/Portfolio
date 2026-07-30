@@ -1,45 +1,24 @@
-# Arun Boddapati's Portfolio
+# Arun Boddapati
 
-Personal portfolio of **Arun Boddapati**, AI / ML Data Science Lead in translational bioinformatics. An immersive single-page experience built with React, Three.js, and GSAP.
+**AI / ML Data Science Lead — translational bioinformatics**
 
-**Live:** https://arunbodd.bio
+I translate unstructured multi-omics, proteomics, and spatial data into rigorous, production-grade AI, accelerating target identification and biomarker discovery through LLM-RAG frameworks and agentic systems.
 
-## Highlights
+### 🌐 [arunbodd.bio](https://arunbodd.bio)
 
-- Interactive Three.js neural-network hero (with a graceful fallback when WebGL is unavailable)
-- Smooth scroll + GSAP scroll animations, light/dark themes
-- Scrollytelling career timeline, research-index publications, bento skills grid
-- Contact form (EmailJS) + Calendly scheduling
-- Google Scholar citation counts pulled from a cached `public/data/scholar.json`
+---
 
-## Tech
+9+ years applying machine learning, large language models, and agentic systems to life-sciences research, across national public-health programs, academic cores, and clinical-AI startups.
 
-React · styled-components · Three.js · GSAP · Lenis · react-router · GitHub Pages · GitHub Actions
+- **884+ citations · h-index 11 · 18 peer-reviewed papers** in Cell, Immunity, Nature Immunology, Science Advances, and others
+- Principal architect of **Aquascope**, the national SARS-CoV-2 wastewater genomic surveillance pipeline, whose results informed federal pandemic-response policy
+- Co-first author on a scRNA-seq / CITE-seq baricitinib study in **Cell** that complemented the FDA Emergency Use Authorization of baricitinib for COVID-19
+- Built **Lintelligence** and **CodArIs**, LLM-RAG and deterministic multi-agent systems for bioinformatics pipeline compliance and orchestration
 
-## Running locally
+**Find me:** [LinkedIn](https://linkedin.com/in/arunbodd) · [Google Scholar](https://scholar.google.com/citations?user=ni4A6KgAAAAJ) · [GitHub](https://github.com/arunbodd)
 
-```bash
-git clone https://github.com/arunbodd/Portfolio.git
-cd Portfolio
-npm install
-npm start        # http://localhost:3000
-npm run build    # production build
-```
+---
 
-Contact-form (EmailJS) and Calendly settings are read from a local `.env` (see `src/config.js`); without them the contact form falls back to opening your mail app. In CI the EmailJS keys come from the `emailJS` environment's secrets.
+<sub>This repository holds the source for arunbodd.bio, built with React, Three.js, and GSAP. Maintenance notes: [MAINTENANCE.md](MAINTENANCE.md)</sub>
 
-## Refreshing citation counts
-
-```bash
-npm run update-citations
-```
-
-This rewrites `public/data/scholar.json` (totals, h-index, and per-paper counts) from the Google Scholar profile. Commit and push the result to deploy it.
-
-A monthly GitHub Action tries the same thing, but Google Scholar blocks datacenter IPs and usually returns 403 to the runner — so treat the local command as the real refresh path. A skipped CI run surfaces a warning annotation and job summary rather than passing silently.
-
-## License
-
-© Arun Boddapati. All rights reserved.
-
-This is a personal portfolio: its content, copy, and design are **not** offered as a template or licensed for reuse. Third-party libraries remain under their own licenses.
+<sub>© Arun Boddapati. All rights reserved. The content, copy, and design here are **not** offered as a template or licensed for reuse. Third-party libraries remain under their own licenses.</sub>
