@@ -12,6 +12,10 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # Required for the EmailJS secrets below to resolve: environment secrets are
+    # only exposed to jobs that declare the environment they live in. The name
+    # must match the GitHub environment exactly (case-sensitive).
+    environment: emailJS
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -26,6 +30,13 @@ jobs:
 
       - name: Build
         run: CI=false npm run build
+        env:
+          # CRA inlines REACT_APP_* at build time. These are EmailJS client-side
+          # identifiers (public by design — they ship in the JS bundle either
+          # way); keeping them in secrets just keeps them out of git history.
+          REACT_APP_EMAILJS_SERVICE_ID: ${{ secrets.REACT_APP_EMAILJS_SERVICE_ID }}
+          REACT_APP_EMAILJS_TEMPLATE_ID: ${{ secrets.REACT_APP_EMAILJS_TEMPLATE_ID }}
+          REACT_APP_EMAILJS_PUBLIC_KEY: ${{ secrets.REACT_APP_EMAILJS_PUBLIC_KEY }}
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
