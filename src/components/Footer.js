@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { scrollToSection } from './SmoothScroll';
-import { openEmail } from '../config';
 
 const FooterContainer = styled.footer`
   border-top: 1px solid var(--border);
@@ -116,7 +115,7 @@ const Footer = () => {
       <Social>
         <a href="https://github.com/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><FaGithub /></a>
         <a href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FaLinkedin /></a>
-        <button type="button" onClick={() => openEmail()} aria-label="Email"><FaEnvelope /></button>
+        <button type="button" onClick={() => go('contact')} aria-label="Go to contact form"><FaEnvelope /></button>
       </Social>
       <Copy>© {new Date().getFullYear()} Arun Boddapati · Built with React, Three.js & GSAP</Copy>
     </Inner>

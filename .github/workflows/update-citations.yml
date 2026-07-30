@@ -50,7 +50,7 @@ jobs:
         run: |
           if [[ -n "$(git status --porcelain public/data/scholar.json)" ]]; then
             git config user.name "arunbodd"
-            git config user.email "[email-redacted]"
+            git config user.email "arunbodd@users.noreply.github.com"
             git add public/data/scholar.json
             git commit -m "chore: auto-update Google Scholar citation count"
             git push origin main

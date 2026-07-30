@@ -25,27 +25,8 @@ export const CALENDLY_URL =
 // Google Analytics 4 Measurement ID. (Public by design — appears in the page.)
 export const GA_ID = process.env.REACT_APP_GA_ID || 'G-RMV0X4TS11';
 
-// The contact email is base64-encoded and only decoded at runtime, so the
-// literal address never appears as plain text or a mailto: in the static HTML
-// or JS bundle — defeating the common email-harvesting scrapers that fuel spam.
-const _enc = 'REDACTED_B64=';
-
-export const getContactEmail = () => {
-  try {
-    return typeof atob === 'function' ? atob(_enc) : '';
-  } catch {
-    return '';
-  }
-};
-
-// Build a mailto: URL on demand (optionally with ?subject=…&body=… params).
-export const buildMailto = (params = '') => {
-  const addr = getContactEmail();
-  return addr ? `mailto:${addr}${params}` : '#';
-};
-
-// Open the user's mail client without ever rendering the address in the DOM.
-export const openEmail = (params = '') => {
-  const url = buildMailto(params);
-  if (url !== '#') window.location.href = url;
-};
+// NOTE: there is deliberately no contact email in this file, or anywhere else
+// in the repo. It used to live here base64-encoded, but base64 is trivially
+// reversible, so the address was still readable by anyone who looked — it only
+// stopped naive regex scrapers. Every route to the inbox now goes through the
+// EmailJS contact form, which holds the destination address server-side.

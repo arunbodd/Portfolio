@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import emailjs from '@emailjs/browser';
-import { FaEnvelope, FaLinkedin, FaGithub, FaQrcode, FaArrowRight, FaCalendarAlt, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
+import { FaLinkedin, FaGithub, FaQrcode, FaArrowRight, FaCalendarAlt, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { IoLocationOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import Reveal from '../components/anim/Reveal';
 import Magnetic from '../components/anim/Magnetic';
 import { Section, Container, Eyebrow } from '../components/ui';
-import { EMAILJS, isEmailConfigured, CALENDLY_URL, openEmail, buildMailto } from '../config';
+import { EMAILJS, isEmailConfigured, CALENDLY_URL } from '../config';
 
 const Head = styled.div`
   max-width: 760px;
@@ -193,7 +193,6 @@ const Tile = styled.a`
 `;
 
 const tiles = [
-  { icon: <FaEnvelope />, label: 'Email', val: 'Open in mail app', action: 'email' },
   { icon: <FaLinkedin />, label: 'LinkedIn', val: 'in/arunbodd', href: 'https://linkedin.com/in/arunbodd', ext: true },
   { icon: <FaGithub />, label: 'GitHub', val: 'github.com/arunbodd', href: 'https://github.com/arunbodd', ext: true },
   { icon: <IoLocationOutline />, label: 'Location', val: 'Atlanta, GA', href: null },
@@ -229,16 +228,13 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData(formRef.current);
-    const name = data.get('from_name');
-    const email = data.get('reply_to');
-    const message = data.get('message');
 
+    // There is no mailto: fallback any more: that required shipping the
+    // destination address to the browser, which is exactly the PII we don't
+    // want in the bundle. If EmailJS isn't configured we say so and point at
+    // LinkedIn rather than silently doing nothing.
     if (!configured) {
-      // No EmailJS keys yet → fall back to the visitor's mail client.
-      const subject = encodeURIComponent(`Portfolio contact from ${name || 'a visitor'}`);
-      const body = encodeURIComponent(`${message || ''}\n\nFrom: ${name || ''} (${email || ''})`);
-      window.location.href = buildMailto(`?subject=${subject}&body=${body}`);
+      setStatus('error');
       return;
     }
 
@@ -292,7 +288,11 @@ const Contact = () => {
                   <Status><FaCheck /> Thanks. Your message is on its way, and I'll reply soon.</Status>
                 )}
                 {status === 'error' && (
-                  <Status $kind="error"><FaExclamationTriangle /> Something went wrong. Please email me directly.</Status>
+                  <Status $kind="error">
+                    <FaExclamationTriangle /> Something went wrong. Please reach me on{' '}
+                    <a href="https://linkedin.com/in/arunbodd" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    {' '}instead.
+                  </Status>
                 )}
 
                 <Magnetic strength={0.25} style={{ alignSelf: 'flex-start' }}>
@@ -303,8 +303,9 @@ const Contact = () => {
 
                 {!configured && (
                   <Note>
-                    Heads up: EmailJS keys aren't set yet, so this button opens your mail app
-                    instead. Add them in <code>.env</code> to enable in-page sending.
+                    Heads up: EmailJS keys aren't set, so this form can't send. Add them in{' '}
+                    <code>.env</code> locally, or as secrets in the <code>emailJS</code> environment
+                    for the deployed site.
                   </Note>
                 )}
               </Form>
@@ -325,13 +326,11 @@ const Contact = () => {
 
               <Tiles>
                 {tiles.map((t) => {
-                  const props = t.action === 'email'
-                    ? { as: 'button', type: 'button', onClick: () => openEmail() }
-                    : t.to
-                      ? { as: Link, to: t.to }
-                      : t.href
-                        ? { href: t.href, ...(t.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
-                        : { as: 'div' };
+                  const props = t.to
+                    ? { as: Link, to: t.to }
+                    : t.href
+                      ? { href: t.href, ...(t.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {}) }
+                      : { as: 'div' };
                   return (
                     <Tile key={t.label} {...props}>
                       <span className="ic">{t.icon}</span>

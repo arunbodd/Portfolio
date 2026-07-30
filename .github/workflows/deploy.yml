@@ -44,4 +44,4 @@ jobs:
           branch: gh-pages
           folder: build
           git-config-name: arunbodd
-          git-config-email: [email-redacted]
+          git-config-email: arunbodd@users.noreply.github.com
