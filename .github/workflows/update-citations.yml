@@ -7,6 +7,17 @@ name: Update citation count
 # deploy). It updates and pushes scholar.json on `main`; the subsequent push
 # triggers the Pages deploy so the new number goes live automatically.
 # You can also run it on demand via the "Run workflow" button.
+#
+# KNOWN LIMITATION: Google Scholar blocks datacenter IPs, so this scheduled run
+# usually gets HTTP 403 and can't refresh anything. It won't fail the job (the
+# cached value is still valid data), but the script now emits a warning
+# annotation and a job summary so a skipped run is visible rather than looking
+# like a successful no-op. The reliable refresh path is local:
+#
+#     npm run update-citations && git commit -am "chore: refresh citations" && git push
+#
+# Keep the schedule anyway: it costs nothing and does work if Scholar ever
+# stops blocking the runner IP range.
 
 on:
   schedule:

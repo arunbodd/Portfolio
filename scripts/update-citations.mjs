@@ -6,10 +6,19 @@
 // In CI:         scheduled monthly by .github/workflows/update-citations.yml
 //
 // Google Scholar has no official API and may serve a consent/CAPTCHA page to
-// bots. This script is intentionally best-effort: if it can't parse sane values
-// it leaves the cached file untouched and exits 0, so the site never breaks.
+// bots. This script is best-effort: if it can't parse sane values it leaves the
+// cached file untouched and exits 0, so the site never breaks.
+//
+// IMPORTANT: Scholar reliably returns HTTP 403 to GitHub Actions runners
+// (datacenter IPs are blocked), while the same request succeeds from a normal
+// residential connection. So the scheduled run will usually report "no change"
+// without having fetched anything. To avoid that looking like success, a
+// blocked run now emits a GitHub warning annotation and a job summary saying
+// how stale the data is. The reliable way to refresh is locally:
+//
+//     npm run update-citations
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -21,8 +30,34 @@ const URL = `https://scholar.google.com/citations?user=${SCHOLAR_ID}&hl=en&cstar
 
 const current = JSON.parse(readFileSync(OUT, 'utf8'));
 
+const daysStale = () => {
+  const then = Date.parse(`${current.updated}T00:00:00Z`);
+  if (Number.isNaN(then)) return null;
+  return Math.floor((Date.now() - then) / 86400000);
+};
+
+// Surface a non-fatal problem in the Actions UI instead of exiting 0 silently.
+const report = (msg) => {
+  const stale = daysStale();
+  const staleNote = stale === null ? '' : ` Data is ${stale} day(s) old.`;
+  if (process.env.GITHUB_ACTIONS) {
+    console.log(`::warning title=Citation update skipped::${msg}.${staleNote} Refresh locally with \`npm run update-citations\`.`);
+    if (process.env.GITHUB_STEP_SUMMARY) {
+      appendFileSync(
+        process.env.GITHUB_STEP_SUMMARY,
+        `### ⚠️ Citation update skipped\n\n`
+          + `**Reason:** ${msg}\n\n`
+          + `Cached value kept: **${current.citations} citations** (last updated ${current.updated}${stale === null ? '' : `, ${stale} days ago`}).\n\n`
+          + 'Google Scholar blocks GitHub Actions IPs, so refresh locally:\n\n'
+          + '```bash\nnpm run update-citations\n```\n',
+      );
+    }
+  }
+};
+
 const fail = (msg) => {
   console.log(`[update-citations] ${msg} — keeping cached values (${current.citations} citations).`);
+  report(msg);
   process.exit(0);
 };
 
