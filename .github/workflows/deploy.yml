@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+  # Manual trigger, so the site can be rebuilt without an code change — useful
+  # if gh-pages ever needs regenerating (it is fully derived from main, so a
+  # rebuild is always safe and restores CNAME along with the rest of build/).
+  workflow_dispatch:
 
 # Allow the default GITHUB_TOKEN to push the built site to the gh-pages branch.
 permissions:
