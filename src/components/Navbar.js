@@ -48,6 +48,39 @@ const Logo = styled(Link)`
   span.dim { color: ${(p) => p.theme.textSlate}; font-weight: 400; }
 `;
 
+/* Top-level tab pair. The portfolio is one continuous scroll and writing is a
+   separate route, so this sits above the section anchors rather than beside
+   them — switching worlds, not jumping to a section. */
+const TabGroup = styled.div`
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 999px;
+  background: ${(p) => p.theme.cardBackground};
+  border: 1px solid var(--border);
+  margin-left: 22px;
+
+  @media (max-width: 880px) { margin-left: 12px; }
+  @media (max-width: 420px) { display: none; }
+`;
+
+const Tab = styled(Link)`
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: ${(p) => p.theme.textSlate};
+  transition: color 0.3s var(--ease), background 0.3s var(--ease);
+
+  &:hover { color: ${(p) => p.theme.textLightSlate}; }
+  &.on {
+    background: ${(p) => p.theme.gradient};
+    color: #05060b;
+  }
+
+  @media (max-width: 880px) { padding: 6px 13px; font-size: 0.8rem; }
+`;
+
 const Menu = styled.div`
   display: flex;
   align-items: center;
@@ -154,6 +187,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const onHome = location.pathname === '/';
+  const onWriting = location.pathname.startsWith('/writing');
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
@@ -201,11 +235,16 @@ const Navbar = () => {
         Arun<span className="dim">.bio</span>
       </Logo>
 
+      <TabGroup>
+        <Tab to="/" className={onHome ? 'on' : ''} onClick={() => setOpen(false)}>Portfolio</Tab>
+        <Tab to="/writing" className={onWriting ? 'on' : ''} onClick={() => setOpen(false)}>Writing</Tab>
+      </TabGroup>
+
       <Menu $open={open}>
-        {links.map((l) => (
+        {onHome && links.map((l) => (
           <StyledLink
             key={l.id}
-            className={onHome && active === l.id ? 'active' : ''}
+            className={active === l.id ? 'active' : ''}
             onClick={() => handleNav(l.id)}
           >
             {l.label}

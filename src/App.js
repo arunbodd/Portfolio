@@ -12,6 +12,7 @@ import Ambient from './components/Ambient';
 import ScrollProgress from './components/ScrollProgress';
 import Analytics from './components/Analytics';
 import OnePage from './pages/OnePage';
+import Writing from './pages/Writing';
 import QRCode from './pages/QRCode';
 
 const GlobalStyle = createGlobalStyle`
@@ -42,6 +43,7 @@ function RoutedApp() {
         <div className="page-content" style={{ position: 'relative', zIndex: 1 }}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<OnePage />} />
+            <Route path="/writing" element={<Writing />} />
             <Route path="/qrcode" element={<QRCode />} />
           </Routes>
           <Footer />
