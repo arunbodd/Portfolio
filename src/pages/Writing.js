@@ -191,7 +191,10 @@ const SubHead = styled.h3`
   border-bottom: 1px solid var(--border);
 `;
 
-const P = `${process.env.PUBLIC_URL || ''}/writing`;
+// PDFs live under /pdfs, not /writing: a static directory that shares a name
+// with a client-side route makes GitHub Pages 301 the route to a trailing
+// slash before the SPA fallback ever runs.
+const P = `${process.env.PUBLIC_URL || ''}/pdfs`;
 
 // DECODED: a five-part series on the forces reshaping computational biology.
 // Issue 5 is written but its three figures aren't rendered yet, so it is
