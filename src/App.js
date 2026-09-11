@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { ThemeContext } from './context/ThemeContext';
-import { useContext } from 'react';
+import { useContext, lazy, Suspense } from 'react';
 import { ThemeProvider as StyledThemeProvider, createGlobalStyle } from 'styled-components';
 import './App.css';
 import Navbar from './components/Navbar';
@@ -14,6 +14,16 @@ import Analytics from './components/Analytics';
 import OnePage from './pages/OnePage';
 import Writing from './pages/Writing';
 import QRCode from './pages/QRCode';
+
+// The Markdown renderer only matters on article pages; keep it out of the
+// bundle the portfolio and index pay for.
+const Article = lazy(() => import('./pages/Article'));
+
+// Shown for the moment the article chunk is in flight on a cold visit, so a
+// direct link to an article never paints an empty page.
+const ArticleLoading = () => (
+  <div style={{ minHeight: '60vh', paddingTop: 120 }} aria-busy="true" aria-label="Loading article" />
+);
 
 const GlobalStyle = createGlobalStyle`
   /* CSS custom properties are set inline on <html> by ThemeContext so the
@@ -44,6 +54,7 @@ function RoutedApp() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<OnePage />} />
             <Route path="/writing" element={<Writing />} />
+            <Route path="/writing/:slug" element={<Suspense fallback={<ArticleLoading />}><Article /></Suspense>} />
             <Route path="/qrcode" element={<QRCode />} />
           </Routes>
           <Footer />

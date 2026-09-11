@@ -75,3 +75,29 @@ variables: `from_name`, `reply_to`, `message` — templates must use those names
 The link lives on **Contact Us → Auto-Reply tab**, pointing at the Auto-Reply
 template (not the reverse). Auto-reply consumes an extra request, so each
 submission costs 2 of the free tier's 200/month.
+
+## Writing
+
+Articles are Markdown files fetched at runtime and rendered with
+`react-markdown` + `remark-gfm` (footnotes). Three places to touch for a new
+post:
+
+1. **Body** — `public/content/writing/<slug>.md`. Body only: no title or
+   byline (those render from metadata). Conventions the renderer relies on:
+   `## PART ...` / `### ...` headings; the TL;DR as a blockquote whose first
+   line is `> **TL;DR** — ...`; citations as GFM footnotes `[^n]` with
+   `[^n]: source, https://...` definitions at the end (the renderer labels
+   that section "References" and numbers by first appearance); figures as
+   `![caption](/content/writing/img/<file>.png)` on their own line. No HTML.
+2. **Metadata** — `src/pages/writing/posts.js`. Series issues go in `posts`
+   (ordered; drives prev/next), standalone pieces in `briefs`, links out in
+   `external`. `readingMinutes` is words ÷ 230.
+3. **Sitemap** — add the `/writing/<slug>` URL to `public/sitemap.xml`.
+
+Figures were pulled from the source PDFs with PyMuPDF (`page.get_images()`,
+skipping anything under 400×200 px) into `public/content/writing/img/`. Keep
+web-size copies only; the jobs-report pages are rendered at 1800 px wide.
+
+Do not put static assets in a directory that shares a name with a route
+(e.g. `public/writing/`): GitHub Pages will 301 the route to a trailing slash
+before the SPA fallback runs.

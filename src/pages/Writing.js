@@ -1,8 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
-import { FaFilePdf, FaExternalLinkAlt, FaLock } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import { FaExternalLinkAlt, FaArrowRight } from 'react-icons/fa';
 import Reveal from '../components/anim/Reveal';
 import { Container, PageHeader } from '../components/ui';
+import { SERIES, posts, briefs, external } from './writing/posts';
 
 const Section = styled.section`
   padding: 130px 0 100px;
@@ -45,17 +47,15 @@ const SeriesHead = styled.div`
   }
 `;
 
-const Issue = styled.a`
+const Issue = styled(Link)`
   display: grid;
   grid-template-columns: 62px 1fr auto;
   gap: 24px;
   align-items: start;
   padding: 26px 0;
   border-bottom: 1px solid var(--border);
-  transition: opacity 0.3s var(--ease);
 
-  &[data-pending='true'] { cursor: default; opacity: 0.62; }
-  &:not([data-pending='true']):hover .t { color: ${(p) => p.theme.highlight}; }
+  &:hover .t, &:hover .go { color: ${(p) => p.theme.highlight}; }
 
   .num {
     font-family: ${(p) => p.theme.fontDisplay};
@@ -97,8 +97,8 @@ const Issue = styled.a`
     color: ${(p) => p.theme.textMuted};
     white-space: nowrap;
     padding-top: 5px;
+    transition: color 0.3s var(--ease);
   }
-  &:not([data-pending='true']):hover .go { color: ${(p) => p.theme.highlight}; }
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
@@ -130,7 +130,7 @@ const Standalone = styled.div`
   @media (max-width: 820px) { grid-template-columns: 1fr; }
 `;
 
-const Piece = styled.a`
+const pieceStyles = css`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -140,11 +140,8 @@ const Piece = styled.a`
   background: ${(p) => p.theme.cardBackground};
   transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
 
-  &:hover {
-    border-color: ${(p) => p.theme.highlight};
-    transform: translateY(-3px);
-  }
-  &:hover h4 { color: ${(p) => p.theme.highlight}; }
+  &:hover { border-color: ${(p) => p.theme.highlight}; transform: translateY(-3px); }
+  &:hover h4, &:hover .go { color: ${(p) => p.theme.highlight}; }
 
   .kind {
     font-family: ${(p) => p.theme.fontMono};
@@ -162,23 +159,17 @@ const Piece = styled.a`
     line-height: 1.3;
     transition: color 0.3s var(--ease);
   }
-  p {
-    color: ${(p) => p.theme.textSlate};
-    font-size: 0.9rem;
-    margin: 0;
-    line-height: 1.65;
-    flex: 1;
-  }
+  p { color: ${(p) => p.theme.textSlate}; font-size: 0.9rem; margin: 0; line-height: 1.65; flex: 1; }
   .go {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
+    display: inline-flex; align-items: center; gap: 7px;
     font-family: ${(p) => p.theme.fontMono};
     font-size: 0.72rem;
     color: ${(p) => p.theme.textMuted};
+    transition: color 0.3s var(--ease);
   }
-  &:hover .go { color: ${(p) => p.theme.highlight}; }
 `;
+const PieceLink = styled(Link)`${pieceStyles}`;
+const PieceExt = styled.a`${pieceStyles}`;
 
 const SubHead = styled.h3`
   font-family: ${(p) => p.theme.fontDisplay};
@@ -190,62 +181,6 @@ const SubHead = styled.h3`
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 `;
-
-// PDFs live under /pdfs, not /writing: a static directory that shares a name
-// with a client-side route makes GitHub Pages 301 the route to a trailing
-// slash before the SPA fallback ever runs.
-const P = `${process.env.PUBLIC_URL || ''}/pdfs`;
-
-// DECODED: a five-part series on the forces reshaping computational biology.
-// Issue 5 is written but its three figures aren't rendered yet, so it is
-// listed as forthcoming rather than shipped half-finished.
-const issues = [
-  {
-    n: '01',
-    title: 'The Ground Is Shifting',
-    when: 'May 2026',
-    file: `${P}/decoded-1-the-ground-is-shifting.pdf`,
-    tags: ['tariffs', 'H-1B', 'AI capex', 'NIH'],
-    summary:
-      'Five forces converging on bioinformatics careers at once: a tariff regime reshaping compute and reagent supply, a hiring recession that shed 22,000+ biopharma roles, aggressive offshoring to Indian GCCs, a $100K H-1B fee choking the talent pipeline, and a $600B+ AI capex buildout justified by AlphaFold 3 clearing a real performance threshold.',
-  },
-  {
-    n: '02',
-    title: 'The Energy Problem',
-    when: 'May 2026',
-    file: `${P}/decoded-2-the-energy-problem.pdf`,
-    tags: ['data centers', 'grid', 'compute'],
-    summary:
-      'The binding constraint on biological AI is no longer algorithms or data — it is electricity. Data centers are on track to double 415 TWh by 2030, transformer lead times have stretched to 3–5 years, and GPUs draw only 40% of facility power. Why compute sovereignty is becoming a premium skillset.',
-  },
-  {
-    n: '03',
-    title: 'The Pharma Playbook',
-    when: 'May 2026',
-    file: `${P}/decoded-3-the-pharma-playbook.pdf`,
-    tags: ['pharma', 'biotech', 'M&A'],
-    summary:
-      'How computational biology is being restructured inside pharma: centralization around NVIDIA-backed stacks, layoffs that strategically spare clinical validation while cutting general analysts, and AI-native biotechs built as capital-efficient acquisition targets. Career durability belongs to the translators.',
-  },
-  {
-    n: '04',
-    title: 'The Other Half',
-    when: 'July 2026',
-    file: `${P}/decoded-4-the-other-half.pdf`,
-    tags: ['diagnostics', 'CRO', 'federal', 'academia'],
-    summary:
-      'The sectors that get less press but employ most of the profession — clinical diagnostics, CROs, federal contracting, academia, and foundation-funded research. Held a month for the courts to strike down the $100K H-1B fee, so it reports finalized policy rather than proposals.',
-  },
-  {
-    n: '05',
-    title: 'Which Arm of the K',
-    when: 'August 2026',
-    pending: true,
-    tags: ['K-curve', 'bond markets', 'the pivot'],
-    summary:
-      'The final issue. Rentosertib carries an entirely AI-designed molecule into Phase III; the labour market bifurcates as entry-level execution contracts 3.0% YoY against acute senior scarcity; hyperscaler debt issuance pushes Treasury yields against early-stage biotech. Closes with a staged pivot framework by career stage.',
-  },
-];
 
 const Writing = () => (
   <Section id="writing">
@@ -259,53 +194,51 @@ const Writing = () => (
 
       <Reveal>
         <SeriesHead>
-          <h3>DECODED</h3>
-          <span className="count">5-part series</span>
-          <p>AI, Biology and the Future of Our Profession. Five months tracking how federal funding, energy constraints, bond markets and clinical genomics collided — written for practitioners deciding where to stand.</p>
+          <h3>{SERIES.name}</h3>
+          <span className="count">{posts.length}-part series</span>
+          <p>{SERIES.tagline}. {SERIES.blurb}</p>
         </SeriesHead>
       </Reveal>
 
-      {issues.map((it) => {
-        const live = !it.pending;
-        const props = live
-          ? { href: it.file, target: '_blank', rel: 'noopener noreferrer' }
-          : { as: 'div', 'data-pending': 'true' };
-        return (
-          <Reveal key={it.n}>
-            <Issue {...props}>
-              <span className="num">{it.n}</span>
-              <div>
-                <h4 className="t">{it.title}</h4>
-                <p className="when">{it.when}{it.pending ? ' · figures in progress' : ''}</p>
-                <p className="sum">{it.summary}</p>
-                <Tags>{it.tags.map((t) => <span key={t}>{t}</span>)}</Tags>
-              </div>
-              <span className="go">
-                {live ? <><FaFilePdf /> Read</> : <><FaLock /> Soon</>}
-              </span>
-            </Issue>
-          </Reveal>
-        );
-      })}
+      {posts.map((it) => (
+        <Reveal key={it.slug}>
+          <Issue to={`/writing/${it.slug}`}>
+            <span className="num">{it.n}</span>
+            <div>
+              <h4 className="t">{it.title}</h4>
+              <p className="when">
+                {it.dateLabel} · {it.readingMinutes} min read{it.note ? ` · ${it.note}` : ''}
+              </p>
+              <p className="sum">{it.summary}</p>
+              <Tags>{it.tags.map((t) => <span key={t}>{t}</span>)}</Tags>
+            </div>
+            <span className="go">Read <FaArrowRight /></span>
+          </Issue>
+        </Reveal>
+      ))}
 
       <Reveal><SubHead>Also published</SubHead></Reveal>
       <Standalone>
-        <Reveal>
-          <Piece href={`${P}/jobs-report-august-2026.pdf`} target="_blank" rel="noopener noreferrer">
-            <span className="kind">Data brief · Sep 2026</span>
-            <h4>The Jobs Report: reading the bioinformatics market</h4>
-            <p>Four pages on where the market actually is. August payrolls jumped +162,000 against a 12-month average of +31,000, biopharma cuts fell 59% in Q2, and 631 computational-biology postings show a market skewed hard to senior. Includes five checks for whether a posting is real.</p>
-            <span className="go"><FaFilePdf /> Read the brief</span>
-          </Piece>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <Piece href="https://medium.com/@arunbodd/the-bioinformatician-before-and-after-ai-01fa91bdcda2" target="_blank" rel="noopener noreferrer">
-            <span className="kind">Essay · Medium</span>
-            <h4>The Bioinformatician, Before and After AI</h4>
-            <p>What actually changed in the day-to-day work once the tools got good — which parts of the job compressed, which became more valuable, and why domain judgment ended up mattering more rather than less.</p>
-            <span className="go"><FaExternalLinkAlt /> Read on Medium</span>
-          </Piece>
-        </Reveal>
+        {briefs.map((b, i) => (
+          <Reveal key={b.slug} delay={i * 0.08}>
+            <PieceLink to={`/writing/${b.slug}`}>
+              <span className="kind">{b.kind} · {b.dateLabel}</span>
+              <h4>{b.title}</h4>
+              <p>{b.summary}</p>
+              <span className="go">Read the brief <FaArrowRight /></span>
+            </PieceLink>
+          </Reveal>
+        ))}
+        {external.map((s, i) => (
+          <Reveal key={s.href} delay={(briefs.length + i) * 0.08}>
+            <PieceExt href={s.href} target="_blank" rel="noopener noreferrer">
+              <span className="kind">{s.kind}</span>
+              <h4>{s.title}</h4>
+              <p>{s.summary}</p>
+              <span className="go"><FaExternalLinkAlt /> {s.cta}</span>
+            </PieceExt>
+          </Reveal>
+        ))}
       </Standalone>
     </Container>
   </Section>
